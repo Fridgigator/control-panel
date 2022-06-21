@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FrontPageButton extends StatelessWidget {
   final String text;
-  final VoidCallback onClick;
+  final VoidCallback? onClick;
   const FrontPageButton({key, required this.text, required this.onClick})
       : super(key: key);
   @override
