@@ -22,7 +22,8 @@ class FrontPageView extends State<FrontPage> {
                     child: Column(children: [
               FrontPageContent(
                   title: "Monitors your fridge",
-                  text: "Text",
+                  text:
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                   imageSource: "assets/fridge.svg",
                   textPos: 0,
                   buttons: [
@@ -43,19 +44,22 @@ class FrontPageView extends State<FrontPage> {
                   ]),
               FrontPageContent(
                 title: "The perfect place for your produce",
-                text: "Text",
+                text:
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 imageSource: "assets/lemon.svg",
                 textPos: 1,
               ),
               FrontPageContent(
                 title: "Technology",
-                text: "Text",
+                text:
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 imageSource: "assets/network.svg",
                 textPos: 2,
               ),
               FrontPageContent(
                   title: "Open Source",
-                  text: "",
+                  text:
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                   imageSource: "assets/Opensource.svg",
                   textPos: 3,
                   buttons: [FrontPageButton(text: "GitHub", onClick: () {})])

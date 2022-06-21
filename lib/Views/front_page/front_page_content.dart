@@ -29,18 +29,28 @@ class FrontPageContent extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 48),
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w300),
             ),
             Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(children: [
-                  Text(
-                    text,
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                  Row(
-                    children: buttons != null ? buttons! : List.empty(),
-                  )
+                  SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w100,
+                            height: 1.4),
+                      )),
+                  SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                          child: Wrap(
+                            alignment: WrapAlignment.spaceAround,
+                            children: buttons != null ? buttons! : List.empty(),
+                          )))
                 ]))
           ],
         ));
