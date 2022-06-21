@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'front_page_button.dart';
+import '../front_page_button.dart';
 
 // ignore: must_be_immutable
 class FrontPageContent extends StatelessWidget {
@@ -54,40 +54,6 @@ class FrontPageContent extends StatelessWidget {
                 ]))
           ],
         ));
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 128, 0, 128),
-        child: Row(
-          children: textLeft
-              ? [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                          constraints: const BoxConstraints(
-                              minWidth: 300, maxWidth: 576),
-                          child: textWidget)),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                        constraints:
-                            const BoxConstraints(minWidth: 300, maxWidth: 576),
-                        child: SvgPicture.asset(imageSource)),
-                  ),
-                ]
-              : [
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                        constraints:
-                            const BoxConstraints(minWidth: 300, maxWidth: 576),
-                        child: SvgPicture.asset(imageSource)),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                          constraints: const BoxConstraints(
-                              minWidth: 300, maxWidth: 576),
-                          child: textWidget)),
-                ],
-        ));
+    return Column(children: [SvgPicture.asset(imageSource), textWidget]);
   }
 }

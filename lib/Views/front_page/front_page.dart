@@ -1,110 +1,31 @@
-import 'package:control_panel/Views/dialogBox/login.dart';
+import 'package:control_panel/Views/front_page/desktop/front_page_desktop.dart';
 import 'package:flutter/material.dart';
-import 'front_page_button.dart';
-import 'front_page_content.dart';
+import 'phone/front_page_phone.dart';
 
-class FrontPage extends StatefulWidget {
+class FrontPage extends StatelessWidget {
   const FrontPage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => FrontPageView();
-}
-
-class FrontPageView extends State<FrontPage> {
-  String? accessToken;
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 0, 24, 0),
-            child: SingleChildScrollView(
-                child: Center(
-                    child: Column(children: [
-              FrontPageContent(
-                  title: "Monitors your fridge",
-                  text:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                  imageSource: "assets/fridge.svg",
-                  textPos: 0,
-                  buttons: [
-                    FrontPageButton(
-                        text: "Login",
-                        onClick: accessToken != null
-                            ? null
-                            : () async {
-                                String? accessToken = await startLoginButton();
-                                setState(() {
-                                  this.accessToken = accessToken;
-                                });
-                              }),
-                    FrontPageButton(
-                      text: "Learn More",
-                      onClick: () {},
-                    )
-                  ]),
-              FrontPageContent(
-                title: "The perfect place for your produce",
-                text:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                imageSource: "assets/lemon.svg",
-                textPos: 1,
-              ),
-              FrontPageContent(
-                title: "Technology",
-                text:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                imageSource: "assets/network.svg",
-                textPos: 2,
-              ),
-              FrontPageContent(
-                  title: "Open Source",
-                  text:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                  imageSource: "assets/Opensource.svg",
-                  textPos: 3,
-                  buttons: [FrontPageButton(text: "GitHub", onClick: () {})])
-            ])))),
-        appBar: AppBar(actions: [
-          TextButton(onPressed: () {}, child: Text("Control Panel")),
-          TextButton(
-              onPressed: () async {
-                String? accessToken = await startLoginButton();
-                print(accessToken);
-                setState(() {
-                  this.accessToken = accessToken;
-                });
-              },
-              child: Text(accessToken == null ? "Login" : "Logout"))
-        ]));
+    print(isLargeScreen(context));
+    if (isLargeScreen(context)) {
+      return const FrontPageDesktop();
+    } else {
+      return const FrontPagePhone();
+    }
   }
 
-  Future<String?> startLoginButton() async {
-    return await showGeneralDialog(
-        barrierDismissible: true,
-        barrierLabel: "Barrier",
-        barrierColor: Colors.grey.withOpacity(0.5),
-        context: context,
-        transitionDuration: const Duration(milliseconds: 700),
-        pageBuilder: (_, __, ___) {
-          return StatefulBuilder(builder: (context, setState) {
-            return const DialogBox();
-          });
-        },
-        transitionBuilder: (_, anim, __, child) {
-          Tween<Offset> tween;
-          if (anim.status == AnimationStatus.reverse) {
-            tween = Tween(begin: Offset(0, 11), end: Offset.zero);
-          } else {
-            tween = Tween(begin: Offset(0, -1), end: Offset.zero);
-          }
+  static bool isLargeScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 1200;
+  } //Small screen is any screen whose width is less than 800 pixels
 
-          return SlideTransition(
-            position: tween.animate(anim),
-            child: FadeTransition(
-              opacity: anim,
-              child: child,
-            ),
-          );
-        });
+  static bool isSmallScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width < 800;
+  } //Medium screen is any screen whose width is less than 1200 pixels,
+
+  //and more than 800 pixels
+  static bool isMediumScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width > 800 &&
+        MediaQuery.of(context).size.width < 1200;
   }
 }
