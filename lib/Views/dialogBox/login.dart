@@ -120,8 +120,8 @@ class DialogBoxState extends State<DialogBox> {
         currentState = AppState.gitHubTimeout;
       });
     } else {
-      var url = Uri.http('https://fridgigator.herokuapp.com',
-          'verifyGitHubLogin', {"nonce": nonce});
+      var url = Uri.https(
+          'fridgigator.herokuapp.com', 'verifyGitHubLogin', {"nonce": nonce});
       var response = await http.get(url);
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       if (responseMap["ok"]) {
