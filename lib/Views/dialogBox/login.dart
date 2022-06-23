@@ -51,7 +51,7 @@ class DialogBoxState extends State<DialogBox> {
       case AppState.firstStageConnectToGithub:
         var loginGithubUrl = Uri.https("github.com", "login/oauth/authorize", {
           "client_id": "30bf4172998cc4ec684e",
-          "redirect_uri": "http://localhost:1234/register",
+          "redirect_uri": "https://fridgigator.herokuapp.com/register",
           "state": nonce,
         });
         return Container(
@@ -120,8 +120,8 @@ class DialogBoxState extends State<DialogBox> {
         currentState = AppState.gitHubTimeout;
       });
     } else {
-      var url =
-          Uri.http('localhost:1234', 'verifyGitHubLogin', {"nonce": nonce});
+      var url = Uri.http('https://fridgigator.herokuapp.com',
+          'verifyGitHubLogin', {"nonce": nonce});
       var response = await http.get(url);
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       if (responseMap["ok"]) {
