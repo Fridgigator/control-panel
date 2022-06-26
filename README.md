@@ -1,2 +1,2 @@
-# The Fridgigator web site
+# The Control Panel
 
