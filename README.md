@@ -1,2 +1,2 @@
-# control-panel
-The control-panel
+# The Fridgigator web site
+
