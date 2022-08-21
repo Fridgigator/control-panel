@@ -1,6 +1,11 @@
-import 'package:control_panel/Views/front_page/front_page.dart';
+import 'package:control_panel/Views/dialogBox/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as dev;
+
+import 'Views/MainDisplay/front_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,8 +44,115 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String? accessToken;
+  SharedPreferences? prefs;
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      prefs = await SharedPreferences.getInstance();
+      setState(() {
+        accessToken = prefs?.getString("access_token");
+      });
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const FrontPage();
+    return Scaffold(
+      appBar: AppBar(title: Text("Fridgigator's Control Panel"), actions: [
+        TextButton(
+            onPressed: () async {
+              if (accessToken == null) {
+                String? accessToken = await startLoginButton();
+                print(accessToken);
+                if (accessToken != null && prefs != null) {
+                  prefs?.setString("access_token", accessToken);
+                  setState(() {
+                    this.accessToken = accessToken;
+                  });
+                }
+              } else {
+                () async {
+                  await prefs?.remove("access_token");
+                  setState(() {
+                    accessToken = null;
+                  });
+                }();
+              }
+            },
+            child: Text(accessToken == null ? "Login" : "Logout"))
+      ]),
+      body: FrontPage(accessToken: accessToken),
+      floatingActionButton: SpeedDial(
+        visible: accessToken != null,
+        icon: Icons.add,
+        onPress: null,
+        activeIcon: Icons.close,
+        spacing: 3,
+        childPadding: const EdgeInsets.all(5),
+        spaceBetweenChildren: 4,
+        renderOverlay: true,
+        useRotationAnimation: true,
+        animationCurve: Curves.elasticInOut,
+        isOpenOnStart: false,
+        animationDuration: const Duration(milliseconds: 250),
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.accessibility),
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            label: 'New Fridge',
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.brush),
+            backgroundColor: Colors.deepOrange,
+            foregroundColor: Colors.white,
+            label: 'New Hub',
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.margin),
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
+            label: 'New Sensor',
+            visible: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> startLoginButton() async {
+    print("123");
+
+    String? a = await showGeneralDialog(
+        barrierDismissible: true,
+        barrierLabel: "Barrier",
+        barrierColor: Colors.grey.withOpacity(0.5),
+        context: context,
+        transitionDuration: const Duration(milliseconds: 700),
+        pageBuilder: (_, __, ___) {
+          return StatefulBuilder(builder: (context, setState) {
+            return const DialogBox();
+          });
+        },
+        transitionBuilder: (_, anim, __, child) {
+          Tween<Offset> tween;
+          if (anim.status == AnimationStatus.reverse) {
+            tween = Tween(begin: Offset(0, 11), end: Offset.zero);
+          } else {
+            tween = Tween(begin: Offset(0, -1), end: Offset.zero);
+          }
+
+          return SlideTransition(
+            position: tween.animate(anim),
+            child: FadeTransition(
+              opacity: anim,
+              child: child,
+            ),
+          );
+        });
+    print("a=$a");
+    return a;
   }
 }

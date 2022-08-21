@@ -27,6 +27,7 @@ class DialogBoxState extends State<DialogBox> {
       String? accessToken = prefs.getString("access_token");
       if (accessToken != null) {
         setState(() {
+          print("accessToken=$accessToken");
           currentState = AppState.registerDevice;
           this.accessToken = accessToken;
         });
@@ -51,9 +52,9 @@ class DialogBoxState extends State<DialogBox> {
       case AppState.firstStageConnectToGithub:
         var loginGithubUrl = Uri.https("github.com", "login/oauth/authorize", {
           "client_id": "30bf4172998cc4ec684e",
-          "redirect_uri": "https://fridgigator.herokuapp.com/register",
           "state": nonce,
         });
+        debugPrint("uri=$loginGithubUrl");
         return Container(
             child: Column(children: [
           const Padding(
@@ -99,6 +100,13 @@ class DialogBoxState extends State<DialogBox> {
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
               child: Text("GitHub login timed out"))
         ]));
+      case AppState.denied:
+        return Container(
+            child: Column(children: const [
+          Padding(
+              padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
+              child: Text("GitHub Denied"))
+        ]));
     }
   }
 
@@ -124,12 +132,17 @@ class DialogBoxState extends State<DialogBox> {
           'fridgigator.herokuapp.com', 'verifyGitHubLogin', {"nonce": nonce});
       var response = await http.get(url);
       Map<String, dynamic> responseMap = jsonDecode(response.body);
-      if (responseMap["ok"]) {
+      if (responseMap["ok"] == "ok") {
+        debugPrint("Getting access_token=$responseMap");
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("access_token", responseMap["access_token"]);
         setState(() {
           currentState = AppState.registerDevice;
           accessToken = responseMap["access_token"];
+        });
+      } else if (responseMap["ok"] == "denied") {
+        setState(() {
+          currentState = AppState.denied;
         });
       } else {
         await Future.delayed(
@@ -146,5 +159,6 @@ enum AppState {
   waitingForGitHub,
   gitHubTimeout,
   gitHubBug,
-  registerDevice
+  registerDevice,
+  denied
 }
