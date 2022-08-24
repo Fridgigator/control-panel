@@ -6,14 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-class DialogBox extends StatefulWidget {
-  const DialogBox({Key? key}) : super(key: key);
+class LoginDialog extends StatefulWidget {
+  const LoginDialog({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => DialogBoxState();
+  State<StatefulWidget> createState() => LoginDialogState();
 }
 
-class DialogBoxState extends State<DialogBox> {
+class LoginDialogState extends State<LoginDialog> {
   final String nonce = generateNonce();
   late AppState currentState;
   String? accessToken;
@@ -61,13 +61,11 @@ class DialogBoxState extends State<DialogBox> {
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
               child: Text("Step 1")),
           ElevatedButton(
-            child: const Text("Login through GitGub"),
+            child: const Text("Login through GitHub"),
             onPressed: () async {
               setState(() {
-                dev.log("SetState");
                 currentState = AppState.waitingForGitHub;
               });
-              dev.log("about to launch");
               if (!await launchUrl(loginGithubUrl)) {
                 throw 'Could not launch $loginGithubUrl';
               }

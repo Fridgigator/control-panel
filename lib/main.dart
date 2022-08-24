@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as dev;
 
 import 'Views/MainDisplay/front_page.dart';
+import 'Views/dialogBox/add_hub.dart';
+import 'structures/hub.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +39,6 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -46,6 +46,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String? accessToken;
   SharedPreferences? prefs;
+  List<Hub> hubList = [];
   @override
   void initState() {
     super.initState();
@@ -59,13 +60,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    String? accessToken = this.accessToken;
     return Scaffold(
-      appBar: AppBar(title: Text("Fridgigator's Control Panel"), actions: [
+      appBar: AppBar(title: const Text("Control Panel"), actions: [
         TextButton(
             onPressed: () async {
               if (accessToken == null) {
-                String? accessToken = await startLoginButton();
-                print(accessToken);
+                String? accessToken =
+                    await startLoginButton(const LoginDialog()) as String?;
+                debugPrint(accessToken);
                 if (accessToken != null && prefs != null) {
                   prefs?.setString("access_token", accessToken);
                   setState(() {
@@ -99,33 +102,32 @@ class _MyHomePageState extends State<MyHomePage> {
         animationDuration: const Duration(milliseconds: 250),
         children: [
           SpeedDialChild(
-            child: const Icon(Icons.accessibility),
+            child: const Icon(Icons.add_box),
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
             label: 'New Fridge',
           ),
           SpeedDialChild(
-            child: const Icon(Icons.brush),
+            child: const Icon(Icons.hub),
             backgroundColor: Colors.deepOrange,
             foregroundColor: Colors.white,
             label: 'New Hub',
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.margin),
-            backgroundColor: Colors.indigo,
-            foregroundColor: Colors.white,
-            label: 'New Sensor',
-            visible: true,
+            onTap: () async {
+              List<Hub> hubList =
+                  await startLoginButton(AddHub(accessToken: accessToken!))
+                      as List<Hub>;
+              setState(() {
+                this.hubList = hubList;
+              });
+            },
           ),
         ],
       ),
     );
   }
 
-  Future<String?> startLoginButton() async {
-    print("123");
-
-    String? a = await showGeneralDialog(
+  Future<Object?> startLoginButton(Widget widget) async {
+    Object? a = await showGeneralDialog(
         barrierDismissible: true,
         barrierLabel: "Barrier",
         barrierColor: Colors.grey.withOpacity(0.5),
@@ -133,15 +135,15 @@ class _MyHomePageState extends State<MyHomePage> {
         transitionDuration: const Duration(milliseconds: 700),
         pageBuilder: (_, __, ___) {
           return StatefulBuilder(builder: (context, setState) {
-            return const DialogBox();
+            return widget;
           });
         },
         transitionBuilder: (_, anim, __, child) {
           Tween<Offset> tween;
           if (anim.status == AnimationStatus.reverse) {
-            tween = Tween(begin: Offset(0, 11), end: Offset.zero);
+            tween = Tween(begin: const Offset(0, 11), end: Offset.zero);
           } else {
-            tween = Tween(begin: Offset(0, -1), end: Offset.zero);
+            tween = Tween(begin: const Offset(0, -1), end: Offset.zero);
           }
 
           return SlideTransition(
@@ -152,7 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           );
         });
-    print("a=$a");
     return a;
   }
 }
