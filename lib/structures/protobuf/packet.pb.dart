@@ -10,82 +10,82 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-enum Packet_Type {
+enum BLESendPacket_Type {
   placeholder, 
-  ack, 
-  eot, 
-  wifi, 
   getWifi, 
+  wifiConnectInfo, 
+  getWiFiConnectState, 
+  nonce, 
   notSet
 }
 
-class Packet extends $pb.GeneratedMessage {
-  static const $core.Map<$core.int, Packet_Type> _Packet_TypeByTag = {
-    1 : Packet_Type.placeholder,
-    2 : Packet_Type.ack,
-    3 : Packet_Type.eot,
-    4 : Packet_Type.wifi,
-    5 : Packet_Type.getWifi,
-    0 : Packet_Type.notSet
+class BLESendPacket extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, BLESendPacket_Type> _BLESendPacket_TypeByTag = {
+    1 : BLESendPacket_Type.placeholder,
+    2 : BLESendPacket_Type.getWifi,
+    3 : BLESendPacket_Type.wifiConnectInfo,
+    4 : BLESendPacket_Type.getWiFiConnectState,
+    5 : BLESendPacket_Type.nonce,
+    0 : BLESendPacket_Type.notSet
   };
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Packet', createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLESendPacket', createEmptyInstance: create)
     ..oo(0, [1, 2, 3, 4, 5])
     ..aOM<Placeholder>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'placeholder', subBuilder: Placeholder.create)
-    ..aOM<Ack>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'ack', subBuilder: Ack.create)
-    ..aOM<EndOfTransmission>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'eot', subBuilder: EndOfTransmission.create)
-    ..aOM<WiFiVector>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'wifi', subBuilder: WiFiVector.create)
-    ..aOM<GetWiFi>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getWifi', protoName: 'getWifi', subBuilder: GetWiFi.create)
+    ..aOM<GetWiFi>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getWifi', protoName: 'getWifi', subBuilder: GetWiFi.create)
+    ..aOM<WiFiConnectInfo>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'wifiConnectInfo', protoName: 'wifiConnectInfo', subBuilder: WiFiConnectInfo.create)
+    ..aOM<GetWiFiConnectState>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getWiFiConnectState', protoName: 'getWiFiConnectState', subBuilder: GetWiFiConnectState.create)
+    ..aOM<RegisterNonce>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nonce', subBuilder: RegisterNonce.create)
     ..hasRequiredFields = false
   ;
 
-  Packet._() : super();
-  factory Packet({
+  BLESendPacket._() : super();
+  factory BLESendPacket({
     Placeholder? placeholder,
-    Ack? ack,
-    EndOfTransmission? eot,
-    WiFiVector? wifi,
     GetWiFi? getWifi,
+    WiFiConnectInfo? wifiConnectInfo,
+    GetWiFiConnectState? getWiFiConnectState,
+    RegisterNonce? nonce,
   }) {
     final _result = create();
     if (placeholder != null) {
       _result.placeholder = placeholder;
     }
-    if (ack != null) {
-      _result.ack = ack;
-    }
-    if (eot != null) {
-      _result.eot = eot;
-    }
-    if (wifi != null) {
-      _result.wifi = wifi;
-    }
     if (getWifi != null) {
       _result.getWifi = getWifi;
     }
+    if (wifiConnectInfo != null) {
+      _result.wifiConnectInfo = wifiConnectInfo;
+    }
+    if (getWiFiConnectState != null) {
+      _result.getWiFiConnectState = getWiFiConnectState;
+    }
+    if (nonce != null) {
+      _result.nonce = nonce;
+    }
     return _result;
   }
-  factory Packet.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory Packet.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory BLESendPacket.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BLESendPacket.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  Packet clone() => Packet()..mergeFromMessage(this);
+  BLESendPacket clone() => BLESendPacket()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  Packet copyWith(void Function(Packet) updates) => super.copyWith((message) => updates(message as Packet)) as Packet; // ignore: deprecated_member_use
+  BLESendPacket copyWith(void Function(BLESendPacket) updates) => super.copyWith((message) => updates(message as BLESendPacket)) as BLESendPacket; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static Packet create() => Packet._();
-  Packet createEmptyInstance() => create();
-  static $pb.PbList<Packet> createRepeated() => $pb.PbList<Packet>();
+  static BLESendPacket create() => BLESendPacket._();
+  BLESendPacket createEmptyInstance() => create();
+  static $pb.PbList<BLESendPacket> createRepeated() => $pb.PbList<BLESendPacket>();
   @$core.pragma('dart2js:noInline')
-  static Packet getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Packet>(create);
-  static Packet? _defaultInstance;
+  static BLESendPacket getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BLESendPacket>(create);
+  static BLESendPacket? _defaultInstance;
 
-  Packet_Type whichType() => _Packet_TypeByTag[$_whichOneof(0)]!;
+  BLESendPacket_Type whichType() => _BLESendPacket_TypeByTag[$_whichOneof(0)]!;
   void clearType() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -100,48 +100,48 @@ class Packet extends $pb.GeneratedMessage {
   Placeholder ensurePlaceholder() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  Ack get ack => $_getN(1);
+  GetWiFi get getWifi => $_getN(1);
   @$pb.TagNumber(2)
-  set ack(Ack v) { setField(2, v); }
+  set getWifi(GetWiFi v) { setField(2, v); }
   @$pb.TagNumber(2)
-  $core.bool hasAck() => $_has(1);
+  $core.bool hasGetWifi() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAck() => clearField(2);
+  void clearGetWifi() => clearField(2);
   @$pb.TagNumber(2)
-  Ack ensureAck() => $_ensure(1);
+  GetWiFi ensureGetWifi() => $_ensure(1);
 
   @$pb.TagNumber(3)
-  EndOfTransmission get eot => $_getN(2);
+  WiFiConnectInfo get wifiConnectInfo => $_getN(2);
   @$pb.TagNumber(3)
-  set eot(EndOfTransmission v) { setField(3, v); }
+  set wifiConnectInfo(WiFiConnectInfo v) { setField(3, v); }
   @$pb.TagNumber(3)
-  $core.bool hasEot() => $_has(2);
+  $core.bool hasWifiConnectInfo() => $_has(2);
   @$pb.TagNumber(3)
-  void clearEot() => clearField(3);
+  void clearWifiConnectInfo() => clearField(3);
   @$pb.TagNumber(3)
-  EndOfTransmission ensureEot() => $_ensure(2);
+  WiFiConnectInfo ensureWifiConnectInfo() => $_ensure(2);
 
   @$pb.TagNumber(4)
-  WiFiVector get wifi => $_getN(3);
+  GetWiFiConnectState get getWiFiConnectState => $_getN(3);
   @$pb.TagNumber(4)
-  set wifi(WiFiVector v) { setField(4, v); }
+  set getWiFiConnectState(GetWiFiConnectState v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasWifi() => $_has(3);
+  $core.bool hasGetWiFiConnectState() => $_has(3);
   @$pb.TagNumber(4)
-  void clearWifi() => clearField(4);
+  void clearGetWiFiConnectState() => clearField(4);
   @$pb.TagNumber(4)
-  WiFiVector ensureWifi() => $_ensure(3);
+  GetWiFiConnectState ensureGetWiFiConnectState() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  GetWiFi get getWifi => $_getN(4);
+  RegisterNonce get nonce => $_getN(4);
   @$pb.TagNumber(5)
-  set getWifi(GetWiFi v) { setField(5, v); }
+  set nonce(RegisterNonce v) { setField(5, v); }
   @$pb.TagNumber(5)
-  $core.bool hasGetWifi() => $_has(4);
+  $core.bool hasNonce() => $_has(4);
   @$pb.TagNumber(5)
-  void clearGetWifi() => clearField(5);
+  void clearNonce() => clearField(5);
   @$pb.TagNumber(5)
-  GetWiFi ensureGetWifi() => $_ensure(4);
+  RegisterNonce ensureNonce() => $_ensure(4);
 }
 
 class Placeholder extends $pb.GeneratedMessage {
@@ -173,64 +173,6 @@ class Placeholder extends $pb.GeneratedMessage {
   static Placeholder? _defaultInstance;
 }
 
-class Ack extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Ack', createEmptyInstance: create)
-    ..hasRequiredFields = false
-  ;
-
-  Ack._() : super();
-  factory Ack() => create();
-  factory Ack.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory Ack.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  Ack clone() => Ack()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  Ack copyWith(void Function(Ack) updates) => super.copyWith((message) => updates(message as Ack)) as Ack; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static Ack create() => Ack._();
-  Ack createEmptyInstance() => create();
-  static $pb.PbList<Ack> createRepeated() => $pb.PbList<Ack>();
-  @$core.pragma('dart2js:noInline')
-  static Ack getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Ack>(create);
-  static Ack? _defaultInstance;
-}
-
-class EndOfTransmission extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'EndOfTransmission', createEmptyInstance: create)
-    ..hasRequiredFields = false
-  ;
-
-  EndOfTransmission._() : super();
-  factory EndOfTransmission() => create();
-  factory EndOfTransmission.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory EndOfTransmission.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  EndOfTransmission clone() => EndOfTransmission()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  EndOfTransmission copyWith(void Function(EndOfTransmission) updates) => super.copyWith((message) => updates(message as EndOfTransmission)) as EndOfTransmission; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static EndOfTransmission create() => EndOfTransmission._();
-  EndOfTransmission createEmptyInstance() => create();
-  static $pb.PbList<EndOfTransmission> createRepeated() => $pb.PbList<EndOfTransmission>();
-  @$core.pragma('dart2js:noInline')
-  static EndOfTransmission getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EndOfTransmission>(create);
-  static EndOfTransmission? _defaultInstance;
-}
-
 class GetWiFi extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetWiFi', createEmptyInstance: create)
     ..hasRequiredFields = false
@@ -258,6 +200,143 @@ class GetWiFi extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static GetWiFi getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetWiFi>(create);
   static GetWiFi? _defaultInstance;
+}
+
+class WiFiConnectInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'WiFiConnectInfo', createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'ssid')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
+    ..hasRequiredFields = false
+  ;
+
+  WiFiConnectInfo._() : super();
+  factory WiFiConnectInfo({
+    $core.String? ssid,
+    $core.String? password,
+  }) {
+    final _result = create();
+    if (ssid != null) {
+      _result.ssid = ssid;
+    }
+    if (password != null) {
+      _result.password = password;
+    }
+    return _result;
+  }
+  factory WiFiConnectInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory WiFiConnectInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  WiFiConnectInfo clone() => WiFiConnectInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  WiFiConnectInfo copyWith(void Function(WiFiConnectInfo) updates) => super.copyWith((message) => updates(message as WiFiConnectInfo)) as WiFiConnectInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static WiFiConnectInfo create() => WiFiConnectInfo._();
+  WiFiConnectInfo createEmptyInstance() => create();
+  static $pb.PbList<WiFiConnectInfo> createRepeated() => $pb.PbList<WiFiConnectInfo>();
+  @$core.pragma('dart2js:noInline')
+  static WiFiConnectInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<WiFiConnectInfo>(create);
+  static WiFiConnectInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get ssid => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set ssid($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSsid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSsid() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get password => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set password($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPassword() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPassword() => clearField(2);
+}
+
+class GetWiFiConnectState extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetWiFiConnectState', createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  GetWiFiConnectState._() : super();
+  factory GetWiFiConnectState() => create();
+  factory GetWiFiConnectState.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetWiFiConnectState.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetWiFiConnectState clone() => GetWiFiConnectState()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetWiFiConnectState copyWith(void Function(GetWiFiConnectState) updates) => super.copyWith((message) => updates(message as GetWiFiConnectState)) as GetWiFiConnectState; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetWiFiConnectState create() => GetWiFiConnectState._();
+  GetWiFiConnectState createEmptyInstance() => create();
+  static $pb.PbList<GetWiFiConnectState> createRepeated() => $pb.PbList<GetWiFiConnectState>();
+  @$core.pragma('dart2js:noInline')
+  static GetWiFiConnectState getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetWiFiConnectState>(create);
+  static GetWiFiConnectState? _defaultInstance;
+}
+
+class RegisterNonce extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RegisterNonce', createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nonce')
+    ..hasRequiredFields = false
+  ;
+
+  RegisterNonce._() : super();
+  factory RegisterNonce({
+    $core.String? nonce,
+  }) {
+    final _result = create();
+    if (nonce != null) {
+      _result.nonce = nonce;
+    }
+    return _result;
+  }
+  factory RegisterNonce.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RegisterNonce.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RegisterNonce clone() => RegisterNonce()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RegisterNonce copyWith(void Function(RegisterNonce) updates) => super.copyWith((message) => updates(message as RegisterNonce)) as RegisterNonce; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static RegisterNonce create() => RegisterNonce._();
+  RegisterNonce createEmptyInstance() => create();
+  static $pb.PbList<RegisterNonce> createRepeated() => $pb.PbList<RegisterNonce>();
+  @$core.pragma('dart2js:noInline')
+  static RegisterNonce getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RegisterNonce>(create);
+  static RegisterNonce? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get nonce => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set nonce($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasNonce() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearNonce() => clearField(1);
 }
 
 class WiFiVector extends $pb.GeneratedMessage {
@@ -303,8 +382,8 @@ class WiFiVector extends $pb.GeneratedMessage {
 
 class WiFiData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'WiFiData', createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'SSID', protoName: 'SSID')
-    ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'BSSID', $pb.PbFieldType.OU6, protoName: 'BSSID', defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'ssid')
+    ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bssid', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'Channel', $pb.PbFieldType.OU3, protoName: 'Channel')
     ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isEncrypted', protoName: 'isEncrypted')
     ..hasRequiredFields = false
@@ -312,17 +391,17 @@ class WiFiData extends $pb.GeneratedMessage {
 
   WiFiData._() : super();
   factory WiFiData({
-    $core.String? sSID,
-    $fixnum.Int64? bSSID,
+    $core.String? ssid,
+    $fixnum.Int64? bssid,
     $core.int? channel,
     $core.bool? isEncrypted,
   }) {
     final _result = create();
-    if (sSID != null) {
-      _result.sSID = sSID;
+    if (ssid != null) {
+      _result.ssid = ssid;
     }
-    if (bSSID != null) {
-      _result.bSSID = bSSID;
+    if (bssid != null) {
+      _result.bssid = bssid;
     }
     if (channel != null) {
       _result.channel = channel;
@@ -354,22 +433,22 @@ class WiFiData extends $pb.GeneratedMessage {
   static WiFiData? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get sSID => $_getSZ(0);
+  $core.String get ssid => $_getSZ(0);
   @$pb.TagNumber(1)
-  set sSID($core.String v) { $_setString(0, v); }
+  set ssid($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasSSID() => $_has(0);
+  $core.bool hasSsid() => $_has(0);
   @$pb.TagNumber(1)
-  void clearSSID() => clearField(1);
+  void clearSsid() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get bSSID => $_getI64(1);
+  $fixnum.Int64 get bssid => $_getI64(1);
   @$pb.TagNumber(2)
-  set bSSID($fixnum.Int64 v) { $_setInt64(1, v); }
+  set bssid($fixnum.Int64 v) { $_setInt64(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasBSSID() => $_has(1);
+  $core.bool hasBssid() => $_has(1);
   @$pb.TagNumber(2)
-  void clearBSSID() => clearField(2);
+  void clearBssid() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.int get channel => $_getIZ(2);
@@ -388,5 +467,334 @@ class WiFiData extends $pb.GeneratedMessage {
   $core.bool hasIsEncrypted() => $_has(3);
   @$pb.TagNumber(4)
   void clearIsEncrypted() => clearField(4);
+}
+
+enum WiFiConnectResponseInfo_Type {
+  placeholder, 
+  timeout, 
+  connectingToWiFi, 
+  connectedToWiFi, 
+  connectingToServer, 
+  failedConnectingToServer, 
+  notSet
+}
+
+class WiFiConnectResponseInfo extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, WiFiConnectResponseInfo_Type> _WiFiConnectResponseInfo_TypeByTag = {
+    1 : WiFiConnectResponseInfo_Type.placeholder,
+    2 : WiFiConnectResponseInfo_Type.timeout,
+    3 : WiFiConnectResponseInfo_Type.connectingToWiFi,
+    4 : WiFiConnectResponseInfo_Type.connectedToWiFi,
+    5 : WiFiConnectResponseInfo_Type.connectingToServer,
+    6 : WiFiConnectResponseInfo_Type.failedConnectingToServer,
+    0 : WiFiConnectResponseInfo_Type.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'WiFiConnectResponseInfo', createEmptyInstance: create)
+    ..oo(0, [1, 2, 3, 4, 5, 6])
+    ..aOM<Placeholder>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'placeholder', subBuilder: Placeholder.create)
+    ..aOM<Timeout>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeout', subBuilder: Timeout.create)
+    ..aOM<ConnectingToWiFi>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectingToWiFi', protoName: 'connectingToWiFi', subBuilder: ConnectingToWiFi.create)
+    ..aOM<ConnectedToWiFi>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedToWiFi', protoName: 'connectedToWiFi', subBuilder: ConnectedToWiFi.create)
+    ..aOM<ConnectingToServer>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectingToServer', protoName: 'connectingToServer', subBuilder: ConnectingToServer.create)
+    ..aOM<FailedConnectingToServer>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'failedConnectingToServer', protoName: 'failedConnectingToServer', subBuilder: FailedConnectingToServer.create)
+    ..hasRequiredFields = false
+  ;
+
+  WiFiConnectResponseInfo._() : super();
+  factory WiFiConnectResponseInfo({
+    Placeholder? placeholder,
+    Timeout? timeout,
+    ConnectingToWiFi? connectingToWiFi,
+    ConnectedToWiFi? connectedToWiFi,
+    ConnectingToServer? connectingToServer,
+    FailedConnectingToServer? failedConnectingToServer,
+  }) {
+    final _result = create();
+    if (placeholder != null) {
+      _result.placeholder = placeholder;
+    }
+    if (timeout != null) {
+      _result.timeout = timeout;
+    }
+    if (connectingToWiFi != null) {
+      _result.connectingToWiFi = connectingToWiFi;
+    }
+    if (connectedToWiFi != null) {
+      _result.connectedToWiFi = connectedToWiFi;
+    }
+    if (connectingToServer != null) {
+      _result.connectingToServer = connectingToServer;
+    }
+    if (failedConnectingToServer != null) {
+      _result.failedConnectingToServer = failedConnectingToServer;
+    }
+    return _result;
+  }
+  factory WiFiConnectResponseInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory WiFiConnectResponseInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  WiFiConnectResponseInfo clone() => WiFiConnectResponseInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  WiFiConnectResponseInfo copyWith(void Function(WiFiConnectResponseInfo) updates) => super.copyWith((message) => updates(message as WiFiConnectResponseInfo)) as WiFiConnectResponseInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static WiFiConnectResponseInfo create() => WiFiConnectResponseInfo._();
+  WiFiConnectResponseInfo createEmptyInstance() => create();
+  static $pb.PbList<WiFiConnectResponseInfo> createRepeated() => $pb.PbList<WiFiConnectResponseInfo>();
+  @$core.pragma('dart2js:noInline')
+  static WiFiConnectResponseInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<WiFiConnectResponseInfo>(create);
+  static WiFiConnectResponseInfo? _defaultInstance;
+
+  WiFiConnectResponseInfo_Type whichType() => _WiFiConnectResponseInfo_TypeByTag[$_whichOneof(0)]!;
+  void clearType() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  Placeholder get placeholder => $_getN(0);
+  @$pb.TagNumber(1)
+  set placeholder(Placeholder v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPlaceholder() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPlaceholder() => clearField(1);
+  @$pb.TagNumber(1)
+  Placeholder ensurePlaceholder() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  Timeout get timeout => $_getN(1);
+  @$pb.TagNumber(2)
+  set timeout(Timeout v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTimeout() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTimeout() => clearField(2);
+  @$pb.TagNumber(2)
+  Timeout ensureTimeout() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  ConnectingToWiFi get connectingToWiFi => $_getN(2);
+  @$pb.TagNumber(3)
+  set connectingToWiFi(ConnectingToWiFi v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasConnectingToWiFi() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearConnectingToWiFi() => clearField(3);
+  @$pb.TagNumber(3)
+  ConnectingToWiFi ensureConnectingToWiFi() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  ConnectedToWiFi get connectedToWiFi => $_getN(3);
+  @$pb.TagNumber(4)
+  set connectedToWiFi(ConnectedToWiFi v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasConnectedToWiFi() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearConnectedToWiFi() => clearField(4);
+  @$pb.TagNumber(4)
+  ConnectedToWiFi ensureConnectedToWiFi() => $_ensure(3);
+
+  @$pb.TagNumber(5)
+  ConnectingToServer get connectingToServer => $_getN(4);
+  @$pb.TagNumber(5)
+  set connectingToServer(ConnectingToServer v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasConnectingToServer() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearConnectingToServer() => clearField(5);
+  @$pb.TagNumber(5)
+  ConnectingToServer ensureConnectingToServer() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  FailedConnectingToServer get failedConnectingToServer => $_getN(5);
+  @$pb.TagNumber(6)
+  set failedConnectingToServer(FailedConnectingToServer v) { setField(6, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasFailedConnectingToServer() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearFailedConnectingToServer() => clearField(6);
+  @$pb.TagNumber(6)
+  FailedConnectingToServer ensureFailedConnectingToServer() => $_ensure(5);
+}
+
+class Timeout extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Timeout', createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  Timeout._() : super();
+  factory Timeout() => create();
+  factory Timeout.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Timeout.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Timeout clone() => Timeout()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Timeout copyWith(void Function(Timeout) updates) => super.copyWith((message) => updates(message as Timeout)) as Timeout; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Timeout create() => Timeout._();
+  Timeout createEmptyInstance() => create();
+  static $pb.PbList<Timeout> createRepeated() => $pb.PbList<Timeout>();
+  @$core.pragma('dart2js:noInline')
+  static Timeout getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Timeout>(create);
+  static Timeout? _defaultInstance;
+}
+
+class ConnectingToWiFi extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectingToWiFi', createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  ConnectingToWiFi._() : super();
+  factory ConnectingToWiFi() => create();
+  factory ConnectingToWiFi.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ConnectingToWiFi.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ConnectingToWiFi clone() => ConnectingToWiFi()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ConnectingToWiFi copyWith(void Function(ConnectingToWiFi) updates) => super.copyWith((message) => updates(message as ConnectingToWiFi)) as ConnectingToWiFi; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ConnectingToWiFi create() => ConnectingToWiFi._();
+  ConnectingToWiFi createEmptyInstance() => create();
+  static $pb.PbList<ConnectingToWiFi> createRepeated() => $pb.PbList<ConnectingToWiFi>();
+  @$core.pragma('dart2js:noInline')
+  static ConnectingToWiFi getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectingToWiFi>(create);
+  static ConnectingToWiFi? _defaultInstance;
+}
+
+class ConnectedToWiFi extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectedToWiFi', createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  ConnectedToWiFi._() : super();
+  factory ConnectedToWiFi() => create();
+  factory ConnectedToWiFi.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ConnectedToWiFi.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ConnectedToWiFi clone() => ConnectedToWiFi()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ConnectedToWiFi copyWith(void Function(ConnectedToWiFi) updates) => super.copyWith((message) => updates(message as ConnectedToWiFi)) as ConnectedToWiFi; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ConnectedToWiFi create() => ConnectedToWiFi._();
+  ConnectedToWiFi createEmptyInstance() => create();
+  static $pb.PbList<ConnectedToWiFi> createRepeated() => $pb.PbList<ConnectedToWiFi>();
+  @$core.pragma('dart2js:noInline')
+  static ConnectedToWiFi getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectedToWiFi>(create);
+  static ConnectedToWiFi? _defaultInstance;
+}
+
+class ConnectingToServer extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectingToServer', createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  ConnectingToServer._() : super();
+  factory ConnectingToServer() => create();
+  factory ConnectingToServer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ConnectingToServer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ConnectingToServer clone() => ConnectingToServer()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ConnectingToServer copyWith(void Function(ConnectingToServer) updates) => super.copyWith((message) => updates(message as ConnectingToServer)) as ConnectingToServer; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ConnectingToServer create() => ConnectingToServer._();
+  ConnectingToServer createEmptyInstance() => create();
+  static $pb.PbList<ConnectingToServer> createRepeated() => $pb.PbList<ConnectingToServer>();
+  @$core.pragma('dart2js:noInline')
+  static ConnectingToServer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectingToServer>(create);
+  static ConnectingToServer? _defaultInstance;
+}
+
+class FailedConnectingToServer extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FailedConnectingToServer', createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'causeid', $pb.PbFieldType.O3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cause')
+    ..hasRequiredFields = false
+  ;
+
+  FailedConnectingToServer._() : super();
+  factory FailedConnectingToServer({
+    $core.int? causeid,
+    $core.String? cause,
+  }) {
+    final _result = create();
+    if (causeid != null) {
+      _result.causeid = causeid;
+    }
+    if (cause != null) {
+      _result.cause = cause;
+    }
+    return _result;
+  }
+  factory FailedConnectingToServer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory FailedConnectingToServer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  FailedConnectingToServer clone() => FailedConnectingToServer()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  FailedConnectingToServer copyWith(void Function(FailedConnectingToServer) updates) => super.copyWith((message) => updates(message as FailedConnectingToServer)) as FailedConnectingToServer; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static FailedConnectingToServer create() => FailedConnectingToServer._();
+  FailedConnectingToServer createEmptyInstance() => create();
+  static $pb.PbList<FailedConnectingToServer> createRepeated() => $pb.PbList<FailedConnectingToServer>();
+  @$core.pragma('dart2js:noInline')
+  static FailedConnectingToServer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FailedConnectingToServer>(create);
+  static FailedConnectingToServer? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get causeid => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set causeid($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCauseid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCauseid() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get cause => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set cause($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCause() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCause() => clearField(2);
 }
 

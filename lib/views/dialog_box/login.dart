@@ -16,7 +16,7 @@ class LoginDialog extends StatefulWidget {
 class LoginDialogState extends State<LoginDialog> {
   final String nonce = generateNonce();
   late AppState currentState;
-  String? accessToken;
+  String? githubToken;
 
   @override
   void initState() {
@@ -24,12 +24,12 @@ class LoginDialogState extends State<LoginDialog> {
     currentState = AppState.firstStageConnectToGithub;
     () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString("access_token");
-      if (accessToken != null) {
+      String? githubToken = prefs.getString("githubToken");
+      if (githubToken != null) {
         setState(() {
-          print("accessToken=$accessToken");
+          debugPrint("accessToken=$githubToken");
           currentState = AppState.registerDevice;
-          this.accessToken = accessToken;
+          this.githubToken = githubToken;
         });
       }
     }();
@@ -46,7 +46,7 @@ class LoginDialogState extends State<LoginDialog> {
     );
   }
 
-  Container getView(AppState appState, StateSetter setState) {
+  Widget getView(AppState appState, StateSetter setState) {
     dev.log("appState=$appState");
     switch (appState) {
       case AppState.firstStageConnectToGithub:
@@ -55,8 +55,7 @@ class LoginDialogState extends State<LoginDialog> {
           "state": nonce,
         });
         debugPrint("uri=$loginGithubUrl");
-        return Container(
-            child: Column(children: [
+        return Column(children: [
           const Padding(
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
               child: Text("Step 1")),
@@ -71,40 +70,35 @@ class LoginDialogState extends State<LoginDialog> {
               }
             },
           )
-        ]));
+        ]);
 
       case AppState.waitingForGitHub:
         getServerData(0, setState);
-        return Container(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [CircularProgressIndicator(value: null)]));
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const [CircularProgressIndicator(value: null)]);
       case AppState.registerDevice:
-        print("at=$accessToken");
-        Navigator.pop(context, accessToken);
+        Navigator.pop(context, githubToken);
         return Container();
       case AppState.gitHubBug:
-        return Container(
-            child: Column(children: [
-          const Padding(
+        return Column(children: const [
+          Padding(
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
               child: Text("GitHub login failed"))
-        ]));
+        ]);
       case AppState.gitHubTimeout:
-        return Container(
-            child: Column(children: const [
+        return Column(children: const [
           Padding(
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
               child: Text("GitHub login timed out"))
-        ]));
+        ]);
       case AppState.denied:
-        return Container(
-            child: Column(children: const [
+        return Column(children: const [
           Padding(
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
               child: Text("GitHub Denied"))
-        ]));
+        ]);
     }
   }
 
@@ -131,12 +125,11 @@ class LoginDialogState extends State<LoginDialog> {
       var response = await http.get(url);
       Map<String, dynamic> responseMap = jsonDecode(response.body);
       if (responseMap["ok"] == "ok") {
-        debugPrint("Getting access_token=$responseMap");
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("access_token", responseMap["access_token"]);
+        prefs.setString("github_token", responseMap["github_token"]);
         setState(() {
           currentState = AppState.registerDevice;
-          accessToken = responseMap["access_token"];
+          githubToken = responseMap["github_token"];
         });
       } else if (responseMap["ok"] == "denied") {
         setState(() {

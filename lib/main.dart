@@ -1,12 +1,11 @@
-import 'package:control_panel/Views/dialogBox/login.dart';
+import 'package:control_panel/views/dialog_box/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Views/MainDisplay/front_page.dart';
-import 'Views/dialogBox/add_hub.dart';
-import 'structures/hub.dart';
+import 'views/main_display/front_page.dart';
+import 'views/dialog_box/add_hub.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,51 +43,51 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String? accessToken;
+  String? githubToken;
   SharedPreferences? prefs;
-  List<Hub> hubList = [];
   @override
   void initState() {
     super.initState();
     () async {
       prefs = await SharedPreferences.getInstance();
       setState(() {
-        accessToken = prefs?.getString("access_token");
+        githubToken = prefs?.getString("github_token");
+        debugPrint("Setting github token = $githubToken");
       });
     }();
   }
 
   @override
   Widget build(BuildContext context) {
-    String? accessToken = this.accessToken;
+    String? githubToken = this.githubToken;
     return Scaffold(
       appBar: AppBar(title: const Text("Control Panel"), actions: [
         TextButton(
             onPressed: () async {
-              if (accessToken == null) {
-                String? accessToken =
+              if (githubToken == null) {
+                String? githubToken =
                     await startLoginButton(const LoginDialog()) as String?;
-                debugPrint(accessToken);
-                if (accessToken != null && prefs != null) {
-                  prefs?.setString("access_token", accessToken);
+                if (githubToken != null && prefs != null) {
+                  debugPrint("setting githubToken");
+                  prefs?.setString("github_token", githubToken);
                   setState(() {
-                    this.accessToken = accessToken;
+                    this.githubToken = githubToken;
                   });
                 }
               } else {
                 () async {
-                  await prefs?.remove("access_token");
+                  await prefs?.remove("github_token");
                   setState(() {
-                    accessToken = null;
+                    this.githubToken = null;
                   });
                 }();
               }
             },
-            child: Text(accessToken == null ? "Login" : "Logout"))
+            child: Text(githubToken == null ? "Login" : "Logout"))
       ]),
-      body: FrontPage(accessToken: accessToken),
+      body: FrontPage(githubToken: "$githubToken"),
       floatingActionButton: SpeedDial(
-        visible: accessToken != null,
+        visible: githubToken != null,
         icon: Icons.add,
         onPress: null,
         activeIcon: Icons.close,
@@ -113,12 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
             foregroundColor: Colors.white,
             label: 'New Hub',
             onTap: () async {
-              List<Hub> hubList =
-                  await startLoginButton(AddHub(accessToken: accessToken!))
-                      as List<Hub>;
-              setState(() {
-                this.hubList = hubList;
-              });
+              await startLoginButton(AddHub(accessToken: githubToken!));
             },
           ),
         ],
