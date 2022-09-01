@@ -1,10 +1,9 @@
-import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:math';
+import 'package:control_panel/structures/protobuf/FrontendBackend.pbserver.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class LoginDialog extends StatefulWidget {
   const LoginDialog({Key? key}) : super(key: key);
@@ -14,23 +13,77 @@ class LoginDialog extends StatefulWidget {
 }
 
 class LoginDialogState extends State<LoginDialog> {
-  final String nonce = generateNonce();
+  String nonce = "";
   late AppState currentState;
-  String? githubToken;
+  String? accessToken;
 
   @override
   void initState() {
     super.initState();
-    currentState = AppState.firstStageConnectToGithub;
+    currentState = AppState.gettingNonce;
     () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? githubToken = prefs.getString("githubToken");
-      if (githubToken != null) {
+      String? accessToken = prefs.getString("access_code");
+      if (accessToken != null) {
         setState(() {
-          debugPrint("accessToken=$githubToken");
+          debugPrint("accessToken=$accessToken");
           currentState = AppState.registerDevice;
-          this.githubToken = githubToken;
+          this.accessToken = accessToken;
         });
+      } else {
+        debugPrint("Connecting to websocket");
+        final channel = WebSocketChannel.connect(
+          Uri.parse('wss://fridgigator.herokuapp.com/login/get-state'),
+        );
+
+        channel.stream.handleError((e) => debugPrint("error=$e"));
+        channel.stream.listen((event) async {
+          debugPrint("event=$event");
+          ToFrontEnd n = ToFrontEnd.fromBuffer(event);
+          switch (n.whichType()) {
+            case ToFrontEnd_Type.githubState:
+              if (!mounted) {
+                return;
+              }
+              setState(() {
+                nonce = n.githubState.nonce;
+                currentState = AppState.firstStageConnectToGithub;
+              });
+              break;
+            case ToFrontEnd_Type.notSet:
+              if (!mounted) {
+                return;
+              }
+
+              setState(() {
+                currentState = AppState.denied;
+              });
+
+              break;
+            case ToFrontEnd_Type.accessCode:
+              if (n.accessCode.failed) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  currentState = AppState.denied;
+                });
+              } else {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setString("access_code", n.accessCode.accessCode);
+                if (!mounted) {
+                  return;
+                }
+
+                setState(() {
+                  currentState = AppState.registerDevice;
+                  this.accessToken = n.accessCode.accessCode;
+                });
+              }
+          }
+        },
+            onError: (e) => debugPrint("error1=$e"),
+            onDone: () => debugPrint("Done"));
       }
     }();
   }
@@ -47,8 +100,15 @@ class LoginDialogState extends State<LoginDialog> {
   }
 
   Widget getView(AppState appState, StateSetter setState) {
-    dev.log("appState=$appState");
+    debugPrint("appState=$appState");
     switch (appState) {
+      case AppState.gettingNonce:
+        return Column(children: const [
+          Padding(
+              padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
+              child: Text("Step 1")),
+          Text("Getting Nonce"),
+        ]);
       case AppState.firstStageConnectToGithub:
         var loginGithubUrl = Uri.https("github.com", "login/oauth/authorize", {
           "client_id": "30bf4172998cc4ec684e",
@@ -73,13 +133,14 @@ class LoginDialogState extends State<LoginDialog> {
         ]);
 
       case AppState.waitingForGitHub:
-        getServerData(0, setState);
+        //getServerData(0, setState);
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: const [CircularProgressIndicator(value: null)]);
       case AppState.registerDevice:
-        Navigator.pop(context, githubToken);
+        debugPrint("AccessToken = $accessToken");
+        Navigator.pop(context, accessToken);
         return Container();
       case AppState.gitHubBug:
         return Column(children: const [
@@ -110,42 +171,10 @@ class LoginDialogState extends State<LoginDialog> {
     return String.fromCharCodes(Iterable.generate(
         25, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
   }
-
-  void getServerData(
-    int amntTimesCalled,
-    StateSetter setState,
-  ) async {
-    if (amntTimesCalled > 15) {
-      setState(() {
-        currentState = AppState.gitHubTimeout;
-      });
-    } else {
-      var url = Uri.https(
-          'fridgigator.herokuapp.com', 'verifyGitHubLogin', {"nonce": nonce});
-      var response = await http.get(url);
-      Map<String, dynamic> responseMap = jsonDecode(response.body);
-      if (responseMap["ok"] == "ok") {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("github_token", responseMap["github_token"]);
-        setState(() {
-          currentState = AppState.registerDevice;
-          githubToken = responseMap["github_token"];
-        });
-      } else if (responseMap["ok"] == "denied") {
-        setState(() {
-          currentState = AppState.denied;
-        });
-      } else {
-        await Future.delayed(
-          Duration(seconds: amntTimesCalled * 2),
-        );
-        getServerData(amntTimesCalled + 1, setState);
-      }
-    }
-  }
 }
 
 enum AppState {
+  gettingNonce,
   firstStageConnectToGithub,
   waitingForGitHub,
   gitHubTimeout,

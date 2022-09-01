@@ -165,7 +165,6 @@ class AddHubState extends State<AddHub> {
                         getWiFiConnectState: GetWiFiConnectState());
                     await writeData(wifi, ch);
                     var txt = await readData(ch);
-                    // reset remote state
                     WiFiConnectResponseInfo response =
                         WiFiConnectResponseInfo.fromBuffer(txt);
                     if (!mounted) {

@@ -43,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String? githubToken;
+  String? accessCode;
   SharedPreferences? prefs;
   @override
   void initState() {
@@ -51,43 +51,43 @@ class _MyHomePageState extends State<MyHomePage> {
     () async {
       prefs = await SharedPreferences.getInstance();
       setState(() {
-        githubToken = prefs?.getString("github_token");
-        debugPrint("Setting github token = $githubToken");
+        accessCode = prefs?.getString("access_code");
+        debugPrint("Setting access token = $accessCode");
       });
     }();
   }
 
   @override
   Widget build(BuildContext context) {
-    String? githubToken = this.githubToken;
+    String? accessCode = this.accessCode;
     return Scaffold(
       appBar: AppBar(title: const Text("Control Panel"), actions: [
         TextButton(
             onPressed: () async {
-              if (githubToken == null) {
-                String? githubToken =
+              if (accessCode == null) {
+                String? recToken =
                     await startLoginButton(const LoginDialog()) as String?;
-                if (githubToken != null && prefs != null) {
+                if (recToken != null && prefs != null) {
                   debugPrint("setting githubToken");
-                  prefs?.setString("github_token", githubToken);
+                  prefs?.setString("access_code", recToken);
                   setState(() {
-                    this.githubToken = githubToken;
+                    this.accessCode = recToken;
                   });
                 }
               } else {
                 () async {
-                  await prefs?.remove("github_token");
+                  await prefs?.remove("access_code");
                   setState(() {
-                    this.githubToken = null;
+                    this.accessCode = null;
                   });
                 }();
               }
             },
-            child: Text(githubToken == null ? "Login" : "Logout"))
+            child: Text(accessCode == null ? "Login" : "Logout"))
       ]),
-      body: FrontPage(githubToken: "$githubToken"),
+      body: FrontPage(accessCode: "$accessCode"),
       floatingActionButton: SpeedDial(
-        visible: githubToken != null,
+        visible: accessCode != null,
         icon: Icons.add,
         onPress: null,
         activeIcon: Icons.close,
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
             foregroundColor: Colors.white,
             label: 'New Hub',
             onTap: () async {
-              await startLoginButton(AddHub(accessToken: githubToken!));
+              await startLoginButton(AddHub(accessToken: accessCode!));
             },
           ),
         ],

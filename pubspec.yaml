@@ -45,17 +45,22 @@ dependencies:
   flutter_web_bluetooth: ^0.0.8
   protobuf: ^2.1.0
   async: ^2.8.2
+  web_socket_channel: ^2.2.0
+
+
+dependency_overrides:
+  meta: ^1.8.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  #flutter_test:
+  #  sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
