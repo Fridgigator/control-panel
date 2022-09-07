@@ -16,7 +16,7 @@ const BLESendPacket$json = const {
     const {'1': 'getWifi', '3': 2, '4': 1, '5': 11, '6': '.GetWiFi', '9': 0, '10': 'getWifi'},
     const {'1': 'wifiConnectInfo', '3': 3, '4': 1, '5': 11, '6': '.WiFiConnectInfo', '9': 0, '10': 'wifiConnectInfo'},
     const {'1': 'getWiFiConnectState', '3': 4, '4': 1, '5': 11, '6': '.GetWiFiConnectState', '9': 0, '10': 'getWiFiConnectState'},
-    const {'1': 'nonce', '3': 5, '4': 1, '5': 11, '6': '.RegisterNonce', '9': 0, '10': 'nonce'},
+    const {'1': 'token', '3': 5, '4': 1, '5': 11, '6': '.RegisterToken', '9': 0, '10': 'token'},
   ],
   '8': const [
     const {'1': 'type'},
@@ -24,7 +24,7 @@ const BLESendPacket$json = const {
 };
 
 /// Descriptor for `BLESendPacket`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bLESendPacketDescriptor = $convert.base64Decode('Cg1CTEVTZW5kUGFja2V0EjAKC3BsYWNlaG9sZGVyGAEgASgLMgwuUGxhY2Vob2xkZXJIAFILcGxhY2Vob2xkZXISJAoHZ2V0V2lmaRgCIAEoCzIILkdldFdpRmlIAFIHZ2V0V2lmaRI8Cg93aWZpQ29ubmVjdEluZm8YAyABKAsyEC5XaUZpQ29ubmVjdEluZm9IAFIPd2lmaUNvbm5lY3RJbmZvEkgKE2dldFdpRmlDb25uZWN0U3RhdGUYBCABKAsyFC5HZXRXaUZpQ29ubmVjdFN0YXRlSABSE2dldFdpRmlDb25uZWN0U3RhdGUSJgoFbm9uY2UYBSABKAsyDi5SZWdpc3Rlck5vbmNlSABSBW5vbmNlQgYKBHR5cGU=');
+final $typed_data.Uint8List bLESendPacketDescriptor = $convert.base64Decode('Cg1CTEVTZW5kUGFja2V0EjAKC3BsYWNlaG9sZGVyGAEgASgLMgwuUGxhY2Vob2xkZXJIAFILcGxhY2Vob2xkZXISJAoHZ2V0V2lmaRgCIAEoCzIILkdldFdpRmlIAFIHZ2V0V2lmaRI8Cg93aWZpQ29ubmVjdEluZm8YAyABKAsyEC5XaUZpQ29ubmVjdEluZm9IAFIPd2lmaUNvbm5lY3RJbmZvEkgKE2dldFdpRmlDb25uZWN0U3RhdGUYBCABKAsyFC5HZXRXaUZpQ29ubmVjdFN0YXRlSABSE2dldFdpRmlDb25uZWN0U3RhdGUSJgoFdG9rZW4YBSABKAsyDi5SZWdpc3RlclRva2VuSABSBXRva2VuQgYKBHR5cGU=');
 @$core.Deprecated('Use placeholderDescriptor instead')
 const Placeholder$json = const {
   '1': 'Placeholder',
@@ -57,16 +57,16 @@ const GetWiFiConnectState$json = const {
 
 /// Descriptor for `GetWiFiConnectState`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getWiFiConnectStateDescriptor = $convert.base64Decode('ChNHZXRXaUZpQ29ubmVjdFN0YXRl');
-@$core.Deprecated('Use registerNonceDescriptor instead')
-const RegisterNonce$json = const {
-  '1': 'RegisterNonce',
+@$core.Deprecated('Use registerTokenDescriptor instead')
+const RegisterToken$json = const {
+  '1': 'RegisterToken',
   '2': const [
-    const {'1': 'nonce', '3': 1, '4': 1, '5': 9, '8': const {}, '10': 'nonce'},
+    const {'1': 'uuid', '3': 1, '4': 1, '5': 9, '8': const {}, '10': 'uuid'},
   ],
 };
 
-/// Descriptor for `RegisterNonce`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List registerNonceDescriptor = $convert.base64Decode('Cg1SZWdpc3Rlck5vbmNlEhsKBW5vbmNlGAEgASgJQgWSPwIIEFIFbm9uY2U=');
+/// Descriptor for `RegisterToken`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List registerTokenDescriptor = $convert.base64Decode('Cg1SZWdpc3RlclRva2VuEhkKBHV1aWQYASABKAlCBZI/AnAkUgR1dWlk');
 @$core.Deprecated('Use wiFiVectorDescriptor instead')
 const WiFiVector$json = const {
   '1': 'WiFiVector',
@@ -147,3 +147,24 @@ const FailedConnectingToServer$json = const {
 
 /// Descriptor for `FailedConnectingToServer`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List failedConnectingToServerDescriptor = $convert.base64Decode('ChhGYWlsZWRDb25uZWN0aW5nVG9TZXJ2ZXISGAoHY2F1c2VpZBgBIAEoBVIHY2F1c2VpZBIbCgVjYXVzZRgCIAEoCUIFkj8CCCBSBWNhdXNl');
+@$core.Deprecated('Use loginResponseDescriptor instead')
+const LoginResponse$json = const {
+  '1': 'LoginResponse',
+  '2': const [
+    const {'1': 'login_error', '3': 1, '4': 1, '5': 11, '6': '.LoginError', '9': 0, '10': 'loginError'},
+    const {'1': 'timeout', '3': 2, '4': 1, '5': 11, '6': '.Timeout', '9': 0, '10': 'timeout'},
+  ],
+  '8': const [
+    const {'1': 'type'},
+  ],
+};
+
+/// Descriptor for `LoginResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List loginResponseDescriptor = $convert.base64Decode('Cg1Mb2dpblJlc3BvbnNlEi4KC2xvZ2luX2Vycm9yGAEgASgLMgsuTG9naW5FcnJvckgAUgpsb2dpbkVycm9yEiQKB3RpbWVvdXQYAiABKAsyCC5UaW1lb3V0SABSB3RpbWVvdXRCBgoEdHlwZQ==');
+@$core.Deprecated('Use loginErrorDescriptor instead')
+const LoginError$json = const {
+  '1': 'LoginError',
+};
+
+/// Descriptor for `LoginError`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List loginErrorDescriptor = $convert.base64Decode('CgpMb2dpbkVycm9y');

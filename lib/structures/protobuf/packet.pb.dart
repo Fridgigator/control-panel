@@ -15,7 +15,7 @@ enum BLESendPacket_Type {
   getWifi, 
   wifiConnectInfo, 
   getWiFiConnectState, 
-  nonce, 
+  token, 
   notSet
 }
 
@@ -25,7 +25,7 @@ class BLESendPacket extends $pb.GeneratedMessage {
     2 : BLESendPacket_Type.getWifi,
     3 : BLESendPacket_Type.wifiConnectInfo,
     4 : BLESendPacket_Type.getWiFiConnectState,
-    5 : BLESendPacket_Type.nonce,
+    5 : BLESendPacket_Type.token,
     0 : BLESendPacket_Type.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLESendPacket', createEmptyInstance: create)
@@ -34,7 +34,7 @@ class BLESendPacket extends $pb.GeneratedMessage {
     ..aOM<GetWiFi>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getWifi', protoName: 'getWifi', subBuilder: GetWiFi.create)
     ..aOM<WiFiConnectInfo>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'wifiConnectInfo', protoName: 'wifiConnectInfo', subBuilder: WiFiConnectInfo.create)
     ..aOM<GetWiFiConnectState>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getWiFiConnectState', protoName: 'getWiFiConnectState', subBuilder: GetWiFiConnectState.create)
-    ..aOM<RegisterNonce>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nonce', subBuilder: RegisterNonce.create)
+    ..aOM<RegisterToken>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'token', subBuilder: RegisterToken.create)
     ..hasRequiredFields = false
   ;
 
@@ -44,7 +44,7 @@ class BLESendPacket extends $pb.GeneratedMessage {
     GetWiFi? getWifi,
     WiFiConnectInfo? wifiConnectInfo,
     GetWiFiConnectState? getWiFiConnectState,
-    RegisterNonce? nonce,
+    RegisterToken? token,
   }) {
     final _result = create();
     if (placeholder != null) {
@@ -59,8 +59,8 @@ class BLESendPacket extends $pb.GeneratedMessage {
     if (getWiFiConnectState != null) {
       _result.getWiFiConnectState = getWiFiConnectState;
     }
-    if (nonce != null) {
-      _result.nonce = nonce;
+    if (token != null) {
+      _result.token = token;
     }
     return _result;
   }
@@ -133,15 +133,15 @@ class BLESendPacket extends $pb.GeneratedMessage {
   GetWiFiConnectState ensureGetWiFiConnectState() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  RegisterNonce get nonce => $_getN(4);
+  RegisterToken get token => $_getN(4);
   @$pb.TagNumber(5)
-  set nonce(RegisterNonce v) { setField(5, v); }
+  set token(RegisterToken v) { setField(5, v); }
   @$pb.TagNumber(5)
-  $core.bool hasNonce() => $_has(4);
+  $core.bool hasToken() => $_has(4);
   @$pb.TagNumber(5)
-  void clearNonce() => clearField(5);
+  void clearToken() => clearField(5);
   @$pb.TagNumber(5)
-  RegisterNonce ensureNonce() => $_ensure(4);
+  RegisterToken ensureToken() => $_ensure(4);
 }
 
 class Placeholder extends $pb.GeneratedMessage {
@@ -292,51 +292,51 @@ class GetWiFiConnectState extends $pb.GeneratedMessage {
   static GetWiFiConnectState? _defaultInstance;
 }
 
-class RegisterNonce extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RegisterNonce', createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nonce')
+class RegisterToken extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RegisterToken', createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uuid')
     ..hasRequiredFields = false
   ;
 
-  RegisterNonce._() : super();
-  factory RegisterNonce({
-    $core.String? nonce,
+  RegisterToken._() : super();
+  factory RegisterToken({
+    $core.String? uuid,
   }) {
     final _result = create();
-    if (nonce != null) {
-      _result.nonce = nonce;
+    if (uuid != null) {
+      _result.uuid = uuid;
     }
     return _result;
   }
-  factory RegisterNonce.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory RegisterNonce.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RegisterToken.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RegisterToken.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  RegisterNonce clone() => RegisterNonce()..mergeFromMessage(this);
+  RegisterToken clone() => RegisterToken()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  RegisterNonce copyWith(void Function(RegisterNonce) updates) => super.copyWith((message) => updates(message as RegisterNonce)) as RegisterNonce; // ignore: deprecated_member_use
+  RegisterToken copyWith(void Function(RegisterToken) updates) => super.copyWith((message) => updates(message as RegisterToken)) as RegisterToken; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static RegisterNonce create() => RegisterNonce._();
-  RegisterNonce createEmptyInstance() => create();
-  static $pb.PbList<RegisterNonce> createRepeated() => $pb.PbList<RegisterNonce>();
+  static RegisterToken create() => RegisterToken._();
+  RegisterToken createEmptyInstance() => create();
+  static $pb.PbList<RegisterToken> createRepeated() => $pb.PbList<RegisterToken>();
   @$core.pragma('dart2js:noInline')
-  static RegisterNonce getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RegisterNonce>(create);
-  static RegisterNonce? _defaultInstance;
+  static RegisterToken getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RegisterToken>(create);
+  static RegisterToken? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get nonce => $_getSZ(0);
+  $core.String get uuid => $_getSZ(0);
   @$pb.TagNumber(1)
-  set nonce($core.String v) { $_setString(0, v); }
+  set uuid($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasNonce() => $_has(0);
+  $core.bool hasUuid() => $_has(0);
   @$pb.TagNumber(1)
-  void clearNonce() => clearField(1);
+  void clearUuid() => clearField(1);
 }
 
 class WiFiVector extends $pb.GeneratedMessage {
@@ -796,5 +796,114 @@ class FailedConnectingToServer extends $pb.GeneratedMessage {
   $core.bool hasCause() => $_has(1);
   @$pb.TagNumber(2)
   void clearCause() => clearField(2);
+}
+
+enum LoginResponse_Type {
+  loginError, 
+  timeout, 
+  notSet
+}
+
+class LoginResponse extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, LoginResponse_Type> _LoginResponse_TypeByTag = {
+    1 : LoginResponse_Type.loginError,
+    2 : LoginResponse_Type.timeout,
+    0 : LoginResponse_Type.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'LoginResponse', createEmptyInstance: create)
+    ..oo(0, [1, 2])
+    ..aOM<LoginError>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'loginError', subBuilder: LoginError.create)
+    ..aOM<Timeout>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeout', subBuilder: Timeout.create)
+    ..hasRequiredFields = false
+  ;
+
+  LoginResponse._() : super();
+  factory LoginResponse({
+    LoginError? loginError,
+    Timeout? timeout,
+  }) {
+    final _result = create();
+    if (loginError != null) {
+      _result.loginError = loginError;
+    }
+    if (timeout != null) {
+      _result.timeout = timeout;
+    }
+    return _result;
+  }
+  factory LoginResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LoginResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  LoginResponse clone() => LoginResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  LoginResponse copyWith(void Function(LoginResponse) updates) => super.copyWith((message) => updates(message as LoginResponse)) as LoginResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static LoginResponse create() => LoginResponse._();
+  LoginResponse createEmptyInstance() => create();
+  static $pb.PbList<LoginResponse> createRepeated() => $pb.PbList<LoginResponse>();
+  @$core.pragma('dart2js:noInline')
+  static LoginResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LoginResponse>(create);
+  static LoginResponse? _defaultInstance;
+
+  LoginResponse_Type whichType() => _LoginResponse_TypeByTag[$_whichOneof(0)]!;
+  void clearType() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  LoginError get loginError => $_getN(0);
+  @$pb.TagNumber(1)
+  set loginError(LoginError v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLoginError() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLoginError() => clearField(1);
+  @$pb.TagNumber(1)
+  LoginError ensureLoginError() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  Timeout get timeout => $_getN(1);
+  @$pb.TagNumber(2)
+  set timeout(Timeout v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTimeout() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTimeout() => clearField(2);
+  @$pb.TagNumber(2)
+  Timeout ensureTimeout() => $_ensure(1);
+}
+
+class LoginError extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'LoginError', createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  LoginError._() : super();
+  factory LoginError() => create();
+  factory LoginError.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LoginError.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  LoginError clone() => LoginError()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  LoginError copyWith(void Function(LoginError) updates) => super.copyWith((message) => updates(message as LoginError)) as LoginError; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static LoginError create() => LoginError._();
+  LoginError createEmptyInstance() => create();
+  static $pb.PbList<LoginError> createRepeated() => $pb.PbList<LoginError>();
+  @$core.pragma('dart2js:noInline')
+  static LoginError getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LoginError>(create);
+  static LoginError? _defaultInstance;
 }
 

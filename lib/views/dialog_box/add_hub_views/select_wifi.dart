@@ -71,7 +71,7 @@ class _SelectWiFiState extends State<SelectWiFi> {
                       widget.onButtonTap(widget.wifi, controller.text),
                 )
               : const MaterialButton(
-                  child: Text("Connecting..."), onPressed: null),
+                  onPressed: null, child: Text("Connecting...")),
         ],
       ));
     }

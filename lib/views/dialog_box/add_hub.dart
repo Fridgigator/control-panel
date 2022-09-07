@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:control_panel/structures/constants.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_bluetooth/flutter_web_bluetooth.dart';
 import 'package:flutter_web_bluetooth/js_web_bluetooth.dart';
 import 'package:collection/collection.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'add_hub_views/select_wifi.dart';
 
@@ -178,6 +181,51 @@ class AddHubState extends State<AddHub> {
                       setState(() {
                         curState = HubState.registerDevice;
                       });
+                      debugPrint("${widget.accessToken.length}");
+                      assert(widget.accessToken.length <= 36);
+                      // Make sure that websocket is connected by the time the esp32 verifies itself
+                      final channel = WebSocketChannel.connect(
+                        Uri.parse(
+                            'wss://fridgigator.herokuapp.com/api/confirm-added-hub?accessToken=${widget.accessToken}'),
+                      );
+                      Completer<dynamic> result = Completer();
+                      channel.stream.handleError((e) => debugPrint("error=$e"));
+                      channel.stream.listen((event) async {
+                        result.complete(json.decode(event));
+                      });
+
+                      BLESendPacket wifi = BLESendPacket(
+                          token: RegisterToken(uuid: widget.accessToken));
+                      await writeData(wifi, ch);
+
+                      var addedHubResult = await result.future;
+                      if (addedHubResult["result"] == "ok") {
+                        if (!mounted) {
+                          return;
+                        }
+                        Navigator.pop(context, true);
+                      } else if (addedHubResult["result"] == "timeout") {
+                        if (!mounted) {
+                          return;
+                        }
+                        setState(() {
+                          curState = HubState.timeoutConfirmingRegistration;
+                        });
+                      } else if (addedHubResult["result"] == "reuse_id") {
+                        if (!mounted) {
+                          return;
+                        }
+                        setState(() {
+                          curState = HubState.reuseID;
+                        });
+                      } else {
+                        if (!mounted) {
+                          return;
+                        }
+                        setState(() {
+                          curState = HubState.assertionError;
+                        });
+                      }
                     } else if (response.whichType() ==
                         WiFiConnectResponseInfo_Type.timeout) {
                       const snackBar = SnackBar(
@@ -244,11 +292,11 @@ class AddHubState extends State<AddHub> {
     return Center(
       child: Container(
         height: 480,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
         child: AlertDialog(
           content: SizedBox(height: 480, width: 480, child: getView(curState)),
           title: getTitle(curState),
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 20),
       ),
     );
   }
@@ -305,6 +353,10 @@ class AddHubState extends State<AddHub> {
         return const Center(child: Text("GATT not able to connect"));
       case HubState.assertionError:
         return const Center(child: Text("Assertion Error"));
+      case HubState.timeoutConfirmingRegistration:
+        return const Center(child: Text("Timed out confirming registration"));
+      case HubState.reuseID:
+        return const Center(child: Text("This hub has already been added"));
     }
   }
 
@@ -334,6 +386,10 @@ class AddHubState extends State<AddHub> {
       case HubState.cannotCommunicate:
         return const Text("Error");
       case HubState.assertionError:
+        return const Text("Error");
+      case HubState.timeoutConfirmingRegistration:
+        return const Text("Error");
+      case HubState.reuseID:
         return const Text("Error");
     }
   }
@@ -369,6 +425,8 @@ enum HubState {
   cannotCommunicate,
   networkError,
   assertionError,
+  timeoutConfirmingRegistration,
+  reuseID,
 }
 
 class WiFiData {
