@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:control_panel/structures/data_types.dart';
@@ -64,7 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
         accessCode = prefs?.getString("access_code");
         debugPrint("Setting access token = $accessCode");
       });
-      getData();
+      Timer.periodic(const Duration(milliseconds: 1000), (t) async {
+        await getData();
+      });
     }();
   }
 
@@ -101,7 +104,10 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Colors.white,
         label: 'New Sensor',
         onTap: () async {
-          await startPopup(AddSensor(accessToken: accessCode!));
+          await startPopup(AddSensor(
+            accessToken: accessCode!,
+            fridges: fridges,
+          ));
           getData();
         },
       ));
@@ -196,6 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
       http.Response r = await http.post(
           Uri.parse('https://fridgigator.herokuapp.com/api/get-user-info'),
           headers: <String, String>{'Authorization': accessCode});
+      debugPrint("r.body=${r.body}");
       Map<String, dynamic> user = jsonDecode(r.body);
       debugPrint("user=$user");
 
@@ -212,16 +219,31 @@ class _MyHomePageState extends State<MyHomePage> {
                 name: e["name"],
                 uuid: e["uuid"],
                 sensors: (e["sensors"] as List<dynamic>).map((e) {
+                  debugPrint("e=$e");
+                  String modelName = "";
+                  switch (e["model"]) {
+                    case 0:
+                      modelName = "TI";
+                      break;
+                    case 1:
+                      modelName = "Nordic";
+                      break;
+                    case 3:
+                      modelName = "Custom";
+                      break;
+                  }
                   return Sensor(
-                      model: e["model"],
-                      uuid: e["uuid"],
-                      name: e["name"],
-                      value: e["lastValue"]);
+                    model: modelName,
+                    uuid: e["uuid"],
+                    name: e["name"],
+                    value: {}, /*e["lastValue"])*/
+                  );
                 }).toList());
           }).toList();
 
           this.hubs = hubs.map((e) {
             return Hub(
+              isConnected: e["isConnected"],
               uuid: e["uuid"],
             );
           }).toList();

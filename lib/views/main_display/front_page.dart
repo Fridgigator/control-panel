@@ -39,23 +39,18 @@ class _MyFrontPageState extends State<FrontPage> {
                     child: DataTable(
                         columns: const [
                           DataColumn(label: Text("uuid")),
-                          DataColumn(label: Text("Settings"))
+                          DataColumn(label: Text("Connected")),
+                          DataColumn(label: Text("Remove")),
                         ],
                         rows: widget.hubs
                             .map((e) => DataRow(cells: [
                                   DataCell(Text(e.uuid)),
-                                  DataCell(DropdownButton(
-                                    value: "B",
-                                    onChanged: (e) {},
-                                    items: const [
-                                      DropdownMenuItem(
-                                          value: "A", child: Text("A")),
-                                      DropdownMenuItem(
-                                        value: "B",
-                                        child: Text(""),
-                                      )
-                                    ],
-                                  ))
+                                  DataCell(e.isConnected
+                                      ? const Icon(Icons.circle,
+                                          color: Colors.green)
+                                      : const Icon(Icons.circle,
+                                          color: Colors.red)),
+                                  const DataCell(Icon(Icons.clear)),
                                 ]))
                             .toList()),
                   ))

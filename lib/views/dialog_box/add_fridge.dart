@@ -85,7 +85,7 @@ class _AddFridgeState extends State<AddFridge> {
 
   Future<FridgeError?> registerFridge(
       String accessCode, String fridgeName) async {
-    var returnVal;
+    dynamic returnVal;
     try {
       http.Response r = await http.post(
           Uri.https('fridgigator.herokuapp.com', '/api/register-fridge',

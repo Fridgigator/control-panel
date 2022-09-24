@@ -1,13 +1,14 @@
 class Hub {
   String uuid;
-  Hub({required this.uuid});
+  bool isConnected;
+  Hub({required this.uuid, required this.isConnected});
 }
 
 class Sensor {
   String name;
   String uuid;
   String model;
-  Map<int, int> value;
+  Map<String, int> value;
   Sensor(
       {required this.name,
       required this.uuid,
