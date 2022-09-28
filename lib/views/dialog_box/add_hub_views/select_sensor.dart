@@ -6,7 +6,7 @@ import '../add_sensor.dart';
 class SelectSensor extends StatefulWidget {
   final String name;
   final String address;
-  final Function(SensorMaker maker) onAdd;
+  final Function(SensorMaker maker, String fridgeID) onAdd;
   final Function() onSensorTap;
   final bool shouldDisplaySensorType;
   final List<Fridge> fridges;
@@ -27,6 +27,8 @@ class SelectSensor extends StatefulWidget {
 class _SelectSensorState extends State<SelectSensor> {
   SensorMaker sMaker = SensorMaker.None;
   Fridge? selectedFridge;
+  TextEditingController locationController = TextEditingController();
+  List<DropdownMenuItem<Fridge?>> fridgeMenuItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +44,13 @@ class _SelectSensorState extends State<SelectSensor> {
         ),
       )
     ];
-    List<DropdownMenuItem<Fridge>> fridgeMenuItems =
-        widget.fridges.map((Fridge e) {
-      return DropdownMenuItem(value: e, child: Text(e.name));
-    }).toList();
+    fridgeMenuItems = [];
+    fridgeMenuItems.add(const DropdownMenuItem(
+        value: null, key: Key(""), child: Text("Select Fridge")));
+    fridgeMenuItems.addAll(widget.fridges.map((Fridge e) {
+      return DropdownMenuItem(value: e, key: Key(e.uuid), child: Text(e.name));
+    }));
+    Fridge? selectedFridge = this.selectedFridge;
     if (widget.shouldDisplaySensorType) {
       children.add(Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -79,31 +84,35 @@ class _SelectSensorState extends State<SelectSensor> {
                               value: SensorMaker.Custom, child: Text("Custom")),
                         ]),
                     TextField(
-                      controller: null,
+                      controller: locationController,
                       decoration: const InputDecoration(
                         hintText: "Enter Location in Fridge",
                         helperText: "Location",
                       ),
                     ),
-                    DropdownButton(
-                        value: selectedFridge,
+                    DropdownButton<Fridge?>(
+                        value: this.selectedFridge,
                         onChanged: (Fridge? e) {
                           setState(() {
-                            selectedFridge = e;
+                            this.selectedFridge = e;
                           });
                         },
                         items: fridgeMenuItems)
                   ],
                 )),
             MaterialButton(
-                child: const Text("Add"),
-                onPressed: () {
-                  debugPrint(sMaker.name);
-                  if (sMaker != SensorMaker.None) {
-                    debugPrint("about to run onadd");
-                    widget.onAdd(sMaker);
-                  }
-                }),
+              onPressed: sMaker == SensorMaker.None ||
+                      locationController.text == "" ||
+                      selectedFridge == null
+                  ? null
+                  : () {
+                      if (sMaker != SensorMaker.None) {
+                        debugPrint("about to run onadd");
+                        widget.onAdd(sMaker, selectedFridge.uuid);
+                      }
+                    },
+              child: const Text("Add"),
+            ),
           ]));
     }
     return InkWell(

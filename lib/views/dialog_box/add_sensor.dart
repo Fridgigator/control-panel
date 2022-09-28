@@ -28,7 +28,7 @@ class AddSensorState extends State<AddSensor> {
   SensorMaker maker = SensorMaker.None;
   String sensorName = "";
   String sensorAddress = "";
-
+  String fridgeID = "";
   @override
   void initState() {
     super.initState();
@@ -43,15 +43,22 @@ class AddSensorState extends State<AddSensor> {
       if (curState == SensorState.initialState ||
           curState == SensorState.selectSensors) {
         var data = jsonDecode(event);
-        data.forEach((key, value) {
-          debugPrint("value = $value; mounted=$mounted");
-          if (value != "" && mounted) {
-            setState(() {
+        List<Sensor> sensors = [];
+        for (Fridge f in widget.fridges) {
+          sensors.addAll(f.sensors);
+        }
+        if (!mounted) return;
+        setState(() {
+          availableSensors.addAll(data.where((e) {
+            return !sensors.contains(e);
+          }).map((key, value) {
+            debugPrint("value = $value; mounted=$mounted");
+            if (value != "" && mounted) {
               debugPrint("Setting State selectSensors");
               curState = SensorState.selectSensors;
-              availableSensors.add(_Sensor(address: key, name: value));
-            });
-          }
+            }
+            return _Sensor(address: key, name: value, fridgeID: "");
+          }));
         });
       }
     });
@@ -97,13 +104,14 @@ class AddSensorState extends State<AddSensor> {
                               shouldDisplaySensorType:
                                   currentlySelected != null &&
                                       currentlySelected == index,
-                              onAdd: (SensorMaker maker) {
+                              onAdd: (SensorMaker maker, String fridgeID) {
                                 setState(() {
                                   debugPrint("Setting State");
                                   this.maker = maker;
                                   this.curState = SensorState.sendingData;
                                   sensorName = e.name;
                                   sensorAddress = e.address;
+                                  this.fridgeID = fridgeID;
                                 });
                                 () async {
                                   http.Response r = await http.post(
@@ -112,11 +120,12 @@ class AddSensorState extends State<AddSensor> {
                                       headers: <String, String>{
                                         'Authorization': widget.accessToken
                                       },
-                                      body: {
+                                      body: json.encode({
                                         "maker": this.maker.name,
                                         "name": sensorName,
                                         "address": sensorAddress,
-                                      });
+                                        "fridgeID": fridgeID,
+                                      }));
                                   if (r.statusCode != 200) {
                                     setState(() {
                                       this.curState =
@@ -124,6 +133,8 @@ class AddSensorState extends State<AddSensor> {
                                     });
                                   }
                                   debugPrint(r.body);
+                                  if (!mounted) return;
+                                  Navigator.pop(context);
                                 }();
                               },
                             ))
@@ -152,7 +163,8 @@ class AddSensorState extends State<AddSensor> {
 class _Sensor {
   String name;
   String address;
-  _Sensor({required this.address, required this.name});
+  String fridgeID;
+  _Sensor({required this.address, required this.name, required this.fridgeID});
 }
 
 enum SensorState {

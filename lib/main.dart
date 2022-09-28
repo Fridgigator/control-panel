@@ -240,6 +240,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 }).toList());
           }).toList();
+          print(
+              "amount of Fridges with id=cc6a223c-fd55-46af-a3cb-bff7fcf844b7=${this.fridges.map((e) => e.uuid).where((e) => e == "cc6a223c-fd55-46af-a3cb-bff7fcf844b7").toList()}");
 
           this.hubs = hubs.map((e) {
             return Hub(

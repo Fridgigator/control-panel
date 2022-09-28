@@ -1,5 +1,6 @@
 import 'package:control_panel/structures/data_types.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class FrontPage extends StatefulWidget {
   const FrontPage(
@@ -50,7 +51,11 @@ class _MyFrontPageState extends State<FrontPage> {
                                           color: Colors.green)
                                       : const Icon(Icons.circle,
                                           color: Colors.red)),
-                                  const DataCell(Icon(Icons.clear)),
+                                  DataCell(IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: () {
+                                        deleteHub(e.uuid);
+                                      })),
                                 ]))
                             .toList()),
                   ))
@@ -61,7 +66,14 @@ class _MyFrontPageState extends State<FrontPage> {
             rows.add(Row(children: [
               Container(
                   margin: const EdgeInsets.fromLTRB(8, 16, 8, 16),
-                  child: Text("Fridge ${fridge.name}:"))
+                  child: Row(children: [
+                    Text("Fridge ${fridge.name}:"),
+                    IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          deleteFridge(fridge.uuid);
+                        })
+                  ]))
             ]));
 
             rows.add(Row(
@@ -78,7 +90,8 @@ class _MyFrontPageState extends State<FrontPage> {
                               DataColumn(label: Text("model")),
                               DataColumn(label: Text("Temperature")),
                               DataColumn(label: Text("Humidity")),
-                              DataColumn(label: Text("Settings"))
+                              DataColumn(label: Text("")),
+                              DataColumn(label: Text(""))
                             ],
                             rows: fridge.sensors
                                 .map((e) => DataRow(cells: [
@@ -87,18 +100,15 @@ class _MyFrontPageState extends State<FrontPage> {
                                       DataCell(Text(e.model)),
                                       DataCell(Text("${e.value[0]}")),
                                       DataCell(Text("${e.value[1]}")),
-                                      DataCell(DropdownButton(
-                                        value: "B",
-                                        onChanged: (e) {},
-                                        items: const [
-                                          DropdownMenuItem(
-                                              value: "A", child: Text("A")),
-                                          DropdownMenuItem(
-                                            value: "B",
-                                            child: Text(""),
-                                          )
-                                        ],
-                                      ))
+                                      DataCell(IconButton(
+                                          icon: const Icon(
+                                              Icons.auto_graph_rounded),
+                                          onPressed: () {})),
+                                      DataCell(IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () {
+                                            deleteSensor(e.uuid);
+                                          }))
                                     ]))
                                 .toList()))),
               ],
@@ -115,5 +125,20 @@ class _MyFrontPageState extends State<FrontPage> {
             return SingleChildScrollView(child: Column(children: rows));
           }
         }));
+  }
+
+  void deleteSensor(String uuid) async {
+    await http.get(Uri.parse(
+        'https://fridgigator.herokuapp.com/api/delete?type=sensor&uuid=$uuid'));
+  }
+
+  void deleteHub(String uuid) async {
+    await http.get(Uri.parse(
+        'https://fridgigator.herokuapp.com/api/delete?type=hub&uuid=$uuid'));
+  }
+
+  void deleteFridge(String uuid) async {
+    await http.get(Uri.parse(
+        'https://fridgigator.herokuapp.com/api/delete?type=fridge&uuid=$uuid'));
   }
 }
