@@ -47,19 +47,32 @@ class AddSensorState extends State<AddSensor> {
         for (Fridge f in widget.fridges) {
           sensors.addAll(f.sensors);
         }
+        debugPrint("data=$data");
         if (!mounted) return;
-        setState(() {
-          availableSensors.addAll(data.where((e) {
-            return !sensors.contains(e);
-          }).map((key, value) {
-            debugPrint("value = $value; mounted=$mounted");
-            if (value != "" && mounted) {
-              debugPrint("Setting State selectSensors");
-              curState = SensorState.selectSensors;
-            }
-            return _Sensor(address: key, name: value, fridgeID: "");
-          }));
-        });
+        if (data != null) {
+          bool found = false;
+
+          setState(() {
+            data.forEach((key, value) {
+              debugPrint(
+                  "sensors.map((k) => k.name=${sensors.map((k) => k.uuid).toList()}");
+              if (value != "" && mounted) {
+                debugPrint("Setting State selectSensors");
+                curState = SensorState.selectSensors;
+              }
+              if (!sensors.map((k) => k.uuid).contains(key)) {
+                found = true;
+                availableSensors
+                    .add(_Sensor(address: key, name: value, fridgeID: ""));
+              }
+            });
+          });
+          if (!found) {
+            setState(() {
+              curState = SensorState.noValidDevices;
+            });
+          }
+        }
       }
     });
   }
@@ -143,6 +156,9 @@ class AddSensorState extends State<AddSensor> {
         return const Center(child: CircularProgressIndicator());
       case SensorState.errorSendingData:
         return const Text("Couldn't add sensor");
+      case SensorState.noValidDevices:
+        return const Text(
+            "Cannot find a new device to add. Try removing one from an existing fridge.");
     }
   }
 
@@ -155,6 +171,8 @@ class AddSensorState extends State<AddSensor> {
       case SensorState.sendingData:
         return const Text("Sending Data");
       case SensorState.errorSendingData:
+        return const Text("Error");
+      case SensorState.noValidDevices:
         return const Text("Error");
     }
   }
@@ -172,6 +190,7 @@ enum SensorState {
   selectSensors,
   sendingData,
   errorSendingData,
+  noValidDevices,
 }
 
 enum SensorMaker {
