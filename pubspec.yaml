@@ -46,6 +46,9 @@ dependencies:
   protobuf: ^2.1.0
   async: ^2.8.2
   web_socket_channel: ^2.2.0
+  intl: ^0.17.0
+  fl_chart: ^0.55.2
+  timeago: ^3.3.0
 
 
 dependency_overrides:

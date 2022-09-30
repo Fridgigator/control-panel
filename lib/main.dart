@@ -74,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     String? accessCode = this.accessCode;
+    debugPrint("accessCode=$accessCode, ${accessCode == null}");
     List<SpeedDialChild> newAddOptions = [
       SpeedDialChild(
         child: const Icon(Icons.sensor_window),
@@ -142,9 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(accessCode == null ? "Login" : "Logout"))
       ]),
       body: FrontPage(
-          accessCode: "$accessCode",
+          accessCode: accessCode,
           fridges: fridges,
-          loggedIn: accessCode == "",
+          loggedIn: accessCode != null,
           remoteName: curUser,
           hubs: hubs),
       floatingActionButton: SpeedDial(
@@ -236,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     model: modelName,
                     uuid: e["uuid"],
                     name: e["name"],
-                    value: {}, /*e["lastValue"])*/
+                    value: Map.from(e["lastValue"]),
                   );
                 }).toList());
           }).toList();

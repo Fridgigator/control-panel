@@ -14,7 +14,7 @@ class Sensor {
   String name;
   String uuid;
   String model;
-  Map<String, int> value;
+  Map<String, double> value;
   Sensor(
       {required this.name,
       required this.uuid,
