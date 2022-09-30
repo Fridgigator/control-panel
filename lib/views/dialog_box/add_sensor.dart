@@ -39,7 +39,6 @@ class AddSensorState extends State<AddSensor> {
     availableSensors.clear();
     channel.stream.handleError((e) => debugPrint("error=$e"));
     channel.stream.listen((event) async {
-      debugPrint("event=$event");
       if (curState == SensorState.initialState ||
           curState == SensorState.selectSensors) {
         var data = jsonDecode(event);
@@ -47,17 +46,13 @@ class AddSensorState extends State<AddSensor> {
         for (Fridge f in widget.fridges) {
           sensors.addAll(f.sensors);
         }
-        debugPrint("data=$data");
         if (!mounted) return;
         if (data != null) {
           bool found = false;
 
           setState(() {
             data.forEach((key, value) {
-              debugPrint(
-                  "sensors.map((k) => k.name=${sensors.map((k) => k.uuid).toList()}");
               if (value != "" && mounted) {
-                debugPrint("Setting State selectSensors");
                 curState = SensorState.selectSensors;
               }
               if (!sensors.map((k) => k.uuid).contains(key)) {
@@ -92,7 +87,6 @@ class AddSensorState extends State<AddSensor> {
   }
 
   Widget getView(SensorState curState) {
-    debugPrint("$maker");
     switch (curState) {
       case SensorState.initialState:
         return const Center(child: CircularProgressIndicator());
@@ -117,9 +111,9 @@ class AddSensorState extends State<AddSensor> {
                               shouldDisplaySensorType:
                                   currentlySelected != null &&
                                       currentlySelected == index,
-                              onAdd: (SensorMaker maker, String fridgeID) {
+                              onAdd: (SensorMaker maker, String fridgeID,
+                                  String location) {
                                 setState(() {
-                                  debugPrint("Setting State");
                                   this.maker = maker;
                                   this.curState = SensorState.sendingData;
                                   sensorName = e.name;
@@ -137,6 +131,7 @@ class AddSensorState extends State<AddSensor> {
                                         "maker": this.maker.name,
                                         "name": sensorName,
                                         "address": sensorAddress,
+                                        "location": location,
                                         "fridgeID": fridgeID,
                                       }));
                                   if (r.statusCode != 200) {
@@ -145,7 +140,6 @@ class AddSensorState extends State<AddSensor> {
                                           SensorState.errorSendingData;
                                     });
                                   }
-                                  debugPrint(r.body);
                                   if (!mounted) return;
                                   Navigator.pop(context);
                                 }();

@@ -6,7 +6,7 @@ import '../add_sensor.dart';
 class SelectSensor extends StatefulWidget {
   final String name;
   final String address;
-  final Function(SensorMaker maker, String fridgeID) onAdd;
+  final Function(SensorMaker maker, String fridgeID, String location) onAdd;
   final Function() onSensorTap;
   final bool shouldDisplaySensorType;
   final List<Fridge> fridges;
@@ -107,8 +107,8 @@ class _SelectSensorState extends State<SelectSensor> {
                   ? null
                   : () {
                       if (sMaker != SensorMaker.None) {
-                        debugPrint("about to run onadd");
-                        widget.onAdd(sMaker, selectedFridge.uuid);
+                        widget.onAdd(sMaker, selectedFridge.uuid,
+                            locationController.text);
                       }
                     },
               child: const Text("Add"),

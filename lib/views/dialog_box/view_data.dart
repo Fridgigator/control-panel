@@ -27,12 +27,8 @@ class BarChartSample2State extends State<ViewData> {
     super.initState();
 
     () async {
-      debugPrint(
-          "urlSensorStat=${'https://fridgigator.herokuapp.com/api/get-sensor-stat?sensor-id=${widget.sensorID}'}");
       http.Response r = await http.get(Uri.parse(
           'https://fridgigator.herokuapp.com/api/get-sensor-stat?sensor-id=${widget.sensorID}'));
-      debugPrint(
-          "urlSensorStat=${'https://fridgigator.herokuapp.com/api/get-sensor-stat?sensor-id=${widget.sensorID}'}");
       if (r.statusCode != 200) {
         const snackBar = SnackBar(
           content: Text("There's a bug in the backend"),
@@ -45,7 +41,6 @@ class BarChartSample2State extends State<ViewData> {
         Navigator.pop(context);
       }
       var jsonData = json.decode(r.body);
-      debugPrint("percentiles: ${jsonData.length}");
       List<BarChartGroupData> items = [];
       for (int i = jsonData.length - 1; i >= 0; i--) {
         var v = jsonData[i];
@@ -182,8 +177,8 @@ class BarChartSample2State extends State<ViewData> {
     List<String> titles = [];
 
     for (int i = 0; i < 10; i++) {
-      titles.add(DateFormat('kk:mm').format(DateTime.now()
-          .subtract(const Duration(minutes: 7, seconds: 30) * i)));
+      titles.add(DateFormat('kk:mm')
+          .format(DateTime.now().subtract(const Duration(minutes: 15) * i)));
     }
 
     Widget text = Text(

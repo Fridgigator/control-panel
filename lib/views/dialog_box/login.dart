@@ -26,19 +26,16 @@ class LoginDialogState extends State<LoginDialog> {
       String? accessToken = prefs.getString("access_code");
       if (accessToken != null) {
         setState(() {
-          debugPrint("accessToken=$accessToken");
           currentState = AppState.registerDevice;
           this.accessToken = accessToken;
         });
       } else {
-        debugPrint("Connecting to websocket");
         final channel = WebSocketChannel.connect(
           Uri.parse('wss://fridgigator.herokuapp.com/login/get-state'),
         );
 
         channel.stream.handleError((e) => debugPrint("error=$e"));
         channel.stream.listen((event) async {
-          debugPrint("event=$event");
           ToFrontEnd n = ToFrontEnd.fromBuffer(event);
           switch (n.whichType()) {
             case ToFrontEnd_Type.githubState:
@@ -100,7 +97,6 @@ class LoginDialogState extends State<LoginDialog> {
   }
 
   Widget getView(AppState appState, StateSetter setState) {
-    debugPrint("appState=$appState");
     switch (appState) {
       case AppState.gettingNonce:
         return Column(children: const [
@@ -114,7 +110,6 @@ class LoginDialogState extends State<LoginDialog> {
           "client_id": "30bf4172998cc4ec684e",
           "state": nonce,
         });
-        debugPrint("uri=$loginGithubUrl");
         return Column(children: [
           const Padding(
               padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
@@ -139,7 +134,6 @@ class LoginDialogState extends State<LoginDialog> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: const [CircularProgressIndicator(value: null)]);
       case AppState.registerDevice:
-        debugPrint("AccessToken = $accessToken");
         Navigator.pop(context, accessToken);
         return Container();
       case AppState.gitHubBug:

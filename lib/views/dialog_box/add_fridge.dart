@@ -93,7 +93,6 @@ class _AddFridgeState extends State<AddFridge> {
           headers: <String, String>{'Authorization': accessCode});
       returnVal = jsonDecode(r.body);
     } catch (e) {
-      debugPrint("$e");
       return FridgeError.connectionError;
     }
     if (returnVal["error"] == "nameAlreadyExists") {

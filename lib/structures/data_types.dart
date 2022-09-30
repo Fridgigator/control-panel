@@ -11,14 +11,16 @@ class Hub {
 }
 
 class Sensor {
-  String name;
+  String location;
   String uuid;
   String model;
+  String name;
   Map<String, double> value;
   Sensor(
-      {required this.name,
+      {required this.location,
       required this.uuid,
       required this.model,
+      required this.name,
       required this.value});
   @override
   bool operator ==(Object other) =>
@@ -41,7 +43,6 @@ class Fridge {
   Fridge({required this.name, required this.uuid, required this.sensors});
   @override
   bool operator ==(Object other) {
-    print("other=${(other as Fridge).uuid}, this=${this.uuid}");
     return other is Fridge && uuid == other.uuid;
   }
 

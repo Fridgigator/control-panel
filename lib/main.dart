@@ -63,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
       prefs = await SharedPreferences.getInstance();
       setState(() {
         accessCode = prefs?.getString("access_code");
-        debugPrint("Setting access token = $accessCode");
       });
       Timer.periodic(const Duration(milliseconds: 1000), (t) async {
         await getData();
@@ -74,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     String? accessCode = this.accessCode;
-    debugPrint("accessCode=$accessCode, ${accessCode == null}");
     List<SpeedDialChild> newAddOptions = [
       SpeedDialChild(
         child: const Icon(Icons.sensor_window),
@@ -122,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 String? recToken =
                     await startPopup(const LoginDialog()) as String?;
                 if (recToken != null && prefs != null) {
-                  debugPrint("setting githubToken");
                   prefs?.setString("access_code", recToken);
 
                   setState(() {
@@ -134,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 () async {
                   await prefs?.remove("access_code");
                   setState(() {
-                    debugPrint("logging out");
                     this.accessCode = null;
                   });
                 }();
@@ -203,9 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
       http.Response r = await http.post(
           Uri.parse('https://fridgigator.herokuapp.com/api/get-user-info'),
           headers: <String, String>{'Authorization': accessCode});
-      debugPrint("r.body=${r.body}");
       Map<String, dynamic> user = jsonDecode(r.body);
-      debugPrint("user=$user");
 
       var response = await http.get(
           Uri.parse('https://fridgigator.herokuapp.com/api/get-overview'),
@@ -219,8 +213,9 @@ class _MyHomePageState extends State<MyHomePage> {
             return Fridge(
                 name: e["name"],
                 uuid: e["uuid"],
-                sensors: (e["sensors"] as List<dynamic>).map((e) {
-                  debugPrint("e=$e");
+                sensors: (e["sensors"] as List<dynamic>)
+                    .where((e) => e["name"] != "")
+                    .map((e) {
                   String modelName = "";
                   switch (e["model"]) {
                     case 0:
@@ -237,12 +232,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     model: modelName,
                     uuid: e["uuid"],
                     name: e["name"],
+                    location: e["location"],
                     value: Map.from(e["lastValue"]),
                   );
                 }).toList());
           }).toList();
-          print(
-              "amount of Fridges with id=cc6a223c-fd55-46af-a3cb-bff7fcf844b7=${this.fridges.map((e) => e.uuid).where((e) => e == "cc6a223c-fd55-46af-a3cb-bff7fcf844b7").toList()}");
 
           this.hubs = hubs.map((e) {
             return Hub(

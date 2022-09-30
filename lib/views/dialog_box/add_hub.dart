@@ -181,7 +181,6 @@ class AddHubState extends State<AddHub> {
                       setState(() {
                         curState = HubState.registerDevice;
                       });
-                      debugPrint("${widget.accessToken.length}");
                       assert(widget.accessToken.length <= 36);
                       // Make sure that websocket is connected by the time the esp32 verifies itself
                       final channel = WebSocketChannel.connect(

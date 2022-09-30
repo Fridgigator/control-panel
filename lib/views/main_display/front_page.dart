@@ -1,4 +1,5 @@
 import 'package:control_panel/structures/data_types.dart';
+import 'package:control_panel/views/dialog_box/start_alarm.dart';
 import 'package:control_panel/views/dialog_box/view_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -28,7 +29,6 @@ class _MyFrontPageState extends State<FrontPage> {
   Widget build(BuildContext context) {
     widget.hubs.sort((Hub a, Hub b) => a.uuid.compareTo(b.uuid));
     Widget child;
-    debugPrint("widget.remoteName=${widget.accessCode}");
     if (widget.accessCode == null) {
       if (!widget.loggedIn) {
         child = const Text("Please log in");
@@ -104,30 +104,38 @@ class _MyFrontPageState extends State<FrontPage> {
                               DataColumn(label: Text("Temperature")),
                               DataColumn(label: Text("Last Seen")),
                               DataColumn(label: Text("")),
+                              DataColumn(label: Text("")),
                               DataColumn(label: Text(""))
                             ],
                             rows: fridge.sensors.map((e) {
-                              debugPrint(
-                                  "e=${DateTime.fromMicrosecondsSinceEpoch(((e.value['type'] ?? 0) * 1000 * 1000).toInt(), isUtc: true)}; ${(e.value['type'] ?? 0) * 1000 * 1000}");
                               return DataRow(cells: [
-                                DataCell(Text(e.name)),
+                                DataCell(Text(e.location)),
                                 DataCell(Text(e.uuid)),
                                 DataCell(Text(e.model)),
-                                DataCell(Text("${e.value["value"]}")),
-                                DataCell(Text(timeago.format(
-                                    DateTime.fromMicrosecondsSinceEpoch(
-                                            ((e.value["type"] ?? 0) *
-                                                    1000 *
-                                                    1000)
-                                                .toInt(),
-                                            isUtc: true)
-                                        .toLocal()))),
+                                DataCell(Text((e.value["type"] != -62135596800)
+                                    ? "${e.value["value"]}"
+                                    : "None")),
+                                DataCell(Text((e.value["type"] != -62135596800)
+                                    ? timeago.format(
+                                        DateTime.fromMicrosecondsSinceEpoch(
+                                                ((e.value["type"] ?? 0) *
+                                                        1000 *
+                                                        1000)
+                                                    .toInt(),
+                                                isUtc: true)
+                                            .toLocal())
+                                    : "Never")),
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.auto_graph_rounded),
                                     onPressed: () {
                                       startPopup(ViewData(
                                           sensorID: e.uuid,
                                           timeCalled: DateTime.now()));
+                                    })),
+                                DataCell(IconButton(
+                                    icon: const Icon(Icons.alarm),
+                                    onPressed: () {
+                                      startPopup(AddAlarm(sensorID: e.uuid));
                                     })),
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.clear),
