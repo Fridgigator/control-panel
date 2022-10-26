@@ -49,3 +49,15 @@ class Fridge {
   @override
   int get hashCode => uuid.hashCode;
 }
+
+class PhoneData {
+  String num;
+  VerifiedState state;
+  PhoneData({required this.num, required this.state});
+}
+
+enum VerifiedState {
+  verified,
+  expired,
+  notVerified,
+}

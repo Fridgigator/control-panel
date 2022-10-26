@@ -1,5 +1,5 @@
 import 'package:control_panel/structures/data_types.dart';
-import 'package:control_panel/views/dialog_box/start_alarm.dart';
+import 'package:control_panel/views/dialog_box/add_alarm.dart';
 import 'package:control_panel/views/dialog_box/view_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -135,7 +135,10 @@ class _MyFrontPageState extends State<FrontPage> {
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.alarm),
                                     onPressed: () {
-                                      startPopup(AddAlarm(sensorID: e.uuid));
+                                      startPopup(AddAlarm(
+                                        sensorID: e.uuid,
+                                        accessToken: widget.accessCode ?? "",
+                                      ));
                                     })),
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.clear),

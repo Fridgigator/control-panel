@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:control_panel/structures/data_types.dart';
 import 'package:control_panel/views/dialog_box/add_fridge.dart';
+import 'package:control_panel/views/dialog_box/add_phone.dart';
 import 'package:control_panel/views/dialog_box/add_sensor.dart';
 import 'package:control_panel/views/dialog_box/login.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<SpeedDialChild> newAddOptions = [
       SpeedDialChild(
         child: const Icon(Icons.sensor_window),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         label: 'New Fridge',
         onTap: () async {
@@ -85,9 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       )
     ];
+
     newAddOptions.add(SpeedDialChild(
       child: const Icon(Icons.hub),
-      backgroundColor: Colors.deepOrange,
+      backgroundColor: Colors.purple,
       foregroundColor: Colors.white,
       label: 'New Hub',
       onTap: () async {
@@ -99,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (hubs.isNotEmpty && fridges.isNotEmpty) {
       newAddOptions.add(SpeedDialChild(
         child: const Icon(Icons.sensors_sharp),
-        backgroundColor: Colors.pink,
+        backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         label: 'New Sensor',
         onTap: () async {
@@ -111,6 +113,19 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ));
     }
+
+    newAddOptions.add(SpeedDialChild(
+      child: const Icon(Icons.phone),
+      backgroundColor: Colors.green,
+      foregroundColor: Colors.white,
+      label: 'Set Phone',
+      onTap: () async {
+        await startPopup(PhoneSettings(
+          accessToken: accessCode!,
+        ));
+        getData();
+      },
+    ));
 
     return Scaffold(
       appBar: AppBar(title: const Text("Control Panel"), actions: [
