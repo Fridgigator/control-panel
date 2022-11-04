@@ -260,6 +260,16 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           }).toList();
         });
+      } else if (response.statusCode == 403) {
+        debugPrint("response.body=${response.body}");
+        var jsonResult = json.decode(response.body);
+        var error = jsonResult['error'];
+        if (error == "invalid-access-token") {
+          await prefs?.remove("access_code");
+          setState(() {
+            this.accessCode = null;
+          });
+        }
       } else {
         // If that response was not OK, throw an error.
         throw Exception('Failed to load post');
