@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.control_panel">
+
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="control_panel"
         android:name="${applicationName}"

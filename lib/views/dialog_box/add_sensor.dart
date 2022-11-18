@@ -49,20 +49,21 @@ class AddSensorState extends State<AddSensor> {
         if (!mounted) return;
         if (data != null) {
           bool found = false;
-
           setState(() {
             data.forEach((key, value) {
-              if (value != "" && mounted) {
-                curState = SensorState.selectSensors;
-              }
+              curState = SensorState.selectSensors;
               if (!sensors.map((k) => k.uuid).contains(key)) {
                 found = true;
-                availableSensors
-                    .add(_Sensor(address: key, name: value, fridgeID: ""));
+                debugPrint("|key=$key|,name=$value|");
+                if ("$value" != "") {
+                  availableSensors
+                      .add(_Sensor(address: key, name: value, fridgeID: ""));
+                }
               }
             });
           });
-          if (!found) {
+
+          if (!found && mounted) {
             setState(() {
               curState = SensorState.noValidDevices;
             });

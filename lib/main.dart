@@ -225,6 +225,8 @@ class _MyHomePageState extends State<MyHomePage> {
         List<dynamic> hubs = jsonResult['hubs'];
         setState(() {
           this.fridges = fridges.map((e) {
+	    
+            debugPrint("e=${e}");
             return Fridge(
                 name: e["name"],
                 uuid: e["uuid"],
@@ -243,6 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       modelName = "Custom";
                       break;
                   }
+
+                  debugPrint("e[lastvalue]=${e["lastValue"]}");
                   return Sensor(
                     model: modelName,
                     uuid: e["uuid"],
