@@ -135,7 +135,6 @@ class _MyFrontPageState extends State<FrontPage> {
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.auto_graph_rounded),
                                     onPressed: () {
-                                      debugPrint("e.key=${e.key}");
                                       startPopup(ViewData(
                                           sensorKey: e.key,
                                           timeCalled: DateTime.now()));
