@@ -12,28 +12,29 @@ class Hub {
 
 class Sensor {
   String location;
+  String key;
   String uuid;
   String model;
   String name;
-  Map<String, double> value;
-  Sensor(
-      {required this.location,
-      required this.uuid,
-      required this.model,
-      required this.name,
-      required this.value});
+  int typeOfData;
+  int time;
+  double value;
+  Sensor({
+    required this.location,
+    required this.key,
+    required this.uuid,
+    required this.model,
+    required this.name,
+    required this.value,
+    required this.time,
+    required this.typeOfData,
+  });
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Sensor && uuid == other.uuid;
+      identical(this, other) || other is Sensor && key == other.key;
 
   @override
-  int get hashCode => uuid.hashCode;
-}
-
-class Data {
-  int typeOfData;
-  int valOfData;
-  Data({required this.typeOfData, required this.valOfData});
+  int get hashCode => key.hashCode;
 }
 
 class Fridge {

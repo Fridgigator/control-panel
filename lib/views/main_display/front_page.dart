@@ -98,29 +98,38 @@ class _MyFrontPageState extends State<FrontPage> {
                         margin: const EdgeInsets.fromLTRB(8, 16, 8, 16),
                         child: DataTable(
                             columns: const [
+                              DataColumn(label: Text("Location")),
                               DataColumn(label: Text("Sensor")),
-                              DataColumn(label: Text("UUID")),
-                              DataColumn(label: Text("Model")),
-                              DataColumn(label: Text("Temperature")),
+                              DataColumn(label: Text("")),
+                              DataColumn(label: Text("")),
+                              DataColumn(label: Text("")),
                               DataColumn(label: Text("Last Seen")),
                               DataColumn(label: Text("")),
                               DataColumn(label: Text("")),
-                              DataColumn(label: Text(""))
+                              DataColumn(label: Text("")),
                             ],
                             rows: fridge.sensors.map((e) {
+                              String text = "";
+                              switch (e.typeOfData) {
+                                case 1:
+                                  text = "Temperature: ";
+                                  break;
+                                case 2:
+                                  text = "Humidity: ";
+                                  break;
+                              }
                               return DataRow(cells: [
                                 DataCell(Text(e.location)),
                                 DataCell(Text(e.uuid)),
                                 DataCell(Text(e.model)),
-                                DataCell(Text((e.value["type"] != -62135596800)
-                                    ? "${e.value["value"]}"
+                                DataCell(Text(text)),
+                                DataCell(Text((e.value != -62135596800)
+                                    ? "${e.value}"
                                     : "None")),
-                                DataCell(Text((e.value["type"] != -62135596800)
+                                DataCell(Text((e.time != -62135596800)
                                     ? timeago.format(
                                         DateTime.fromMicrosecondsSinceEpoch(
-                                                ((e.value["type"] ?? 0) *
-                                                        1000 *
-                                                        1000)
+                                                ((e.time ?? 0) * 1000 * 1000)
                                                     .toInt(),
                                                 isUtc: true)
                                             .toLocal())
