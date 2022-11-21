@@ -245,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       break;
                   }
 
-                  debugPrint("e[lastvalue]=${e["lastValue"]}");
+                  debugPrint("e=$e");
                   return Sensor(
                       model: modelName,
                       uuid: e["uuid"],

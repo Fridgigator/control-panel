@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 class ViewData extends StatefulWidget {
-  final String sensorID;
+  final String sensorKey;
   final DateTime timeCalled;
-  const ViewData({Key? key, required this.sensorID, required this.timeCalled})
+  const ViewData({Key? key, required this.sensorKey, required this.timeCalled})
       : super(key: key);
 
   @override
@@ -27,8 +27,9 @@ class BarChartSample2State extends State<ViewData> {
     super.initState();
 
     () async {
+      debugPrint("key=${widget.sensorKey}");
       http.Response r = await http.get(Uri.parse(
-          'https://fridgigator.herokuapp.com/api/get-sensor-stat?sensor-id=${widget.sensorID}'));
+          'https://fridgigator.herokuapp.com/api/v1/get-sensor-stat?sensor-key=${widget.sensorKey}'));
       if (r.statusCode != 200) {
         const snackBar = SnackBar(
           content: Text("There's a bug in the backend"),

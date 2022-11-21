@@ -101,8 +101,6 @@ class _MyFrontPageState extends State<FrontPage> {
                               DataColumn(label: Text("Location")),
                               DataColumn(label: Text("Sensor")),
                               DataColumn(label: Text("")),
-                              DataColumn(label: Text("")),
-                              DataColumn(label: Text("")),
                               DataColumn(label: Text("Last Seen")),
                               DataColumn(label: Text("")),
                               DataColumn(label: Text("")),
@@ -119,9 +117,9 @@ class _MyFrontPageState extends State<FrontPage> {
                                   break;
                               }
                               return DataRow(cells: [
-                                DataCell(Text(e.location)),
-                                DataCell(Text(e.uuid)),
-                                DataCell(Text(e.model)),
+                                DataCell(Tooltip(
+                                    message: "${e.uuid}: ${e.model}",
+                                    child: Text(e.location))),
                                 DataCell(Text(text)),
                                 DataCell(Text((e.value != -62135596800)
                                     ? "${e.value}"
@@ -129,7 +127,7 @@ class _MyFrontPageState extends State<FrontPage> {
                                 DataCell(Text((e.time != -62135596800)
                                     ? timeago.format(
                                         DateTime.fromMicrosecondsSinceEpoch(
-                                                ((e.time ?? 0) * 1000 * 1000)
+                                                ((e.time) * 1000 * 1000)
                                                     .toInt(),
                                                 isUtc: true)
                                             .toLocal())
@@ -137,8 +135,9 @@ class _MyFrontPageState extends State<FrontPage> {
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.auto_graph_rounded),
                                     onPressed: () {
+                                      debugPrint("e.key=${e.key}");
                                       startPopup(ViewData(
-                                          sensorID: e.uuid,
+                                          sensorKey: e.key,
                                           timeCalled: DateTime.now()));
                                     })),
                                 DataCell(IconButton(
