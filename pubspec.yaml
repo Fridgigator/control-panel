@@ -52,6 +52,8 @@ dependencies:
   phone_number: ^1.0.0
   intl_phone_number_input: ^0.7.1
   pin_code_fields: ^7.4.0
+  im_animations: ^0.1.2
+  gauges: ^1.0.0
 
 
 dependency_overrides:
