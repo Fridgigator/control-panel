@@ -1,8 +1,10 @@
+import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data_structures/main_view_state.dart';
 import 'fridge_drawer.dart';
-import 'main_connection_stats.dart';
+import 'main_navigation_rail.dart';
 import 'overview.dart';
 
 class MyApp extends StatelessWidget {
@@ -22,6 +24,7 @@ class _MyAppState extends StatefulWidget {
 class _HomePageState extends State<_MyAppState> {
   bool loggedIn = false;
   bool doneLoading = false;
+  MainViewState currentlySelectedPage = MainViewState.main;
   SharedPreferences? sp;
   @override
   void initState() {
@@ -41,11 +44,10 @@ class _HomePageState extends State<_MyAppState> {
     }
     bool darkTheme = sp?.getBool("darktheme") ?? false;
     bool isOnSmallDevice =
-        MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                .size
-                .shortestSide <
-            600;
-
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width <
+            900;
+    debugPrint(
+        'size=${MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width}');
     return MaterialApp(
         theme: ThemeData(),
         darkTheme: darkTheme ? ThemeData.dark() : ThemeData.light(),
@@ -70,12 +72,45 @@ class _HomePageState extends State<_MyAppState> {
                     icon: Icon(loggedIn ? Icons.logout : Icons.login))
               ],
             ),
-            drawer: loggedIn
-                ? !isOnSmallDevice
-                    ? null
-                    : FridgeDrawer(darkTheme: darkTheme)
-                : null,
-            body:
-                Overview(darkTheme: darkTheme, smallDevice: isOnSmallDevice)));
+            drawer:
+                !isOnSmallDevice ? null : FridgeDrawer(darkTheme: darkTheme),
+            body: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              double width =
+                  MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+                      .size
+                      .width;
+
+              if (width < 250) {
+                return const Center(child: Text("Screen too small"));
+              } else if (width < 900) {
+                return Overview(darkTheme: darkTheme, smallDevice: true);
+              } else {
+                return MainNavigationRail(
+                    mainView: Expanded(
+                      child: Overview(
+                          darkTheme: darkTheme, smallDevice: isOnSmallDevice),
+                    ),
+                    viewState: currentlySelectedPage,
+                    changeViewState: (int? select) {
+                      if (select == null) return;
+                      setState(() {
+                        currentlySelectedPage =
+                            MainViewState.getByValue(select);
+                      });
+                    });
+              }
+            }),
+            bottomNavigationBar: isOnSmallDevice
+                ? MainBottomNavigationBar(
+                    viewState: currentlySelectedPage,
+                    changeViewState: (int? select) {
+                      if (select == null) return;
+                      setState(() {
+                        currentlySelectedPage =
+                            MainViewState.getByValue(select);
+                      });
+                    })
+                : null));
   }
 }

@@ -15,7 +15,8 @@ class MainConnectionStat extends StatelessWidget {
             onTap: () {},
             child: Container(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                child: Column(
+                child: ListView(
+                  shrinkWrap: true,
                   children: [
                     const Text("Connection status"),
                     Container(
