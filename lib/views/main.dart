@@ -1,11 +1,14 @@
+import 'package:control_panel/views/Fridges/fridges.dart';
+import 'package:control_panel/views/Settings/settings.dart';
+import 'package:control_panel/views/hubs/hubs.dart';
 import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data_structures/main_view_state.dart';
-import 'fridge_drawer.dart';
-import 'main_navigation_rail.dart';
-import 'overview.dart';
+import ' main_navigation_rail.dart';
+import 'overview/overview.dart';
+import 'sensors/sensors.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,14 +21,16 @@ class MyApp extends StatelessWidget {
 class _MyAppState extends StatefulWidget {
   const _MyAppState({Key? key}) : super(key: key);
   @override
-  State<StatefulWidget> createState() => _HomePageState();
+  State<StatefulWidget> createState() => _MainPageState();
 }
 
-class _HomePageState extends State<_MyAppState> {
-  bool loggedIn = false;
+class _MainPageState extends State<_MyAppState> {
+  bool darkTheme = false;
   bool doneLoading = false;
-  MainViewState currentlySelectedPage = MainViewState.main;
+  bool loggedIn = false;
   SharedPreferences? sp;
+  MainViewState currentlySelectedPage = MainViewState.overview;
+
   @override
   void initState() {
     super.initState();
@@ -33,84 +38,149 @@ class _HomePageState extends State<_MyAppState> {
       sp = await SharedPreferences.getInstance();
       setState(() {
         doneLoading = true;
+        darkTheme = sp?.getBool("darktheme") ?? false;
       });
     }();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!doneLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    bool darkTheme = sp?.getBool("darktheme") ?? false;
+    overviewScaffold(pageToGo) => _MainScaffold(
+          doneLoading: doneLoading,
+          currentlySelectedPage: pageToGo,
+          darkTheme: darkTheme,
+          invertDarkTheme: () {
+            setState(() {
+              darkTheme = !darkTheme;
+              sp?.setBool("darktheme", darkTheme);
+            });
+          },
+          logOut: () {
+            setState(() {
+              loggedIn = !loggedIn;
+            });
+          },
+          loggedIn: loggedIn,
+        );
+
+    return MaterialApp(
+      theme: ThemeData(),
+      darkTheme: darkTheme ? ThemeData.dark() : ThemeData.light(),
+      title: 'Control Panel',
+      initialRoute: MainViewState.overview.name,
+      routes: {
+        "/": (context) => overviewScaffold(MainViewState.overview),
+        MainViewState.overview.name: (context) =>
+            overviewScaffold(MainViewState.overview),
+        MainViewState.hubs.name: (context) =>
+            overviewScaffold(MainViewState.hubs),
+        MainViewState.fridges.name: (context) =>
+            overviewScaffold(MainViewState.fridges),
+        MainViewState.sensors.name: (context) =>
+            overviewScaffold(MainViewState.sensors),
+        MainViewState.settings.name: (context) =>
+            overviewScaffold(MainViewState.settings),
+      },
+    );
+  }
+}
+
+class _MainScaffold extends StatelessWidget {
+  final MainViewState currentlySelectedPage;
+  final bool darkTheme;
+  final bool loggedIn;
+
+  final void Function() invertDarkTheme;
+  final void Function() logOut;
+
+  final bool doneLoading;
+
+  const _MainScaffold({
+    required this.darkTheme,
+    required this.currentlySelectedPage,
+    required this.invertDarkTheme,
+    required this.loggedIn,
+    required this.logOut,
+    required this.doneLoading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!doneLoading) return const CircularProgressIndicator();
     bool isOnSmallDevice =
         MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width <
             900;
-    debugPrint(
-        'size=${MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width}');
-    return MaterialApp(
-        theme: ThemeData(),
-        darkTheme: darkTheme ? ThemeData.dark() : ThemeData.light(),
-        title: 'Control Panel',
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text('Control Panel'),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        sp?.setBool("darktheme", !darkTheme);
-                      });
-                    },
-                    icon: Icon(darkTheme ? Icons.light_mode : Icons.dark_mode)),
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        loggedIn = !loggedIn;
-                      });
-                    },
-                    icon: Icon(loggedIn ? Icons.logout : Icons.login))
-              ],
-            ),
-            drawer:
-                !isOnSmallDevice ? null : FridgeDrawer(darkTheme: darkTheme),
-            body: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-              double width =
-                  MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                      .size
-                      .width;
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Control Panel'),
+          actions: [
+            IconButton(
+                onPressed: invertDarkTheme,
+                icon: Icon(darkTheme ? Icons.light_mode : Icons.dark_mode)),
+            IconButton(
+                onPressed: logOut,
+                icon: Icon(loggedIn ? Icons.logout : Icons.login))
+          ],
+        ),
+        body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+          double width =
+              MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+                  .size
+                  .width;
 
-              if (width < 250) {
-                return const Center(child: Text("Screen too small"));
-              } else if (width < 900) {
+          if (width < 250) {
+            return const Center(child: Text("Screen too small"));
+          } else if (width < 900) {
+            switch (currentlySelectedPage) {
+              case MainViewState.overview:
                 return Overview(darkTheme: darkTheme, smallDevice: true);
-              } else {
-                return MainNavigationRail(
-                    mainView: Expanded(
-                      child: Overview(
-                          darkTheme: darkTheme, smallDevice: isOnSmallDevice),
-                    ),
-                    viewState: currentlySelectedPage,
-                    changeViewState: (int? select) {
-                      if (select == null) return;
-                      setState(() {
-                        currentlySelectedPage =
-                            MainViewState.getByValue(select);
-                      });
-                    });
-              }
-            }),
-            bottomNavigationBar: isOnSmallDevice
-                ? MainBottomNavigationBar(
-                    viewState: currentlySelectedPage,
-                    changeViewState: (int? select) {
-                      if (select == null) return;
-                      setState(() {
-                        currentlySelectedPage =
-                            MainViewState.getByValue(select);
-                      });
-                    })
-                : null));
+              case MainViewState.hubs:
+                return Hubs(darkTheme: darkTheme, smallDevice: true);
+              case MainViewState.sensors:
+                return Sensors(darkTheme: darkTheme, smallDevice: true);
+              case MainViewState.fridges:
+                return Fridges(darkTheme: darkTheme, smallDevice: true);
+              case MainViewState.settings:
+                return Settings(darkTheme: darkTheme, smallDevice: true);
+            }
+          } else {
+            Widget child;
+            switch (currentlySelectedPage) {
+              case MainViewState.overview:
+                child = Overview(darkTheme: darkTheme, smallDevice: false);
+                break;
+              case MainViewState.hubs:
+                child = Hubs(darkTheme: darkTheme, smallDevice: false);
+                break;
+              case MainViewState.sensors:
+                child = Sensors(darkTheme: darkTheme, smallDevice: false);
+                break;
+              case MainViewState.fridges:
+                child = Fridges(darkTheme: darkTheme, smallDevice: false);
+                break;
+              case MainViewState.settings:
+                child = Settings(darkTheme: darkTheme, smallDevice: false);
+            }
+
+            return MainNavigationRail(
+                mainView: Expanded(child: child),
+                viewState: currentlySelectedPage,
+                changeViewState: (int? select) {
+                  if (select == null) return;
+                  Navigator.pushNamed(
+                      context, MainViewState.getByValue(select).name);
+                });
+          }
+        }),
+        bottomNavigationBar: isOnSmallDevice
+            ? MainBottomNavigationBar(
+                viewState: currentlySelectedPage,
+                changeViewState: (int? select) {
+                  if (select == null) return;
+                  Navigator.pushNamed(
+                      context, MainViewState.getByValue(select).name);
+                })
+            : null);
   }
 }

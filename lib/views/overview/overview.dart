@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
-
-import 'fridge_overview_display.dart';
-import 'main_connection_stats.dart';
+import 'package:control_panel/views/overview/fridge_overview_display.dart';
+import 'package:control_panel/views/overview/overview_connection_stats.dart';
+import 'package:flutter/material.dart';
 
 class Overview extends StatelessWidget {
   final bool darkTheme;

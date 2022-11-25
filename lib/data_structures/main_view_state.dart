@@ -1,5 +1,5 @@
 enum MainViewState {
-  main(0),
+  overview(0),
   hubs(1),
   sensors(2),
   fridges(3),
