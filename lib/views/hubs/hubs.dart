@@ -1,4 +1,8 @@
+import 'package:control_panel/views/hubs/chart.dart';
+import 'package:control_panel/views/hubs/sensor_view.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:im_animations/im_animations.dart';
 
 class Hubs extends StatelessWidget {
   final bool darkTheme;
@@ -7,6 +11,68 @@ class Hubs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("hubs"));
+    return SingleChildScrollView(
+        child: Wrap(direction: Axis.horizontal, children: [
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+      SensorView(
+        darkTheme: darkTheme,
+      ),
+    ]));
   }
 }
