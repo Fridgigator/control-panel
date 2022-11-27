@@ -31,7 +31,7 @@ class LoginDialogState extends State<LoginDialog> {
         });
       } else {
         final channel = WebSocketChannel.connect(
-          Uri.parse('wss://fridgigator.herokuapp.com/login/get-state'),
+          Uri.parse('wss://fridgigator-001.fly.dev/login/get-state'),
         );
 
         channel.stream.handleError((e) => debugPrint("error=$e"));

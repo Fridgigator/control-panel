@@ -28,7 +28,7 @@ class AddAlarmState extends State<AddAlarm> {
     () async {
       http.Response r = await http.get(
         Uri.parse(
-            'https://fridgigator.herokuapp.com/api/get-alarm?sensorID=${widget.sensorID}'),
+            'https://fridgigator-001.fly.dev/api/get-alarm?sensorID=${widget.sensorID}'),
       );
       var body = jsonDecode(r.body);
       setState(() {
@@ -41,7 +41,7 @@ class AddAlarmState extends State<AddAlarm> {
       });
       r = await http.post(
           Uri.parse(
-              'https://fridgigator.herokuapp.com/api/v1/get-telephone-list'),
+              'https://fridgigator-001.fly.dev/api/v1/get-telephone-list'),
           headers: <String, String>{'Authorization': widget.accessToken});
       List<dynamic> phone = jsonDecode(r.body);
       setState(() {
@@ -134,13 +134,13 @@ class AddAlarmState extends State<AddAlarm> {
                                       if (telephoneToAlert != "None") {
                                         await http.get(
                                           Uri.parse(
-                                              'https://fridgigator.herokuapp.com/api/v1/add-alarm?sensorID=${widget.sensorID}&phone=${Uri.encodeComponent(telephoneToAlert)}&temp=$tInC'),
+                                              'https://fridgigator-001.fly.dev/api/v1/add-alarm?sensorID=${widget.sensorID}&phone=${Uri.encodeComponent(telephoneToAlert)}&temp=$tInC'),
                                         );
                                       } else {
                                         debugPrint("not null");
                                         await http.get(
                                           Uri.parse(
-                                              'https://fridgigator.herokuapp.com/api/v1/delete-alarm?sensorID=${widget.sensorID}'),
+                                              'https://fridgigator-001.fly.dev/api/v1/delete-alarm?sensorID=${widget.sensorID}'),
                                         );
                                       }
                                     }

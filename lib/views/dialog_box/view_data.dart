@@ -29,7 +29,7 @@ class BarChartSample2State extends State<ViewData> {
     () async {
       debugPrint("key=${widget.sensorKey}");
       http.Response r = await http.get(Uri.parse(
-          'https://fridgigator.herokuapp.com/api/v1/get-sensor-stat?sensor-key=${widget.sensorKey}'));
+          'https://fridgigator-001.fly.dev/api/v1/get-sensor-stat?sensor-key=${widget.sensorKey}'));
       if (r.statusCode != 200) {
         const snackBar = SnackBar(
           content: Text("There's a bug in the backend"),

@@ -88,7 +88,7 @@ class _AddFridgeState extends State<AddFridge> {
     dynamic returnVal;
     try {
       http.Response r = await http.post(
-          Uri.https('fridgigator.herokuapp.com', '/api/register-fridge',
+          Uri.https('fridgigator-001.fly.dev', '/api/register-fridge',
               {'fridge-name': fridgeName}),
           headers: <String, String>{'Authorization': accessCode});
       returnVal = jsonDecode(r.body);

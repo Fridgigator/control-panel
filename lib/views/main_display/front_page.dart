@@ -168,17 +168,17 @@ class _MyFrontPageState extends State<FrontPage> {
 
   void deleteSensor(String uuid) async {
     await http.get(Uri.parse(
-        'https://fridgigator.herokuapp.com/api/delete?type=sensor&uuid=$uuid'));
+        'https://fridgigator-001.fly.dev/api/delete?type=sensor&uuid=$uuid'));
   }
 
   void deleteHub(String uuid) async {
     await http.get(Uri.parse(
-        'https://fridgigator.herokuapp.com/api/delete?type=hub&uuid=$uuid'));
+        'https://fridgigator-001.fly.dev/api/delete?type=hub&uuid=$uuid'));
   }
 
   void deleteFridge(String uuid) async {
     await http.get(Uri.parse(
-        'https://fridgigator.herokuapp.com/api/delete?type=fridge&uuid=$uuid'));
+        'https://fridgigator-001.fly.dev/api/delete?type=fridge&uuid=$uuid'));
   }
 
   Future<Object?> startPopup(Widget widget) async {

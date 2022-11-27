@@ -34,7 +34,7 @@ class AddSensorState extends State<AddSensor> {
     super.initState();
     final channel = WebSocketChannel.connect(
       Uri.parse(
-          'wss://fridgigator.herokuapp.com/api/get-add-sensor-results?accessToken=${widget.accessToken}'),
+          'wss://fridgigator-001.fly.dev/api/get-add-sensor-results?accessToken=${widget.accessToken}'),
     );
     availableSensors.clear();
     channel.stream.handleError((e) => debugPrint("error=$e"));
@@ -124,7 +124,7 @@ class AddSensorState extends State<AddSensor> {
                                 () async {
                                   http.Response r = await http.post(
                                       Uri.parse(
-                                          'https://fridgigator.herokuapp.com/api/finalize-add-sensor'),
+                                          'https://fridgigator-001.fly.dev/api/finalize-add-sensor'),
                                       headers: <String, String>{
                                         'Authorization': widget.accessToken
                                       },

@@ -37,7 +37,7 @@ class PhoneSettingsStatefulWidget extends State<PhoneSettings> {
     () async {
       http.Response r = await http.post(
           Uri.parse(
-              'https://fridgigator.herokuapp.com/api/v1/get-telephone-list'),
+              'https://fridgigator-001.fly.dev/api/v1/get-telephone-list'),
           headers: <String, String>{'Authorization': widget.accessToken});
       List<dynamic> phone = jsonDecode(r.body);
       debugPrint(r.body);
@@ -141,7 +141,7 @@ class PhoneSettingsStatefulWidget extends State<PhoneSettings> {
                         ? () async {
                             await http.post(
                                 Uri.parse(
-                                  'https://fridgigator.herokuapp.com/api/v1/register-telephone?phone=${Uri.encodeComponent(num)}',
+                                  'https://fridgigator-001.fly.dev/api/v1/register-telephone?phone=${Uri.encodeComponent(num)}',
                                 ),
                                 headers: <String, String>{
                                   'Authorization': widget.accessToken
@@ -176,7 +176,7 @@ class PhoneSettingsStatefulWidget extends State<PhoneSettings> {
             onCompleted: (v) async {
               var r = await http.post(
                   Uri.parse(
-                    'https://fridgigator.herokuapp.com/api/v1/verify-phone?phone=${Uri.encodeComponent(phoneToVerify)}&code=${Uri.encodeComponent(v)}',
+                    'https://fridgigator-001.fly.dev/api/v1/verify-phone?phone=${Uri.encodeComponent(phoneToVerify)}&code=${Uri.encodeComponent(v)}',
                   ),
                   headers: <String, String>{
                     'Authorization': widget.accessToken

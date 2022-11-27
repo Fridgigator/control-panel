@@ -184,7 +184,7 @@ class AddHubState extends State<AddHub> {
                       // Make sure that websocket is connected by the time the esp32 verifies itself
                       final channel = WebSocketChannel.connect(
                         Uri.parse(
-                            'wss://fridgigator.herokuapp.com/api/confirm-added-hub?accessToken=${widget.accessToken}'),
+                            'wss://fridgigator-001.fly.dev/api/confirm-added-hub?accessToken=${widget.accessToken}'),
                       );
                       Completer<dynamic> result = Completer();
                       channel.stream.handleError((e) => debugPrint("error=$e"));

@@ -212,12 +212,12 @@ class _MyHomePageState extends State<MyHomePage> {
     String? accessCode = this.accessCode;
     if (accessCode != null) {
       http.Response r = await http.post(
-          Uri.parse('https://fridgigator.herokuapp.com/api/get-user-info'),
+          Uri.parse('https://fridgigator-001.fly.dev/api/get-user-info'),
           headers: <String, String>{'Authorization': accessCode});
       Map<String, dynamic> user = jsonDecode(r.body);
 
       var response = await http.get(
-          Uri.parse('https://fridgigator.herokuapp.com/api/get-overview'),
+          Uri.parse('https://fridgigator-001.fly.dev/api/get-overview'),
           headers: {'Authorization': accessCode});
       if (response.statusCode == 200) {
         var jsonResult = json.decode(response.body);
