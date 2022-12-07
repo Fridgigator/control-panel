@@ -54,6 +54,7 @@ dependencies:
   pin_code_fields: ^7.4.0
   im_animations: ^0.1.2
   gauges: ^1.0.0
+  settings_ui: ^2.0.2
 
 
 dependency_overrides:
