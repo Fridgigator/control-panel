@@ -11,8 +11,10 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:web_socket_channel/io.dart';
 import 'views/main_display/front_page.dart';
 import 'views/dialog_box/add_hub.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   SharedPreferences? prefs;
   List<Fridge> fridges = [];
   List<Hub> hubs = [];
-
+  DateTime currentTime = DateTime.now();
   @override
   void initState() {
     super.initState();
@@ -65,8 +67,11 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         accessCode = prefs?.getString("access_code");
       });
-      Timer.periodic(const Duration(milliseconds: 1000), (t) async {
-        await getData();
+      await getData();
+      Timer.periodic(const Duration(milliseconds: 1000), (t) {
+        setState(() {
+          currentTime = DateTime.now();
+        });
       });
     }();
   }
@@ -82,7 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
         label: 'New Fridge',
         onTap: () async {
           await startPopup(AddFridge(accessToken: accessCode!));
-          getData();
         },
       )
     ];
@@ -94,7 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
       label: 'New Hub',
       onTap: () async {
         await startPopup(AddHub(accessToken: accessCode!));
-        getData();
       },
     ));
 
@@ -109,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
             accessToken: accessCode!,
             fridges: fridges,
           ));
-          getData();
         },
       ));
     }
@@ -123,7 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
         await startPopup(PhoneSettings(
           accessToken: accessCode!,
         ));
-        getData();
       },
     ));
 
@@ -140,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     this.accessCode = recToken;
                   });
-                  getData();
                 }
               } else {
                 () async {
@@ -154,6 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(accessCode == null ? "Login" : "Logout"))
       ]),
       body: FrontPage(
+          key: ValueKey(currentTime.microsecond),
+          clock: currentTime,
           accessCode: accessCode,
           fridges: fridges,
           loggedIn: accessCode != null,
@@ -211,77 +213,143 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> getData() async {
     String? accessCode = this.accessCode;
     if (accessCode != null) {
-      http.Response r = await http.post(
-          Uri.parse('https://fridgigator-001.fly.dev/api/get-user-info'),
-          headers: <String, String>{'Authorization': accessCode});
-      Map<String, dynamic> user = jsonDecode(r.body);
-
-      var response = await http.get(
-          Uri.parse('https://fridgigator-001.fly.dev/api/get-overview'),
-          headers: {'Authorization': accessCode});
-      if (response.statusCode == 200) {
-        var jsonResult = json.decode(response.body);
-        List<dynamic> fridges = jsonResult['fridges'];
-        List<dynamic> hubs = jsonResult['hubs'];
-        setState(() {
-          this.fridges = fridges.map((e) {
-            debugPrint("e=${e}");
-            return Fridge(
-                name: e["name"],
-                uuid: e["uuid"],
-                sensors: (e["sensors"] as List<dynamic>)
-                    .where((e) => e["name"] != "")
-                    .map((e) {
-                  String modelName = "";
-                  switch (e["model"]) {
-                    case 0:
-                      modelName = "TI";
-                      break;
-                    case 1:
-                      modelName = "Nordic";
-                      break;
-                    case 3:
-                      modelName = "Custom";
-                      break;
-                  }
-
-                  debugPrint("e=$e");
-                  return Sensor(
-                      model: modelName,
-                      uuid: e["uuid"],
-                      name: e["name"],
-                      location: e["location"],
-                      time: e["time"],
-                      key: e["key"],
-                      typeOfData: e["typeOfData"],
-                      value: e["value"]);
-                }).toList());
-          }).toList();
-
-          this.hubs = hubs.map((e) {
-            return Hub(
-              isConnected: e["isConnected"],
-              uuid: e["uuid"],
-            );
-          }).toList();
+      try {
+        http.Response r = await http.post(
+            Uri.parse('https://fridgigator-001.fly.dev/api/get-user-info'),
+            headers: <String, String>{
+              'Authorization': accessCode
+            }).onError((error, stackTrace) {
+          throw "$stackTrace ${error ?? "UnkownError"}";
         });
-      } else if (response.statusCode == 403) {
-        debugPrint("response.body=${response.body}");
-        var jsonResult = json.decode(response.body);
-        var error = jsonResult['error'];
-        if (error == "invalid-access-token") {
-          await prefs?.remove("access_code");
-          setState(() {
-            this.accessCode = null;
-          });
-        }
-      } else {
-        // If that response was not OK, throw an error.
-        throw Exception('Failed to load post');
+        Map<String, dynamic> user = jsonDecode(r.body);
+        setState(() {
+          curUser = user["login"];
+        });
+
+        final channel = WebSocketChannel.connect(
+          Uri.parse(
+              'wss://fridgigator-001.fly.dev/api/frontend/v1/get-overview?authorization=$accessCode'),
+        );
+
+        debugPrint('sending');
+        channel.stream.handleError((e) => debugPrint("error=$e"));
+        channel.stream.listen(
+          (event) async {
+            debugPrint('event=$event');
+            var response = json.decode(event);
+            if (response["status-code"] == 200) {
+              switch (response['update-what']) {
+                case 'FRIDGE':
+                  List<dynamic> fridges = response['fridges'];
+
+                  setState(() {
+                    this.fridges = fridges.map((e) {
+                      debugPrint("e=$e");
+                      return Fridge(
+                          name: e["name"],
+                          uuid: e["uuid"],
+                          sensors: (e["sensors"] as List<dynamic>)
+                              .where((e) => e["name"] != "")
+                              .map((e) {
+                            debugPrint("e=$e");
+                            return Sensor(
+                                model: Sensor.modelFromNumber(e['model']),
+                                uuid: e["uuid"],
+                                name: e["name"],
+                                location: e["location"],
+                                time: e["time"],
+                                key: e["key"],
+                                typeOfData: e["typeOfData"],
+                                value: e["value"]);
+                          }).toList());
+                    }).toList();
+                  });
+                  break;
+                case 'HUB':
+                  List<dynamic> hubs = response['hubs'];
+                  setState(() {
+                    this.hubs = hubs.map((e) {
+                      return Hub(
+                        lastConnected: e["lastConnected"],
+                        uuid: e["uuid"],
+                      );
+                    }).toList();
+                  });
+                  break;
+                case 'SENSOR':
+                  Sensor newSensor = Sensor(
+                      model: Sensor.modelFromNumber(
+                          response['sensor-data']['model']),
+                      uuid: response['sensor-data']['uuid'],
+                      name: response['sensor-data']['name'],
+                      location: response['sensor-data']['location'],
+                      time: response['sensor-data']['time'],
+                      key: response['sensor-data']['key'],
+                      typeOfData: response['sensor-data']['typeOfData'],
+                      value: response['sensor-data']['value']);
+                  bool changed = false;
+                  for (var fridge in fridges) {
+                    for (int i = 0; i < fridge.sensors.length; i++) {
+                      if (fridge.sensors[i].uuid == newSensor.uuid &&
+                          fridge.sensors[i].typeOfData ==
+                              newSensor.typeOfData &&
+                          fridge.sensors[i].key != newSensor.key) {
+                        changed = true;
+                        fridge.sensors[i] = newSensor;
+                      }
+                    }
+                  }
+                  debugPrint("changed=$changed");
+                  if (changed) {
+                    List<Fridge> f = fridges.map((fridge) {
+                      Fridge f = Fridge(
+                          name: fridge.name,
+                          uuid: fridge.uuid,
+                          sensors: fridge.sensors
+                              .map((e) => Sensor(
+                                    key: e.key,
+                                    uuid: e.uuid,
+                                    model: e.model,
+                                    name: e.name,
+                                    value: e.value,
+                                    location: e.location,
+                                    time: e.time,
+                                    typeOfData: e.typeOfData,
+                                  ))
+                              .toList());
+                      return f;
+                    }).toList();
+                    setState(() {
+                      fridges = f;
+                    });
+                  }
+                  break;
+              }
+            } else if (response["status-code"] == 403) {
+              var jsonResult = response['json-result'];
+              var error = jsonResult['error'];
+              if (error == "invalid-access-token") {
+                await prefs?.remove("access_code");
+                setState(() {
+                  this.accessCode = null;
+                });
+              }
+            } else {
+              // If that response was not OK, throw an error.
+              throw Exception('Failed to load post');
+            }
+          },
+          onDone: () {
+            Timer(const Duration(seconds: 2), getData);
+          },
+          onError: (error, stackTrace) {
+            debugPrint("error $error, $stackTrace");
+          },
+        );
+      } catch (e) {
+        debugPrint("Error caught: $e");
+        Timer(const Duration(seconds: 2), getData);
       }
-      setState(() {
-        curUser = user["login"];
-      });
     }
   }
 }

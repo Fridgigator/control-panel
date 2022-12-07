@@ -1,7 +1,7 @@
 class Hub {
   String uuid;
-  bool isConnected;
-  Hub({required this.uuid, required this.isConnected});
+  int lastConnected;
+  Hub({required this.uuid, required this.lastConnected});
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is Hub && uuid == other.uuid;
@@ -35,6 +35,19 @@ class Sensor {
 
   @override
   int get hashCode => key.hashCode;
+
+  static String modelFromNumber(int model) {
+    switch (model) {
+      case 0:
+        return "TI";
+
+      case 1:
+        return "Nordic";
+      case 3:
+        return "Custom";
+    }
+    return "";
+  }
 }
 
 class Fridge {

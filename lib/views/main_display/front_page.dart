@@ -9,6 +9,7 @@ class FrontPage extends StatefulWidget {
   const FrontPage(
       {required this.accessCode,
       Key? key,
+      required this.clock,
       required this.fridges,
       required this.loggedIn,
       required this.remoteName,
@@ -19,6 +20,7 @@ class FrontPage extends StatefulWidget {
   final List<Hub> hubs;
   final String? remoteName;
   final bool loggedIn;
+  final DateTime clock;
 
   @override
   State<FrontPage> createState() => _MyFrontPageState();
@@ -27,6 +29,8 @@ class FrontPage extends StatefulWidget {
 class _MyFrontPageState extends State<FrontPage> {
   @override
   Widget build(BuildContext context) {
+    debugPrint('Rebuilding');
+
     widget.hubs.sort((Hub a, Hub b) => a.uuid.compareTo(b.uuid));
     Widget child;
     if (widget.accessCode == null) {
@@ -56,21 +60,22 @@ class _MyFrontPageState extends State<FrontPage> {
                           DataColumn(label: Text("Connected")),
                           DataColumn(label: Text("Remove")),
                         ],
-                        rows: widget.hubs
-                            .map((e) => DataRow(cells: [
-                                  DataCell(Text(e.uuid)),
-                                  DataCell(e.isConnected
-                                      ? const Icon(Icons.circle,
-                                          color: Colors.green)
-                                      : const Icon(Icons.circle,
-                                          color: Colors.red)),
-                                  DataCell(IconButton(
-                                      icon: const Icon(Icons.clear),
-                                      onPressed: () {
-                                        deleteHub(e.uuid);
-                                      })),
-                                ]))
-                            .toList()),
+                        rows: widget.hubs.map((e) {
+                          return DataRow(cells: [
+                            DataCell(Text(e.uuid)),
+                            DataCell((widget.clock.millisecondsSinceEpoch /
+                                            1000 -
+                                        e.lastConnected) <
+                                    60
+                                ? const Icon(Icons.circle, color: Colors.green)
+                                : const Icon(Icons.circle, color: Colors.red)),
+                            DataCell(IconButton(
+                                icon: const Icon(Icons.clear),
+                                onPressed: () {
+                                  deleteHub(e.uuid);
+                                })),
+                          ]);
+                        }).toList()),
                   ))
             ],
           ));
@@ -90,6 +95,7 @@ class _MyFrontPageState extends State<FrontPage> {
             ]));
 
             rows.add(Row(
+              key: ObjectKey(fridge),
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ConstrainedBox(
@@ -115,6 +121,21 @@ class _MyFrontPageState extends State<FrontPage> {
                                 case 2:
                                   text = "Humidity: ";
                                   break;
+                                case 3:
+                                  text = "DHT 22 Temp: ";
+                                  break;
+                                case 4:
+                                  text = "DHT 22 Humidity: ";
+                                  break;
+                                case 5:
+                                  text = "DHT 11 Temp: ";
+                                  break;
+                                case 6:
+                                  text = "DHT 11 Humidity: ";
+                                  break;
+                                case 7:
+                                  text = "Pico Temp: ";
+                                  break;
                               }
                               return DataRow(cells: [
                                 DataCell(Tooltip(
@@ -130,7 +151,8 @@ class _MyFrontPageState extends State<FrontPage> {
                                                 ((e.time) * 1000 * 1000)
                                                     .toInt(),
                                                 isUtc: true)
-                                            .toLocal())
+                                            .toLocal(),
+                                        clock: widget.clock)
                                     : "Never")),
                                 DataCell(IconButton(
                                     icon: const Icon(Icons.auto_graph_rounded),
