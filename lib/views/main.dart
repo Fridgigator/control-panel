@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data_structures/main_view_state.dart';
 import ' main_navigation_rail.dart';
+import 'login/login.dart';
 import 'overview/overview.dart';
 
 class MyApp extends StatelessWidget {
@@ -55,15 +56,11 @@ class _MainPageState extends State<_MyAppState> {
               sp?.setBool("darktheme", darkTheme);
             });
           },
-          logOut: () {
-            setState(() {
-              loggedIn = !loggedIn;
-            });
-          },
           loggedIn: loggedIn,
         );
     debugPrint("darktheme=$darkTheme");
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
       //darkTheme: ,
       title: 'Control Panel',
@@ -78,6 +75,7 @@ class _MainPageState extends State<_MyAppState> {
             overviewScaffold(MainViewState.fridges),
         MainViewState.settings.name: (context) =>
             overviewScaffold(MainViewState.settings),
+        "login": (context) => LoginScaffold(darkTheme: darkTheme),
       },
     );
   }
@@ -89,7 +87,6 @@ class _MainScaffold extends StatelessWidget {
   final bool loggedIn;
 
   final void Function() invertDarkTheme;
-  final void Function() logOut;
 
   final bool doneLoading;
 
@@ -98,7 +95,6 @@ class _MainScaffold extends StatelessWidget {
     required this.currentlySelectedPage,
     required this.invertDarkTheme,
     required this.loggedIn,
-    required this.logOut,
     required this.doneLoading,
   });
 
@@ -116,7 +112,7 @@ class _MainScaffold extends StatelessWidget {
                 onPressed: invertDarkTheme,
                 icon: Icon(darkTheme ? Icons.light_mode : Icons.dark_mode)),
             IconButton(
-                onPressed: logOut,
+                onPressed: () => Navigator.pushNamed(context, "login"),
                 icon: Icon(loggedIn ? Icons.logout : Icons.login))
           ],
         ),

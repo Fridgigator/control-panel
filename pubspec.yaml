@@ -55,6 +55,9 @@ dependencies:
   im_animations: ^0.1.2
   gauges: ^1.0.0
   settings_ui: ^2.0.2
+  flutter_login: ^4.1.0
+  font_awesome_flutter: ^10.3.0
+  flutter_svg_provider: ^1.0.3
 
 
 dependency_overrides:
