@@ -10,8 +10,9 @@ class Fridges extends MainWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Wrap(direction: Axis.horizontal, children: [
+    return Center(
+        child: SingleChildScrollView(
+            child: Wrap(direction: Axis.horizontal, children: [
       FridgeCard(
         darkTheme: darkTheme,
       ),
@@ -72,7 +73,7 @@ class Fridges extends MainWidget {
       FridgeCard(
         darkTheme: darkTheme,
       ),
-    ]));
+    ])));
   }
 
   @override

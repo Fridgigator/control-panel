@@ -9,8 +9,9 @@ class Hubs extends MainWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Wrap(direction: Axis.horizontal, children: [
+    return Center(
+        child: SingleChildScrollView(
+            child: Wrap(direction: Axis.horizontal, children: [
       SensorView(
         darkTheme: darkTheme,
       ),
@@ -71,7 +72,7 @@ class Hubs extends MainWidget {
       SensorView(
         darkTheme: darkTheme,
       ),
-    ]));
+    ])));
   }
 
   @override
