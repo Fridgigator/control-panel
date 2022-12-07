@@ -23,11 +23,6 @@ class MainBottomNavigationBar extends StatelessWidget {
             backgroundColor: Colors.green,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.sensors),
-            label: 'Sensors',
-            backgroundColor: Colors.purple,
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.square),
             label: 'Fridges',
             backgroundColor: Colors.pink,

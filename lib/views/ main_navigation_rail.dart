@@ -1,3 +1,4 @@
+import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../data_structures/main_view_state.dart';
@@ -5,7 +6,7 @@ import '../data_structures/main_view_state.dart';
 class MainNavigationRail extends StatelessWidget {
   final MainViewState viewState;
   final Function(int?) changeViewState;
-  final Widget mainView;
+  final MainWidget mainView;
   const MainNavigationRail(
       {super.key,
       required this.viewState,
@@ -31,11 +32,6 @@ class MainNavigationRail extends StatelessWidget {
             label: Text('Hubs'),
           ),
           NavigationRailDestination(
-            icon: Icon(Icons.sensors_outlined),
-            selectedIcon: Icon(Icons.sensors),
-            label: Text('Sensors'),
-          ),
-          NavigationRailDestination(
             icon: Icon(Icons.crop_square_outlined),
             selectedIcon: Icon(Icons.square),
             label: Text('Fridges'),
@@ -47,35 +43,13 @@ class MainNavigationRail extends StatelessWidget {
           ),
         ],
       ),
+
+      if (mainView.hasSideBar()) ...[
+        const VerticalDivider(thickness: 1, width: 1),
+        SizedBox(width: 304.0, child: mainView.getSideBar())
+      ],
       const VerticalDivider(thickness: 1, width: 1),
-      SizedBox(
-          width: 304.0,
-          child: ListView(
-            children: [
-              ListTile(
-                title: const Text('Fridge 1'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Text('Fridge 2'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Text('Fridge 3'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Text('Fridge 4'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Text('Fridge 5'),
-                onTap: () {},
-              ),
-            ],
-          )),
-      const VerticalDivider(thickness: 1, width: 1),
-      mainView
+      Expanded(child: mainView)
       // This is the main content.
     ]);
   }

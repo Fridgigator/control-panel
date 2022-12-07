@@ -1,8 +1,9 @@
+import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/views/overview/fridge_overview_display.dart';
 import 'package:control_panel/views/overview/overview_connection_stats.dart';
 import 'package:flutter/material.dart';
 
-class Overview extends StatelessWidget {
+class Overview extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
   const Overview(
@@ -50,5 +51,38 @@ class Overview extends StatelessWidget {
             children: fridgeCounts,
           )),
         ]);
+  }
+
+  @override
+  Widget getSideBar() {
+    return ListView(
+      children: [
+        ListTile(
+          title: const Text('Fridge 1'),
+          onTap: () {},
+        ),
+        ListTile(
+          title: const Text('Fridge 2'),
+          onTap: () {},
+        ),
+        ListTile(
+          title: const Text('Fridge 3'),
+          onTap: () {},
+        ),
+        ListTile(
+          title: const Text('Fridge 4'),
+          onTap: () {},
+        ),
+        ListTile(
+          title: const Text('Fridge 5'),
+          onTap: () {},
+        ),
+      ],
+    );
+  }
+
+  @override
+  bool hasSideBar() {
+    return true;
   }
 }

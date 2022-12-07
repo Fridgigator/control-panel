@@ -1,9 +1,8 @@
 enum MainViewState {
   overview(0),
   hubs(1),
-  sensors(2),
-  fridges(3),
-  settings(4);
+  fridges(2),
+  settings(3);
 
   const MainViewState(this.value);
   final num value;

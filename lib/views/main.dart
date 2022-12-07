@@ -1,5 +1,6 @@
-import 'package:control_panel/views/Fridges/fridges.dart';
-import 'package:control_panel/views/Settings/settings.dart';
+import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/views/fridges/fridges.dart';
+import 'package:control_panel/views/settings/settings.dart';
 import 'package:control_panel/views/hubs/hubs.dart';
 import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data_structures/main_view_state.dart';
 import ' main_navigation_rail.dart';
 import 'overview/overview.dart';
-import 'sensors/sensors.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -62,10 +62,10 @@ class _MainPageState extends State<_MyAppState> {
           },
           loggedIn: loggedIn,
         );
-
+    debugPrint("darktheme=$darkTheme");
     return MaterialApp(
-      theme: ThemeData(),
-      darkTheme: darkTheme ? ThemeData.dark() : ThemeData.light(),
+      theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
+      //darkTheme: ,
       title: 'Control Panel',
       initialRoute: MainViewState.overview.name,
       routes: {
@@ -76,8 +76,6 @@ class _MainPageState extends State<_MyAppState> {
             overviewScaffold(MainViewState.hubs),
         MainViewState.fridges.name: (context) =>
             overviewScaffold(MainViewState.fridges),
-        MainViewState.sensors.name: (context) =>
-            overviewScaffold(MainViewState.sensors),
         MainViewState.settings.name: (context) =>
             overviewScaffold(MainViewState.settings),
       },
@@ -137,24 +135,19 @@ class _MainScaffold extends StatelessWidget {
                 return Overview(darkTheme: darkTheme, smallDevice: true);
               case MainViewState.hubs:
                 return Hubs(darkTheme: darkTheme, smallDevice: true);
-              case MainViewState.sensors:
-                return Sensors(darkTheme: darkTheme, smallDevice: true);
               case MainViewState.fridges:
                 return Fridges(darkTheme: darkTheme, smallDevice: true);
               case MainViewState.settings:
                 return Settings(darkTheme: darkTheme, smallDevice: true);
             }
           } else {
-            Widget child;
+            MainWidget child;
             switch (currentlySelectedPage) {
               case MainViewState.overview:
                 child = Overview(darkTheme: darkTheme, smallDevice: false);
                 break;
               case MainViewState.hubs:
                 child = Hubs(darkTheme: darkTheme, smallDevice: false);
-                break;
-              case MainViewState.sensors:
-                child = Sensors(darkTheme: darkTheme, smallDevice: false);
                 break;
               case MainViewState.fridges:
                 child = Fridges(darkTheme: darkTheme, smallDevice: false);
@@ -164,7 +157,7 @@ class _MainScaffold extends StatelessWidget {
             }
 
             return MainNavigationRail(
-                mainView: Expanded(child: child),
+                mainView: child,
                 viewState: currentlySelectedPage,
                 changeViewState: (int? select) {
                   if (select == null) return;

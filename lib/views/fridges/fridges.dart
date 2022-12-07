@@ -1,74 +1,75 @@
 import 'package:control_panel/data_structures/main_widget.dart';
-import 'package:control_panel/views/hubs/sensor_view.dart';
+import 'package:control_panel/views/fridges/fridge_card.dart';
 import 'package:flutter/material.dart';
 
-class Hubs extends MainWidget {
+class Fridges extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
-  const Hubs({super.key, required this.darkTheme, required this.smallDevice});
+  const Fridges(
+      {super.key, required this.darkTheme, required this.smallDevice});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Wrap(direction: Axis.horizontal, children: [
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
-      SensorView(
+      FridgeCard(
         darkTheme: darkTheme,
       ),
     ]));
