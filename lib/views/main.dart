@@ -28,7 +28,7 @@ class _MyAppState extends StatefulWidget {
 class _MainPageState extends State<_MyAppState> {
   bool darkTheme = false;
   bool doneLoading = false;
-  bool loggedIn = false;
+  String? accessToken;
   SharedPreferences? sp;
   MainViewState currentlySelectedPage = MainViewState.overview;
 
@@ -40,25 +40,51 @@ class _MainPageState extends State<_MyAppState> {
       setState(() {
         doneLoading = true;
         darkTheme = sp?.getBool("darktheme") ?? false;
+        accessToken = sp?.getString("accessToken");
+        if (accessToken == "") {
+          accessToken = null;
+        }
       });
     }();
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isOnSmallDevice =
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width <
+            900;
     overviewScaffold(pageToGo) => _MainScaffold(
           doneLoading: doneLoading,
           currentlySelectedPage: pageToGo,
           darkTheme: darkTheme,
+          onLogin: (accessToken) {
+            debugPrint("Done, accessToken=$accessToken");
+            sp?.setString("accessToken", accessToken);
+            setState(() {
+              this.accessToken = accessToken;
+              if (accessToken == "") {
+                this.accessToken = null;
+              }
+            });
+          },
+          onLogout: () {
+            sp?.setString("accessToken", "");
+            setState(() {
+              accessToken = null;
+            });
+          },
+          isOnSmallDevice: isOnSmallDevice,
           invertDarkTheme: () {
             setState(() {
               darkTheme = !darkTheme;
               sp?.setBool("darktheme", darkTheme);
             });
           },
-          loggedIn: loggedIn,
+          accessToken: accessToken,
         );
     debugPrint("darktheme=$darkTheme");
+    debugPrint("accessToken=$accessToken");
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
@@ -75,7 +101,17 @@ class _MainPageState extends State<_MyAppState> {
             overviewScaffold(MainViewState.fridges),
         MainViewState.settings.name: (context) =>
             overviewScaffold(MainViewState.settings),
-        "login": (context) => LoginScaffold(darkTheme: darkTheme),
+        "login": (context) => LoginScaffold(
+            darkTheme: darkTheme,
+            onLogin: (accessToken) {
+              sp?.setString("accessToken", accessToken);
+              setState(() {
+                this.accessToken = accessToken;
+                if (accessToken == "") {
+                  this.accessToken = null;
+                }
+              });
+            })
       },
     );
   }
@@ -84,26 +120,33 @@ class _MainPageState extends State<_MyAppState> {
 class _MainScaffold extends StatelessWidget {
   final MainViewState currentlySelectedPage;
   final bool darkTheme;
-  final bool loggedIn;
+  final String? accessToken;
 
   final void Function() invertDarkTheme;
 
   final bool doneLoading;
+  final bool isOnSmallDevice;
+  final Function(String accessToken) onLogin;
+  final Function() onLogout;
 
   const _MainScaffold({
     required this.darkTheme,
     required this.currentlySelectedPage,
     required this.invertDarkTheme,
-    required this.loggedIn,
+    required this.accessToken,
     required this.doneLoading,
+    required this.isOnSmallDevice,
+    required this.onLogin,
+    required this.onLogout,
   });
 
   @override
   Widget build(BuildContext context) {
+    String? accessToken = this.accessToken;
     if (!doneLoading) return const CircularProgressIndicator();
-    bool isOnSmallDevice =
-        MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width <
-            900;
+    if (accessToken == null) {
+      return LoginScaffold(darkTheme: darkTheme, onLogin: onLogin);
+    }
     return Scaffold(
         appBar: AppBar(
           title: const Text('Control Panel'),
@@ -112,8 +155,10 @@ class _MainScaffold extends StatelessWidget {
                 onPressed: invertDarkTheme,
                 icon: Icon(darkTheme ? Icons.light_mode : Icons.dark_mode)),
             IconButton(
-                onPressed: () => Navigator.pushNamed(context, "login"),
-                icon: Icon(loggedIn ? Icons.logout : Icons.login))
+                onPressed: () {
+                  onLogout();
+                },
+                icon: const Icon(Icons.logout))
           ],
         ),
         body: LayoutBuilder(

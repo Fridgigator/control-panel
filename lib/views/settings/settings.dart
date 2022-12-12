@@ -12,7 +12,7 @@ class Settings extends MainWidget {
     return SettingsList(
       sections: [
         SettingsSection(
-          title: const Text('General'),
+          title: const Text('User info'),
           tiles: [
             SettingsTile.navigation(
               title: const Text('Register Phone'),
@@ -22,6 +22,20 @@ class Settings extends MainWidget {
                 debugPrint("Hihihih");
               },
             ),
+            SettingsTile.navigation(
+              title: const Text('Link to other accounts'),
+              //leading: const Icon(Icons.license),
+              description: const Text(
+                  'Read all the Open Source licenses that are applicable'),
+              onPressed: (context) {
+                debugPrint("Hihihih");
+              },
+            ),
+          ],
+        ),
+        SettingsSection(
+          title: const Text('Legal'),
+          tiles: [
             SettingsTile.navigation(
               title: const Text('Licensing information'),
               //leading: const Icon(Icons.license),

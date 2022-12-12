@@ -1,52 +1,86 @@
+import 'dart:convert';
+
+import 'package:control_panel/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 import '../main.dart';
 
-const users = {
-  'dribbble@gmail.com': '12345',
-  'hunter@gmail.com': 'hunter',
-};
-
-class LoginScaffold extends StatefulWidget {
-  const LoginScaffold({super.key, required this.darkTheme});
+class LoginScaffold extends StatelessWidget {
+  const LoginScaffold(
+      {super.key, required this.darkTheme, required this.onLogin});
   final bool darkTheme;
-  @override
-  createState() => _LoginState();
-}
+  final Function(String accessToken) onLogin;
 
-class _LoginState extends State<LoginScaffold> {
-  final Duration loginTime = const Duration(seconds: 3);
-
-  Future<String?> _authUser(LoginData data) {
-    debugPrint('Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(data.name)) {
-        return 'User not exists';
+  Future<String?> _authUser(LoginData data) async {
+    try {
+      var body = (await http
+          .post(Uri.parse("$remoteHttpDomain/login/v1/email/signin"), body: {
+        "email": data.name,
+        "password": data.password,
+      }));
+      if (body.statusCode != 200) {
+        debugPrint("${body.statusCode}");
+        throw "Backend Error";
       }
-      if (users[data.name] != data.password) {
-        return 'Password does not match';
+      var returnMap = jsonDecode(body.body);
+      if (returnMap["error-code"] == 0) {
+        debugPrint("$returnMap");
+        onLogin(returnMap["access-token"]);
+        return '';
+      } else {
+        return returnMap["error-output"];
       }
-      return null;
-    });
+    } catch (e) {
+      debugPrint("$e");
+      return 'Error: $e';
+    }
   }
 
-  Future<String?> _signupUser(SignupData data) {
-    debugPrint('Signup Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      return null;
-    });
+  Future<String?> _signupUser(SignupData data) async {
+    try {
+      var body = (await http
+          .post(Uri.parse("$remoteHttpDomain/login/v1/email/signup"), body: {
+        "email": data.name,
+        "password": data.password,
+      }));
+      if (body.statusCode != 200) {
+        throw "Backend Error";
+      }
+      var returnMap = jsonDecode(body.body);
+      if (returnMap["error-code"] == 0) {
+        return '';
+      } else {
+        return returnMap["error-output"];
+      }
+    } catch (e) {
+      debugPrint("$e");
+      return 'Error: $e';
+    }
   }
 
-  Future<String> _recoverPassword(String name) {
-    debugPrint('Name: $name');
-    return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(name)) {
-        return 'User not exists';
+  Future<String?> _recoverPassword(String name) async {
+    try {
+      var body = (await http
+          .post(Uri.parse("$remoteHttpDomain/login/v1/email/recover"), body: {
+        "email": name,
+      }));
+      if (body.statusCode != 200) {
+        throw "Backend Error";
       }
-      return '';
-    });
+      var returnMap = jsonDecode(body.body);
+      if (returnMap["error-code"] == 0) {
+        return null;
+      } else {
+        return returnMap["error-output"];
+      }
+    } catch (e) {
+      debugPrint("$e");
+      return 'Error: $e';
+    }
   }
 
   @override
@@ -55,10 +89,19 @@ class _LoginState extends State<LoginScaffold> {
       title: 'Fridgigator',
       logo: const Svg('assets/assets/fridge.svg'),
       loginProviders: [
-        LoginProvider(callback: () {
-          return null;
-        })
+        LoginProvider(
+            icon: FontAwesomeIcons.github,
+            callback: () {
+              return null;
+            })
       ],
+      passwordValidator: (String? passwd) {
+        if (passwd == null || passwd.length < 6) {
+          return "Password should be at least 6 characters";
+        } else {
+          return null;
+        }
+      },
       onLogin: _authUser,
       onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
