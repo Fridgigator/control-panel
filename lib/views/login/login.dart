@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:control_panel/view_model/login/email.dart';
 import 'package:control_panel/view_model/login/github.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +5,12 @@ import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 
 class LoginScaffold extends StatelessWidget {
   const LoginScaffold({super.key, required this.darkTheme});
   final bool darkTheme;
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

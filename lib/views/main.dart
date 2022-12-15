@@ -4,6 +4,8 @@ import 'package:control_panel/views/settings/settings.dart';
 import 'package:control_panel/views/hubs/hubs.dart';
 import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data_structures/main_view_state.dart';
@@ -37,6 +39,7 @@ class _MainPageState extends State<_MyAppState> {
     super.initState();
     () async {
       sp = await SharedPreferences.getInstance();
+      FlutterNativeSplash.remove();
       setState(() {
         doneLoading = true;
         darkTheme = sp?.getBool("darktheme") ?? false;

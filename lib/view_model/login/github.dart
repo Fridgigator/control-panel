@@ -3,14 +3,48 @@ import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class GithubLoginViewModel extends ChangeNotifier {
+  @override
+  void dispose() {
+    super.dispose();
+    log("Disposing");
+  }
+
   Future<String?> tryLogin() async {
+    const androidConfig = FlutterBackgroundAndroidConfig(
+      notificationTitle: "Fridgigator",
+      notificationText:
+          "Background notification for keeping the app running in the background",
+      notificationImportance: AndroidNotificationImportance.Default,
+      notificationIcon:
+          AndroidResource(name: 'background_icon', defType: 'drawable'),
+    );
     try {
-      final channel = WebSocketChannel.connect(
+      var canDoBackground =
+          await FlutterBackground.initialize(androidConfig: androidConfig);
+      if (!canDoBackground) {
+        return "Cannot stay alive in the background";
+      }
+
+      canDoBackground = await FlutterBackground.enableBackgroundExecution();
+      if (!canDoBackground) {
+        return "Cannot stay alive in the background";
+      }
+    } catch (e) {
+      if (e is! MissingPluginException) {
+        log("$e");
+        return "Cannot stay alive in the background";
+      }
+    }
+    WebSocketChannel channel;
+    try {
+      channel = WebSocketChannel.connect(
         Uri.parse('$remoteWsDomain/login/v1/github/do-login'),
       );
 
@@ -18,13 +52,14 @@ class GithubLoginViewModel extends ChangeNotifier {
       int i = 0;
 
       await for (String data in channel.stream) {
+        log("$i");
         if (i == 0) {
           var jsonData = jsonDecode(data);
           var state = jsonData["state"];
           log("redirect_uri: $remoteHttpDomain/login/github-response");
           var loginGithubUrl =
               Uri.https("github.com", "login/oauth/authorize", {
-            "client_id": "30bf4172998cc4ec684e",
+            "client_id": clientID,
             "state": state,
             "redirect_uri": "$remoteHttpDomain/login/github-response"
           });
@@ -41,40 +76,20 @@ class GithubLoginViewModel extends ChangeNotifier {
             sp.setString("accessToken", jsonData["access-token"]);
             return null;
           } else {
-            return 'Backend error';
+            return jsonData["error-text"];
           }
         }
       }
     } catch (e) {
-      debugPrint("$e");
+      if (e is PlatformException) {
+        if (e.code == "ACTIVITY_NOT_FOUND") {
+          return "You may not have a proper app for viewing this content";
+        }
+        return ' ${e.message}';
+      }
+      log("$e");
       return 'Backend Error';
     }
     return 'Not complete';
   }
-}
-
-@immutable
-abstract class ReturnState {
-  const ReturnState();
-}
-
-@immutable
-class LaunchURLState extends ReturnState {
-  final Uri remoteURI;
-
-  const LaunchURLState({required this.remoteURI});
-}
-
-@immutable
-class AccessTokenState extends ReturnState {
-  final String accessToken;
-
-  const AccessTokenState({required this.accessToken});
-}
-
-@immutable
-class ErrorState extends ReturnState {
-  final String error;
-
-  const ErrorState({required this.error});
 }
