@@ -101,17 +101,7 @@ class _MainPageState extends State<_MyAppState> {
             overviewScaffold(MainViewState.fridges),
         MainViewState.settings.name: (context) =>
             overviewScaffold(MainViewState.settings),
-        "login": (context) => LoginScaffold(
-            darkTheme: darkTheme,
-            onLogin: (accessToken) {
-              sp?.setString("accessToken", accessToken);
-              setState(() {
-                this.accessToken = accessToken;
-                if (accessToken == "") {
-                  this.accessToken = null;
-                }
-              });
-            })
+        "login": (context) => LoginScaffold(darkTheme: darkTheme)
       },
     );
   }
@@ -145,7 +135,7 @@ class _MainScaffold extends StatelessWidget {
     String? accessToken = this.accessToken;
     if (!doneLoading) return const CircularProgressIndicator();
     if (accessToken == null) {
-      return LoginScaffold(darkTheme: darkTheme, onLogin: onLogin);
+      return LoginScaffold(darkTheme: darkTheme);
     }
     return Scaffold(
         appBar: AppBar(
@@ -163,10 +153,7 @@ class _MainScaffold extends StatelessWidget {
         ),
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          double width =
-              MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                  .size
-                  .width;
+          double width = constraints.maxWidth;
 
           if (width < 250) {
             return const Center(child: Text("Screen too small"));
