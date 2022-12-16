@@ -1,14 +1,13 @@
 import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/view_model/main.dart';
 import 'package:control_panel/views/fridges/fridges.dart';
 import 'package:control_panel/views/settings/settings.dart';
 import 'package:control_panel/views/hubs/hubs.dart';
 import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background/flutter_background.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import '../data_structures/main_view_state.dart';
 import ' main_navigation_rail.dart';
@@ -30,89 +29,91 @@ class _MyAppState extends StatefulWidget {
 }
 
 class _MainPageState extends State<_MyAppState> {
-  bool darkTheme = false;
-  bool doneLoading = false;
-  String? accessToken;
-  SharedPreferences? sp;
   MainViewState currentlySelectedPage = MainViewState.overview;
-
-  @override
-  void initState() {
-    super.initState();
-    () async {
-      sp = await SharedPreferences.getInstance();
-      FlutterNativeSplash.remove();
-      setState(() {
-        doneLoading = true;
-        darkTheme = sp?.getBool("darktheme") ?? false;
-        accessToken = sp?.getString("accessToken");
-        if (accessToken == "") {
-          accessToken = null;
-        }
-      });
-    }();
-  }
 
   @override
   Widget build(BuildContext context) {
     bool isOnSmallDevice =
         MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width <
             900;
-    overviewScaffold(pageToGo) => _MainScaffold(
-          doneLoading: doneLoading,
-          currentlySelectedPage: pageToGo,
-          darkTheme: darkTheme,
-          onLogin: (accessToken) {
-            debugPrint("Done, accessToken=$accessToken");
-            sp?.setString("accessToken", accessToken);
-            setState(() {
-              this.accessToken = accessToken;
-              if (accessToken == "") {
-                this.accessToken = null;
-              }
-            });
-          },
-          onLogout: () {
-            sp?.setString("accessToken", "");
-            setState(() {
-              accessToken = null;
-            });
-          },
-          isOnSmallDevice: isOnSmallDevice,
-          invertDarkTheme: () {
-            setState(() {
-              darkTheme = !darkTheme;
-              sp?.setBool("darktheme", darkTheme);
-            });
-          },
-          accessToken: accessToken,
-        );
-    debugPrint("darktheme=$darkTheme");
-    debugPrint("accessToken=$accessToken");
-    final routes = {
-      "/": (context) => overviewScaffold(MainViewState.overview),
-      "overview": (context) => overviewScaffold(MainViewState.overview),
-      "hubs": (context) => overviewScaffold(MainViewState.hubs),
-      "fridges": (context) => overviewScaffold(MainViewState.fridges),
-      "settings": (context) => overviewScaffold(MainViewState.settings),
-      "login": (context) => LoginScaffold(darkTheme: darkTheme)
-    };
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
-        title: 'Control Panel',
-        initialRoute: MainViewState.overview.name,
-        onGenerateRoute: (settings) {
-          return PageRouteBuilder(
-              settings: settings,
-              pageBuilder: (context, _, __) {
-                log("context=$settings, ${settings.name}");
-                return routes[settings.name]!(context);
-              },
-              transitionDuration: const Duration(milliseconds: 800),
-              transitionsBuilder: (_, a, __, c) =>
-                  FadeTransition(opacity: a, child: c));
+
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => MainViewModel()),
+        ],
+        builder: (context, child) {
+          return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: Provider.of<MainViewModel>(context).darkTheme
+                  ? ThemeData.dark()
+                  : ThemeData.light(),
+              title: 'Control Panel',
+              initialRoute: MainViewState.overview.name,
+              onGenerateRoute: (settings) {
+                return PageRouteBuilder(
+                    settings: settings,
+                    pageBuilder: (context, _, __) {
+                      log("context=$settings, ${settings.name}");
+
+                      final routes = {
+                        "/": (context) => OverviewScaffold(
+                              pageToGo: MainViewState.overview,
+                              isOnSmallDevice: isOnSmallDevice,
+                            ),
+                        "overview": (context) => OverviewScaffold(
+                              pageToGo: MainViewState.overview,
+                              isOnSmallDevice: isOnSmallDevice,
+                            ),
+                        "hubs": (context) => OverviewScaffold(
+                              pageToGo: MainViewState.hubs,
+                              isOnSmallDevice: isOnSmallDevice,
+                            ),
+                        "fridges": (context) => OverviewScaffold(
+                              pageToGo: MainViewState.fridges,
+                              isOnSmallDevice: isOnSmallDevice,
+                            ),
+                        "settings": (context) => OverviewScaffold(
+                              pageToGo: MainViewState.settings,
+                              isOnSmallDevice: isOnSmallDevice,
+                            ),
+                      };
+                      if (settings.name != "login") {
+                        return routes[settings.name]!(context);
+                      } else {
+                        return LoginScaffold(
+                            darkTheme:
+                                Provider.of<MainViewModel>(context).darkTheme);
+                      }
+                    },
+                    transitionDuration: const Duration(milliseconds: 800),
+                    transitionsBuilder: (_, a, __, c) =>
+                        FadeTransition(opacity: a, child: c));
+              });
         });
+  }
+}
+
+class OverviewScaffold extends StatelessWidget {
+  final MainViewState pageToGo;
+  final bool isOnSmallDevice;
+  const OverviewScaffold(
+      {super.key, required this.pageToGo, required this.isOnSmallDevice});
+
+  @override
+  Widget build(BuildContext context) {
+    return _MainScaffold(
+      doneLoading:
+          Provider.of<MainViewModel>(context, listen: false).doneLoading,
+      currentlySelectedPage: pageToGo,
+      darkTheme: Provider.of<MainViewModel>(context, listen: false).darkTheme,
+      onLogin: Provider.of<MainViewModel>(context, listen: false).login,
+      onLogout: Provider.of<MainViewModel>(context, listen: false).logout,
+      isOnSmallDevice: isOnSmallDevice,
+      invertDarkTheme:
+          Provider.of<MainViewModel>(context, listen: false).invertTheme,
+      accessToken:
+          Provider.of<MainViewModel>(context, listen: false).accessToken,
+    );
   }
 }
 
