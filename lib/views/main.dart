@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/views/fridges/fridges.dart';
 import 'package:control_panel/views/settings/settings.dart';
@@ -87,26 +89,30 @@ class _MainPageState extends State<_MyAppState> {
         );
     debugPrint("darktheme=$darkTheme");
     debugPrint("accessToken=$accessToken");
-
+    final routes = {
+      "/": (context) => overviewScaffold(MainViewState.overview),
+      "overview": (context) => overviewScaffold(MainViewState.overview),
+      "hubs": (context) => overviewScaffold(MainViewState.hubs),
+      "fridges": (context) => overviewScaffold(MainViewState.fridges),
+      "settings": (context) => overviewScaffold(MainViewState.settings),
+      "login": (context) => LoginScaffold(darkTheme: darkTheme)
+    };
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
-      //darkTheme: ,
-      title: 'Control Panel',
-      initialRoute: MainViewState.overview.name,
-      routes: {
-        "/": (context) => overviewScaffold(MainViewState.overview),
-        MainViewState.overview.name: (context) =>
-            overviewScaffold(MainViewState.overview),
-        MainViewState.hubs.name: (context) =>
-            overviewScaffold(MainViewState.hubs),
-        MainViewState.fridges.name: (context) =>
-            overviewScaffold(MainViewState.fridges),
-        MainViewState.settings.name: (context) =>
-            overviewScaffold(MainViewState.settings),
-        "login": (context) => LoginScaffold(darkTheme: darkTheme)
-      },
-    );
+        debugShowCheckedModeBanner: false,
+        theme: darkTheme ? ThemeData.dark() : ThemeData.light(),
+        title: 'Control Panel',
+        initialRoute: MainViewState.overview.name,
+        onGenerateRoute: (settings) {
+          return PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, _, __) {
+                log("context=$settings, ${settings.name}");
+                return routes[settings.name]!(context);
+              },
+              transitionDuration: const Duration(milliseconds: 800),
+              transitionsBuilder: (_, a, __, c) =>
+                  FadeTransition(opacity: a, child: c));
+        });
   }
 }
 
