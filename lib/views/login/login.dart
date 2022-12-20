@@ -25,9 +25,7 @@ class LoginScaffold extends StatelessWidget {
             loginProviders: [
               LoginProvider(
                 icon: FontAwesomeIcons.github,
-                callback:
-                    Provider.of<GithubLoginViewModel>(context, listen: false)
-                        .tryLogin,
+                callback: Provider.of<GithubLoginViewModel>(context).tryLogin,
               ),
             ],
             passwordValidator: (String? passwd) {
@@ -37,18 +35,15 @@ class LoginScaffold extends StatelessWidget {
                 return null;
               }
             },
-            onLogin:
-                Provider.of<EmailViewModel>(context, listen: false).authUser,
-            onSignup:
-                Provider.of<EmailViewModel>(context, listen: false).signupUser,
+            onLogin: Provider.of<EmailViewModel>(context).authUser,
+            onSignup: Provider.of<EmailViewModel>(context).signupUser,
             onSubmitAnimationCompleted: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => const MyApp(),
               ));
             },
             onRecoverPassword:
-                Provider.of<EmailViewModel>(context, listen: false)
-                    .recoverPassword,
+                Provider.of<EmailViewModel>(context).recoverPassword,
           );
         });
   }

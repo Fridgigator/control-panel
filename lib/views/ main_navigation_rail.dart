@@ -1,5 +1,7 @@
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import '../data_structures/main_view_state.dart';
 
@@ -44,10 +46,6 @@ class MainNavigationRail extends StatelessWidget {
         ],
       ),
 
-      if (mainView.hasSideBar()) ...[
-        const VerticalDivider(thickness: 1, width: 1),
-        SizedBox(width: 304.0, child: mainView.getSideBar())
-      ],
       const VerticalDivider(thickness: 1, width: 1),
       Expanded(child: mainView)
       // This is the main content.

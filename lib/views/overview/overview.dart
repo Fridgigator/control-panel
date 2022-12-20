@@ -1,84 +1,67 @@
+import 'dart:developer';
+
 import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/view_model/main_view/overview.dart';
 import 'package:control_panel/views/overview/fridge_overview_display.dart';
 import 'package:control_panel/views/overview/overview_connection_stats.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Overview extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
-  const Overview(
-      {super.key, required this.darkTheme, required this.smallDevice});
+  final String accessToken;
+  const Overview({
+    super.key,
+    required this.darkTheme,
+    required this.smallDevice,
+    required this.accessToken,
+  });
 
   @override
   Widget build(BuildContext context) {
-    List<FridgeOverviewDisplay> fridgeCounts = [
-      FridgeOverviewDisplay(
-        fridgeName: "Top Fridge",
-        highHumidity: 20.334,
-        lowHumidity: 1.33,
-        lowTemp: 4,
-        highTemp: 20,
-        medianTemp: -5,
-      ),
-      FridgeOverviewDisplay(
-        fridgeName: "Back Fridge",
-        highHumidity: 20.334,
-        lowHumidity: 1.33,
-        lowTemp: 4,
-        highTemp: 20,
-        medianTemp: 5,
-      ),
-      FridgeOverviewDisplay(
-        fridgeName: "Side Fridge",
-        highHumidity: 20.334,
-        lowHumidity: 1.33,
-        lowTemp: 4,
-        highTemp: 20,
-        medianTemp: 15,
-      ),
-    ];
-    return ListView(
-        padding: smallDevice
-            ? EdgeInsets.fromLTRB(8, 32, 8, 32)
-            : EdgeInsets.fromLTRB(128, 32, 128, 32),
-        scrollDirection: Axis.vertical,
-        children: [
-          MainConnectionStat(darkTheme: darkTheme),
-          Center(
-              child: Wrap(
-            direction: Axis.horizontal,
-            runAlignment: WrapAlignment.spaceAround,
-            children: fridgeCounts,
-          )),
-        ]);
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (_) => OverviewViewModel(accessToken: accessToken))
+        ],
+        builder: (context, child) {
+          return ListView(
+              padding: smallDevice
+                  ? const EdgeInsets.fromLTRB(8, 32, 8, 32)
+                  : const EdgeInsets.fromLTRB(128, 32, 128, 32),
+              scrollDirection: Axis.vertical,
+              children: [
+                MainConnectionStat(
+                    darkTheme: darkTheme,
+                    amountUp: Provider.of<OverviewViewModel>(context).amountUp,
+                    amountDown:
+                        Provider.of<OverviewViewModel>(context).amountDown,
+                    hasPinged:
+                        Provider.of<OverviewViewModel>(context).hasPinged),
+                Center(
+                    child: Wrap(
+                  direction: Axis.horizontal,
+                  runAlignment: WrapAlignment.spaceAround,
+                  children: Provider.of<OverviewViewModel>(context)
+                      .fridges
+                      .map((e) => FridgeOverviewDisplay(fridge: e))
+                      .toList(),
+                )),
+              ]);
+        });
   }
 
   @override
-  Widget getSideBar() {
+  Widget getSideBar(BuildContext context) {
     return ListView(
-      children: [
-        ListTile(
-          title: const Text('Fridge 1'),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('Fridge 2'),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('Fridge 3'),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('Fridge 4'),
-          onTap: () {},
-        ),
-        ListTile(
-          title: const Text('Fridge 5'),
-          onTap: () {},
-        ),
-      ],
-    );
+        children: Provider.of<OverviewViewModel>(context)
+            .fridges
+            .map((e) => ListTile(
+                  title: Text(e.name),
+                  onTap: () {},
+                ))
+            .toList());
   }
 
   @override

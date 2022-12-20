@@ -1,13 +1,17 @@
 import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/libraries/stateless_snackbar/stateless_snackbar.dart';
+import 'package:control_panel/libraries/stateless_snackbar/controller.dart';
 import 'package:control_panel/view_model/main.dart';
+import 'package:control_panel/view_model/main_view/overview.dart';
 import 'package:control_panel/views/fridges/fridges.dart';
 import 'package:control_panel/views/settings/settings.dart';
 import 'package:control_panel/views/hubs/hubs.dart';
 import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import '../data_structures/main_view_state.dart';
 import ' main_navigation_rail.dart';
@@ -102,17 +106,14 @@ class OverviewScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _MainScaffold(
-      doneLoading:
-          Provider.of<MainViewModel>(context, listen: false).doneLoading,
+      doneLoading: Provider.of<MainViewModel>(context).doneLoading,
       currentlySelectedPage: pageToGo,
-      darkTheme: Provider.of<MainViewModel>(context, listen: false).darkTheme,
-      onLogin: Provider.of<MainViewModel>(context, listen: false).login,
-      onLogout: Provider.of<MainViewModel>(context, listen: false).logout,
+      darkTheme: Provider.of<MainViewModel>(context).darkTheme,
+      onLogin: Provider.of<MainViewModel>(context).login,
+      onLogout: Provider.of<MainViewModel>(context).logout,
       isOnSmallDevice: isOnSmallDevice,
-      invertDarkTheme:
-          Provider.of<MainViewModel>(context, listen: false).invertTheme,
-      accessToken:
-          Provider.of<MainViewModel>(context, listen: false).accessToken,
+      invertDarkTheme: Provider.of<MainViewModel>(context).invertTheme,
+      accessToken: Provider.of<MainViewModel>(context).accessToken,
     );
   }
 }
@@ -161,7 +162,7 @@ class _MainScaffold extends StatelessWidget {
                 icon: const Icon(Icons.logout))
           ],
         ),
-        body: LayoutBuilder(
+        body: StatelessSnackbarController(child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
           double width = constraints.maxWidth;
 
@@ -170,7 +171,11 @@ class _MainScaffold extends StatelessWidget {
           } else if (width < 900) {
             switch (currentlySelectedPage) {
               case MainViewState.overview:
-                return Overview(darkTheme: darkTheme, smallDevice: true);
+                return Overview(
+                  darkTheme: darkTheme,
+                  smallDevice: true,
+                  accessToken: accessToken,
+                );
               case MainViewState.hubs:
                 return Hubs(darkTheme: darkTheme, smallDevice: true);
               case MainViewState.fridges:
@@ -182,7 +187,10 @@ class _MainScaffold extends StatelessWidget {
             MainWidget child;
             switch (currentlySelectedPage) {
               case MainViewState.overview:
-                child = Overview(darkTheme: darkTheme, smallDevice: false);
+                child = Overview(
+                    darkTheme: darkTheme,
+                    smallDevice: false,
+                    accessToken: accessToken);
                 break;
               case MainViewState.hubs:
                 child = Hubs(darkTheme: darkTheme, smallDevice: false);
@@ -192,6 +200,24 @@ class _MainScaffold extends StatelessWidget {
                 break;
               case MainViewState.settings:
                 child = Settings(darkTheme: darkTheme, smallDevice: false);
+            }
+            SingleChildWidget notifier;
+            switch (currentlySelectedPage) {
+              case MainViewState.overview:
+                notifier = ChangeNotifierProvider(
+                    create: (_) => OverviewViewModel(accessToken: accessToken));
+                break;
+              case MainViewState.hubs:
+                notifier = ChangeNotifierProvider(
+                    create: (_) => OverviewViewModel(accessToken: accessToken));
+                break;
+              case MainViewState.fridges:
+                notifier = ChangeNotifierProvider(
+                    create: (_) => OverviewViewModel(accessToken: accessToken));
+                break;
+              case MainViewState.settings:
+                notifier = ChangeNotifierProvider(
+                    create: (_) => OverviewViewModel(accessToken: accessToken));
             }
 
             return MainNavigationRail(
@@ -203,7 +229,7 @@ class _MainScaffold extends StatelessWidget {
                       context, MainViewState.getByValue(select).name);
                 });
           }
-        }),
+        })),
         bottomNavigationBar: isOnSmallDevice
             ? MainBottomNavigationBar(
                 viewState: currentlySelectedPage,

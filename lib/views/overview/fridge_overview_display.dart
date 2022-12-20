@@ -1,22 +1,10 @@
+import 'package:control_panel/data_structures/fridge.dart';
 import 'package:flutter/material.dart';
 import 'package:gauges/gauges.dart';
 
 class FridgeOverviewDisplay extends StatelessWidget {
-  final double medianTemp;
-  final double highTemp;
-  final double lowTemp;
-
-  final double highHumidity;
-  final double lowHumidity;
-  final String fridgeName;
-  const FridgeOverviewDisplay(
-      {super.key,
-      required this.fridgeName,
-      required this.medianTemp,
-      required this.highTemp,
-      required this.lowTemp,
-      required this.highHumidity,
-      required this.lowHumidity});
+  final Fridge fridge;
+  const FridgeOverviewDisplay({super.key, required this.fridge});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +14,7 @@ class FridgeOverviewDisplay extends StatelessWidget {
             child: Container(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Column(children: [
-                  Text(fridgeName),
+                  Text(fridge.name),
                   Container(
                       padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
                       child: RadialGauge(
@@ -35,7 +23,7 @@ class FridgeOverviewDisplay extends StatelessWidget {
                           RadialGaugeAxis(
                             pointers: [
                               RadialNeedlePointer(
-                                value: medianTemp,
+                                value: fridge.medianTemp,
                                 thicknessStart: 8,
                                 thicknessEnd: 2,
                                 length: 1,
@@ -77,21 +65,21 @@ class FridgeOverviewDisplay extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("$highTemp C"),
+                          Text("${fridge.medianTemp} C"),
                           const Padding(
                             padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
                           ),
-                          Text("$lowTemp C")
+                          Text("${fridge.lowTemp} C")
                         ]),
                     Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("$highHumidity%"),
+                          Text("${fridge.highHumidity}%"),
                           const Padding(
                             padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
                           ),
-                          Text("$lowHumidity%")
+                          Text("${fridge.lowHumidity}%")
                         ])
                   ]))
                 ]))));

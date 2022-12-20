@@ -76,7 +76,7 @@ class Hubs extends MainWidget {
   }
 
   @override
-  Widget getSideBar() {
+  Widget getSideBar(BuildContext context) {
     return ListView(
       children: [
         ListTile(
