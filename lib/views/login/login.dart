@@ -1,3 +1,4 @@
+import 'package:control_panel/data_structures/theme_type.dart';
 import 'package:control_panel/view_model/login/email.dart';
 import 'package:control_panel/view_model/login/github.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import '../main.dart';
 
 class LoginScaffold extends StatelessWidget {
   const LoginScaffold({super.key, required this.darkTheme});
-  final bool darkTheme;
+  final ThemeType darkTheme;
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

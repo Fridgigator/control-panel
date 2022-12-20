@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/data_structures/theme_type.dart';
 import 'package:control_panel/libraries/stateless_snackbar/stateless_snackbar.dart';
 import 'package:control_panel/libraries/stateless_snackbar/controller.dart';
 import 'package:control_panel/view_model/main.dart';
@@ -10,6 +11,7 @@ import 'package:control_panel/views/settings/settings.dart';
 import 'package:control_panel/views/hubs/hubs.dart';
 import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -46,11 +48,25 @@ class _MainPageState extends State<_MyAppState> {
           ChangeNotifierProvider(create: (_) => MainViewModel()),
         ],
         builder: (context, child) {
+          ThemeData themeData;
+          switch (Provider.of<MainViewModel>(context).themeType) {
+            case ThemeType.dark:
+              themeData = ThemeData.dark(useMaterial3: true);
+              break;
+            case ThemeType.light:
+              themeData = ThemeData.light(useMaterial3: true);
+              break;
+            case ThemeType.system:
+              themeData = SchedulerBinding
+                          .instance.platformDispatcher.platformBrightness ==
+                      Brightness.dark
+                  ? ThemeData.dark(useMaterial3: true)
+                  : ThemeData.light(useMaterial3: true);
+              break;
+          }
           return MaterialApp(
               debugShowCheckedModeBanner: false,
-              theme: Provider.of<MainViewModel>(context).darkTheme
-                  ? ThemeData.dark()
-                  : ThemeData.light(),
+              theme: themeData,
               title: 'Control Panel',
               initialRoute: MainViewState.overview.name,
               onGenerateRoute: (settings) {
@@ -86,7 +102,7 @@ class _MainPageState extends State<_MyAppState> {
                       } else {
                         return LoginScaffold(
                             darkTheme:
-                                Provider.of<MainViewModel>(context).darkTheme);
+                                Provider.of<MainViewModel>(context).themeType);
                       }
                     },
                     transitionDuration: const Duration(milliseconds: 800),
@@ -108,11 +124,10 @@ class OverviewScaffold extends StatelessWidget {
     return _MainScaffold(
       doneLoading: Provider.of<MainViewModel>(context).doneLoading,
       currentlySelectedPage: pageToGo,
-      darkTheme: Provider.of<MainViewModel>(context).darkTheme,
+      darkTheme: Provider.of<MainViewModel>(context).themeType,
       onLogin: Provider.of<MainViewModel>(context).login,
       onLogout: Provider.of<MainViewModel>(context).logout,
       isOnSmallDevice: isOnSmallDevice,
-      invertDarkTheme: Provider.of<MainViewModel>(context).invertTheme,
       accessToken: Provider.of<MainViewModel>(context).accessToken,
     );
   }
@@ -120,10 +135,8 @@ class OverviewScaffold extends StatelessWidget {
 
 class _MainScaffold extends StatelessWidget {
   final MainViewState currentlySelectedPage;
-  final bool darkTheme;
+  final ThemeType darkTheme;
   final String? accessToken;
-
-  final void Function() invertDarkTheme;
 
   final bool doneLoading;
   final bool isOnSmallDevice;
@@ -133,7 +146,6 @@ class _MainScaffold extends StatelessWidget {
   const _MainScaffold({
     required this.darkTheme,
     required this.currentlySelectedPage,
-    required this.invertDarkTheme,
     required this.accessToken,
     required this.doneLoading,
     required this.isOnSmallDevice,
@@ -148,13 +160,24 @@ class _MainScaffold extends StatelessWidget {
     if (accessToken == null) {
       return LoginScaffold(darkTheme: darkTheme);
     }
+    bool isDarkTheme;
+    switch (darkTheme) {
+      case ThemeType.dark:
+        isDarkTheme = true;
+        break;
+      case ThemeType.light:
+        isDarkTheme = false;
+        break;
+      case ThemeType.system:
+        isDarkTheme =
+            MediaQuery.of(context).platformBrightness == Brightness.dark;
+        break;
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Control Panel'),
           actions: [
-            IconButton(
-                onPressed: invertDarkTheme,
-                icon: Icon(darkTheme ? Icons.light_mode : Icons.dark_mode)),
             IconButton(
                 onPressed: () {
                   onLogout();
@@ -172,54 +195,41 @@ class _MainScaffold extends StatelessWidget {
             switch (currentlySelectedPage) {
               case MainViewState.overview:
                 return Overview(
-                  darkTheme: darkTheme,
+                  darkTheme: isDarkTheme,
                   smallDevice: true,
                   accessToken: accessToken,
                 );
               case MainViewState.hubs:
-                return Hubs(darkTheme: darkTheme, smallDevice: true);
+                return Hubs(darkTheme: isDarkTheme, smallDevice: true);
               case MainViewState.fridges:
-                return Fridges(darkTheme: darkTheme, smallDevice: true);
+                return Fridges(darkTheme: isDarkTheme, smallDevice: true);
               case MainViewState.settings:
-                return Settings(darkTheme: darkTheme, smallDevice: true);
+                return Settings(
+                    darkTheme: darkTheme,
+                    smallDevice: true,
+                    setThemeType: Provider.of<MainViewModel>(context).setTheme);
             }
           } else {
             MainWidget child;
             switch (currentlySelectedPage) {
               case MainViewState.overview:
                 child = Overview(
-                    darkTheme: darkTheme,
+                    darkTheme: isDarkTheme,
                     smallDevice: false,
                     accessToken: accessToken);
                 break;
               case MainViewState.hubs:
-                child = Hubs(darkTheme: darkTheme, smallDevice: false);
+                child = Hubs(darkTheme: isDarkTheme, smallDevice: false);
                 break;
               case MainViewState.fridges:
-                child = Fridges(darkTheme: darkTheme, smallDevice: false);
+                child = Fridges(darkTheme: isDarkTheme, smallDevice: false);
                 break;
               case MainViewState.settings:
-                child = Settings(darkTheme: darkTheme, smallDevice: false);
+                child = Settings(
+                    darkTheme: darkTheme,
+                    smallDevice: false,
+                    setThemeType: Provider.of<MainViewModel>(context).setTheme);
             }
-            SingleChildWidget notifier;
-            switch (currentlySelectedPage) {
-              case MainViewState.overview:
-                notifier = ChangeNotifierProvider(
-                    create: (_) => OverviewViewModel(accessToken: accessToken));
-                break;
-              case MainViewState.hubs:
-                notifier = ChangeNotifierProvider(
-                    create: (_) => OverviewViewModel(accessToken: accessToken));
-                break;
-              case MainViewState.fridges:
-                notifier = ChangeNotifierProvider(
-                    create: (_) => OverviewViewModel(accessToken: accessToken));
-                break;
-              case MainViewState.settings:
-                notifier = ChangeNotifierProvider(
-                    create: (_) => OverviewViewModel(accessToken: accessToken));
-            }
-
             return MainNavigationRail(
                 mainView: child,
                 viewState: currentlySelectedPage,

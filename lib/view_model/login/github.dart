@@ -56,12 +56,12 @@ class GithubLoginViewModel extends ChangeNotifier {
         if (i == 0) {
           var jsonData = jsonDecode(data);
           var state = jsonData["state"];
-          log("redirect_uri: $remoteHttpDomain/api/login/github-response");
+          log("redirect_uri: $remoteHttpDomain/api/login/v1/github-response");
           var loginGithubUrl =
               Uri.https("github.com", "login/oauth/authorize", {
             "client_id": clientID,
             "state": state,
-            "redirect_uri": "$remoteHttpDomain/api/login/github-response"
+            "redirect_uri": "$remoteHttpDomain/api/login/v1/github-response"
           });
 
           bool result = await launchUrl(loginGithubUrl);

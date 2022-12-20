@@ -1,35 +1,38 @@
 import 'dart:developer';
 
+import 'package:control_panel/data_structures/theme_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainViewModel with ChangeNotifier {
-  bool _darkTheme = false;
+  ThemeType _darkTheme = ThemeType.system;
   bool _doneLoading = false;
   String? _accessToken;
 
-  bool get darkTheme => _darkTheme;
+  ThemeType get themeType => _darkTheme;
   bool get doneLoading => _doneLoading;
   String? get accessToken => _accessToken;
 
   SharedPreferences? _sp;
 
   MainViewModel() {
-    log("New");
     () async {
       var sp = await SharedPreferences.getInstance();
-      log("New1");
-      darkTheme = sp.getBool("darktheme") ?? false;
-      log("New2");
+      var darkThemeString = sp.getString("darktheme");
+      ThemeType t;
+      if (darkThemeString == "dark") {
+        t = ThemeType.dark;
+      } else if (darkThemeString == "light") {
+        t = ThemeType.light;
+      } else {
+        t = ThemeType.system;
+      }
       accessToken = sp.getString("accessToken");
-      log("New3");
+      themeType = t;
       _sp = sp;
-      log("New4");
       doneLoading = true;
-      log("New5");
       FlutterNativeSplash.remove();
-      log("Done");
     }();
   }
 
@@ -48,8 +51,8 @@ class MainViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  set darkTheme(bool darkTheme) {
-    _sp?.setBool("darktheme", darkTheme);
+  set themeType(ThemeType darkTheme) {
+    _sp?.setString("darktheme", darkTheme.name);
 
     _darkTheme = darkTheme;
     notifyListeners();
@@ -68,7 +71,7 @@ class MainViewModel with ChangeNotifier {
     accessToken = "";
   }
 
-  void invertTheme() {
-    darkTheme = !darkTheme;
+  void setTheme(ThemeType t) {
+    themeType = t;
   }
 }

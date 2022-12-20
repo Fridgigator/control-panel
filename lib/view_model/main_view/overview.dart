@@ -30,6 +30,14 @@ class OverviewViewModel with ChangeNotifier {
 
   set lastPing(DateTime lastPing) {
     _lastPing = lastPing;
+    var curTime = DateTime.now();
+    log("pinged: $curTime $_lastPing");
+    if (curTime.difference(_lastPing) < const Duration(seconds: 5)) {
+      hasPinged = true;
+    } else {
+      hasPinged = false;
+    }
+
     notifyListeners();
   }
 
@@ -68,8 +76,6 @@ class OverviewViewModel with ChangeNotifier {
       log("pinged: $hasPinged");
     });
     () async {
-      log("Construct");
-
       const androidConfig = FlutterBackgroundAndroidConfig(
         notificationTitle: "Fridgigator",
         notificationText:
@@ -141,11 +147,16 @@ class OverviewViewModel with ChangeNotifier {
                   .map((timestamp) =>
                       DateTime.fromMillisecondsSinceEpoch((timestamp) * 1000))
                   .toList();
-              lastPings.sort();
 
               lastPing = DateTime.fromMillisecondsSinceEpoch(0);
 
-              lastPing = lastPings[lastPings.length - 1];
+              lastPing = lastPings.reduce((a, b) {
+                if (a.isAfter(b)) {
+                  return a;
+                } else {
+                  return b;
+                }
+              });
               amountDown = lastPings
                   .where((element) => DateTime.now()
                       .subtract(const Duration(seconds: 5))
@@ -156,7 +167,7 @@ class OverviewViewModel with ChangeNotifier {
                       .subtract(const Duration(seconds: 5))
                       .isBefore(element))
                   .length;
-              log("lrp: $lastPings $amountUp $amountDown");
+              log("lrp: $lastPings $lastPinged $amountUp $amountDown");
             }
           }
           if (map["type"] == "fridges") {
@@ -185,7 +196,8 @@ class OverviewViewModel with ChangeNotifier {
         log("on exception: $e, $stacktrace");
         StatelessSnackbarModel().setText("Disconnected");
       } finally {
-        channel?.sink.close(0, "");
+        log("canceling");
+        channel?.sink.close(4000, "");
       }
       log("waiting");
 
@@ -197,7 +209,8 @@ class OverviewViewModel with ChangeNotifier {
   @override
   void dispose() {
     _timer?.cancel();
-    channel?.sink.close(0, "");
+    log("canceling");
+    channel?.sink.close(4000, "");
     super.dispose();
   }
 }

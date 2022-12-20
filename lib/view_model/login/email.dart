@@ -18,11 +18,12 @@ class EmailViewModel with ChangeNotifier {
 
   Future<String?> authUser(LoginData data) async {
     try {
-      var body = (await http
-          .post(Uri.parse("$remoteHttpDomain/login/v1/email/signin"), body: {
-        "email": data.name,
-        "password": data.password,
-      }));
+      var body = (await http.post(
+          Uri.parse("$remoteHttpDomain/api/login/v1/email/signin"),
+          body: {
+            "email": data.name,
+            "password": data.password,
+          }));
       if (body.statusCode != 200) {
         log("${body.statusCode}");
         throw "Backend Error";
@@ -44,11 +45,12 @@ class EmailViewModel with ChangeNotifier {
 
   Future<String?> signupUser(SignupData data) async {
     try {
-      var body = (await http
-          .post(Uri.parse("$remoteHttpDomain/login/v1/email/signup"), body: {
-        "email": data.name,
-        "password": data.password,
-      }));
+      var body = (await http.post(
+          Uri.parse("$remoteHttpDomain/api/login/v1/email/signup"),
+          body: {
+            "email": data.name,
+            "password": data.password,
+          }));
       if (body.statusCode != 200) {
         throw "Backend Error";
       }
@@ -66,10 +68,11 @@ class EmailViewModel with ChangeNotifier {
 
   Future<String?> recoverPassword(String name) async {
     try {
-      var body = (await http
-          .post(Uri.parse("$remoteHttpDomain/login/v1/email/recover"), body: {
-        "email": name,
-      }));
+      var body = (await http.post(
+          Uri.parse("$remoteHttpDomain/api/login/v1/email/recover"),
+          body: {
+            "email": name,
+          }));
       if (body.statusCode != 200) {
         throw "Backend Error";
       }
