@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:control_panel/data_structures/data_value.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';

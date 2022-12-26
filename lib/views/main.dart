@@ -2,10 +2,8 @@ import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/data_structures/theme_type.dart';
-import 'package:control_panel/libraries/stateless_snackbar/stateless_snackbar.dart';
 import 'package:control_panel/libraries/stateless_snackbar/controller.dart';
 import 'package:control_panel/view_model/main.dart';
-import 'package:control_panel/view_model/main_view/overview.dart';
 import 'package:control_panel/views/fridges/fridges.dart';
 import 'package:control_panel/views/settings/settings.dart';
 import 'package:control_panel/views/hubs/hubs.dart';
@@ -13,7 +11,6 @@ import 'package:control_panel/views/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
 
 import '../data_structures/main_view_state.dart';
 import ' main_navigation_rail.dart';

@@ -1,7 +1,5 @@
-import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:control_panel/data_structures/main_widget.dart';
 
 import '../data_structures/main_view_state.dart';
 

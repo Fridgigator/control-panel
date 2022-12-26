@@ -1,7 +1,5 @@
 import 'package:control_panel/libraries/stateless_snackbar/stateless_snackbar.dart';
-import 'package:control_panel/libraries/stateless_snackbar/viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class StatelessSnackbarController extends StatelessWidget {
   final Widget child;

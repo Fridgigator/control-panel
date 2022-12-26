@@ -57,11 +57,6 @@ class Chart extends StatelessWidget {
       ];
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff72719b),
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
     Widget text;
     if (value.toInt() % 5 == 0) {
       text = Text('${value.toInt()}');
