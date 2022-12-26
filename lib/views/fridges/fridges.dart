@@ -1,6 +1,8 @@
 import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/view_model/main_view/fridges.dart';
 import 'package:control_panel/views/fridges/fridge_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Fridges extends MainWidget {
   final bool darkTheme;
@@ -11,69 +13,24 @@ class Fridges extends MainWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: SingleChildScrollView(
-            child: Wrap(direction: Axis.horizontal, children: [
-      FridgeCard(
-        darkTheme: darkTheme,
+      child: MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => FridgeViewModel())],
+        builder: (context, child) {
+          return SingleChildScrollView(
+            child: Wrap(
+              direction: Axis.horizontal,
+              children: Provider.of<FridgeViewModel>(context)
+                  .fridges
+                  .map(
+                    (fridge) =>
+                        FridgeCard(darkTheme: darkTheme, fridge: fridge),
+                  )
+                  .toList(),
+            ),
+          );
+        },
       ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-      FridgeCard(
-        darkTheme: darkTheme,
-      ),
-    ])));
+    );
   }
 
   @override

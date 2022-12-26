@@ -1,3 +1,4 @@
+import 'package:control_panel/data_structures/sensor.dart';
 import 'package:equatable/equatable.dart';
 
 class Fridge extends Equatable {
@@ -11,6 +12,8 @@ class Fridge extends Equatable {
   final String name;
   final String id;
 
+  final List<Sensor> sensors;
+
   const Fridge(
       {required this.medianTemp,
       required this.lowTemp,
@@ -18,6 +21,7 @@ class Fridge extends Equatable {
       required this.lowHumidity,
       required this.name,
       required this.id,
+      required this.sensors,
       required this.highHumidity});
   @override
   List<Object?> get props =>

@@ -1,3 +1,4 @@
+import 'package:control_panel/libraries/get_updates.dart';
 import 'package:control_panel/views/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -9,5 +10,6 @@ void main() {
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) => '';
   }
+  getUpdates();
   runApp(const MyApp());
 }

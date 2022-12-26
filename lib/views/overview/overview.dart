@@ -10,21 +10,16 @@ import 'package:provider/provider.dart';
 class Overview extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
-  final String accessToken;
   const Overview({
     super.key,
     required this.darkTheme,
     required this.smallDevice,
-    required this.accessToken,
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-              create: (_) => OverviewViewModel(accessToken: accessToken))
-        ],
+        providers: [ChangeNotifierProvider(create: (_) => OverviewViewModel())],
         builder: (context, child) {
           return ListView(
               padding: smallDevice

@@ -197,7 +197,6 @@ class _MainScaffold extends StatelessWidget {
                 return Overview(
                   darkTheme: isDarkTheme,
                   smallDevice: true,
-                  accessToken: accessToken,
                 );
               case MainViewState.hubs:
                 return Hubs(darkTheme: isDarkTheme, smallDevice: true);
@@ -214,9 +213,9 @@ class _MainScaffold extends StatelessWidget {
             switch (currentlySelectedPage) {
               case MainViewState.overview:
                 child = Overview(
-                    darkTheme: isDarkTheme,
-                    smallDevice: false,
-                    accessToken: accessToken);
+                  darkTheme: isDarkTheme,
+                  smallDevice: false,
+                );
                 break;
               case MainViewState.hubs:
                 child = Hubs(darkTheme: isDarkTheme, smallDevice: false);
@@ -235,7 +234,7 @@ class _MainScaffold extends StatelessWidget {
                 viewState: currentlySelectedPage,
                 changeViewState: (int? select) {
                   if (select == null) return;
-                  Navigator.pushNamed(
+                  Navigator.pushReplacementNamed(
                       context, MainViewState.getByValue(select).name);
                 });
           }
@@ -245,7 +244,7 @@ class _MainScaffold extends StatelessWidget {
                 viewState: currentlySelectedPage,
                 changeViewState: (int? select) {
                   if (select == null) return;
-                  Navigator.pushNamed(
+                  Navigator.pushReplacementNamed(
                       context, MainViewState.getByValue(select).name);
                 })
             : null);

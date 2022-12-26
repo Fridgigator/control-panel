@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:control_panel/constants.dart';
 import 'package:control_panel/data_structures/fridge.dart';
-import 'package:control_panel/libraries/stateless_snackbar/model.dart';
+import 'package:control_panel/data_structures/hubs.dart';
+import 'package:control_panel/libraries/get_updates.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_background/flutter_background.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class OverviewViewModel with ChangeNotifier {
@@ -15,6 +12,7 @@ class OverviewViewModel with ChangeNotifier {
   bool _hasPinged = false;
   int _amountUp = 0;
   int _amountDown = 0;
+  bool? disposed;
 
   bool get hasPinged => _hasPinged;
   DateTime get lastPinged => _lastPing;
@@ -24,36 +22,71 @@ class OverviewViewModel with ChangeNotifier {
   set hasPinged(bool hasPinged) {
     if (hasPinged != _hasPinged) {
       _hasPinged = hasPinged;
-      notifyListeners();
+      if (disposed != true) {
+        notifyListeners();
+      }
     }
   }
 
-  set lastPing(DateTime lastPing) {
+  set lastPinged(DateTime lastPing) {
     _lastPing = lastPing;
     var curTime = DateTime.now();
-    log("pinged: $curTime $_lastPing");
+    bool oldHasPinged = hasPinged;
     if (curTime.difference(_lastPing) < const Duration(seconds: 5)) {
       hasPinged = true;
     } else {
       hasPinged = false;
     }
-
-    notifyListeners();
+    if (disposed != true && oldHasPinged != hasPinged) {
+      notifyListeners();
+    }
   }
 
   set amountUp(int amountUp) {
+    int oldAmountUp = _amountUp;
     _amountUp = amountUp;
-    notifyListeners();
+    if (amountUp != 0) {
+      hasPinged = true;
+    }
+    if (amountUp == 0) {
+      hasPinged = false;
+    }
+    if (disposed != true && oldAmountUp != _amountUp) {
+      notifyListeners();
+    }
   }
 
   set amountDown(int amountDown) {
     log("amntDown=$amountDown");
     _amountDown = amountDown;
-    notifyListeners();
+    if (disposed != true) {
+      notifyListeners();
+    }
   }
 
   WebSocketChannel? channel;
   Timer? _timer;
+  List<Hub> _hubs = [];
+
+  set hubs(List<Hub> h) {
+    if (disposed != true) {
+      _hubs = h;
+      var curTime = DateTime.now();
+      int localAmountUp = 0;
+      int localAmountDown = 0;
+      for (Hub h in _hubs) {
+        log("pinged: $curTime $_lastPing");
+        if (curTime.difference(h.lastSeen) < const Duration(seconds: 5)) {
+          localAmountUp++;
+        } else {
+          localAmountDown++;
+        }
+      }
+      amountDown = localAmountDown;
+      amountUp = localAmountUp;
+    }
+  }
+
   List<Fridge> _fridges = [];
   List<Fridge> get fridges => _fridges;
   set fridges(List<Fridge> f) {
@@ -62,155 +95,56 @@ class OverviewViewModel with ChangeNotifier {
   }
 
   bool error = false;
-  final String accessToken;
 
-  OverviewViewModel({required this.accessToken}) {
+  OverviewViewModel() {
+    disposed = false;
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
       var curTime = DateTime.now();
-      log("pinged: $curTime $_lastPing");
-      if (curTime.difference(_lastPing) < const Duration(seconds: 5)) {
-        hasPinged = true;
-      } else {
-        hasPinged = false;
+      int localAmountUp = 0;
+      int localAmountDown = 0;
+      DateTime tmpLastPing = DateTime.fromMicrosecondsSinceEpoch(0);
+      for (Hub h in _hubs) {
+        if (tmpLastPing.isBefore(h.lastSeen)) {
+          tmpLastPing = h.lastSeen;
+        }
+        if (curTime.difference(h.lastSeen) < const Duration(seconds: 5)) {
+          localAmountUp++;
+        } else {
+          localAmountDown++;
+        }
       }
+      lastPinged = tmpLastPing;
+      amountDown = localAmountDown;
+      amountUp = localAmountUp;
+
       log("pinged: $hasPinged");
     });
     () async {
-      const androidConfig = FlutterBackgroundAndroidConfig(
-        notificationTitle: "Fridgigator",
-        notificationText:
-            "Background notification for keeping the app running in the background",
-        notificationImportance: AndroidNotificationImportance.Default,
-        notificationIcon:
-            AndroidResource(name: 'background_icon', defType: 'drawable'),
-      );
-      try {
-        var canDoBackground =
-            await FlutterBackground.initialize(androidConfig: androidConfig);
-        if (!canDoBackground) {
-          error = true;
-          StatelessSnackbarModel()
-              .setText("Cannot stay alive in the background");
+      log("Awaiting for Message");
+      await for (Message m in messagesController.stream) {
+        if (disposed != false) {
+          break;
         }
-
-        canDoBackground = await FlutterBackground.enableBackgroundExecution();
-        if (!canDoBackground) {
-          error = true;
-          StatelessSnackbarModel()
-              .setText("Cannot stay alive in the background");
+        log("Message: $m");
+        if (m is HubMessage) {
+          hubs = m.h;
+        } else if (m is FridgeMessage) {
+          fridges = m.h;
         }
-      } catch (e) {
-        if (e is! MissingPluginException) {
-          log("$e");
-          error = true;
-          StatelessSnackbarModel()
-              .setText("Cannot stay alive in the background");
-        }
-      }
-      log("error = $error");
-      if (error == false) {
-        _getData();
       }
     }();
-  }
-  void _getData() async {
-    log("get data");
-    error = false;
-    while (true) {
-      log("starting get data");
-
-      try {
-        var channel = WebSocketChannel.connect(Uri.parse(
-            '$remoteWsDomain/api/frontend/v2/get-overview?accessToken=$accessToken'));
-        if (channel is WebSocketChannelException) {
-          throw "error in socket";
-        }
-        this.channel = channel;
-
-        log("Listening");
-
-        await for (String data in channel.stream) {
-          log("Removed text");
-          StatelessSnackbarModel().removeText();
-
-          log("data=$data");
-          var map = jsonDecode(data);
-          if (map["type"] == "hub") {
-            log("setting lastPing");
-            List<dynamic> lastPingsDynamic = map["hub"]["last-ping"];
-            if (lastPingsDynamic.isEmpty) {
-              lastPing = DateTime.fromMillisecondsSinceEpoch(0);
-            } else {
-              List<int> lastPingsTimestamp =
-                  lastPingsDynamic.map((e) => (e as int)).toList();
-              List<DateTime> lastPings = lastPingsTimestamp
-                  .map((timestamp) =>
-                      DateTime.fromMillisecondsSinceEpoch((timestamp) * 1000))
-                  .toList();
-
-              lastPing = DateTime.fromMillisecondsSinceEpoch(0);
-
-              lastPing = lastPings.reduce((a, b) {
-                if (a.isAfter(b)) {
-                  return a;
-                } else {
-                  return b;
-                }
-              });
-              amountDown = lastPings
-                  .where((element) => DateTime.now()
-                      .subtract(const Duration(seconds: 5))
-                      .isAfter(element))
-                  .length;
-              amountUp = lastPings
-                  .where((element) => DateTime.now()
-                      .subtract(const Duration(seconds: 5))
-                      .isBefore(element))
-                  .length;
-              log("lrp: $lastPings $lastPinged $amountUp $amountDown");
-            }
-          }
-          if (map["type"] == "fridges") {
-            log("fridges=${map["fridges"]}");
-            List<dynamic> m = map["fridges"];
-
-            List<Fridge> newFridges = m.map((fridgeRec) {
-              Fridge f = Fridge(
-                medianTemp: fridgeRec["median-temp"],
-                lowTemp: fridgeRec["low-temp"],
-                highTemp: fridgeRec["high-temp"],
-                lowHumidity: fridgeRec["low-humidity"],
-                highHumidity: fridgeRec["high-humidity"],
-                name: fridgeRec["name"],
-                id: fridgeRec["id"],
-              );
-              log("Fridge: $f");
-              return f;
-            }).toList();
-            fridges = newFridges;
-          }
-        }
-        log("finished for");
-        StatelessSnackbarModel().setText("Disconnected");
-      } catch (e, stacktrace) {
-        log("on exception: $e, $stacktrace");
-        StatelessSnackbarModel().setText("Disconnected");
-      } finally {
-        log("canceling");
-        channel?.sink.close(4000, "");
+    () async {
+      log("Awaiting for Error Message");
+      await for (Error m in errorsController.stream) {
+        log("Error Message: ${m.name}");
       }
-      log("waiting");
-
-      await Future.delayed(const Duration(seconds: 10));
-      log("finished waiting");
-    }
+    }();
   }
 
   @override
   void dispose() {
+    disposed = true;
     _timer?.cancel();
-    log("canceling");
-    channel?.sink.close(4000, "");
     super.dispose();
   }
 }

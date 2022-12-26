@@ -3,7 +3,27 @@ import 'package:flutter/material.dart';
 
 class Chart extends StatelessWidget {
   final bool darkTheme;
-  const Chart({super.key, required this.darkTheme});
+  final List<DateTime> lastSeenTimes;
+  const Chart(
+      {super.key, required this.darkTheme, required this.lastSeenTimes});
+
+  List<FlSpot> get whenSeen {
+    if (lastSeenTimes.isEmpty) {
+      return [];
+    }
+    List<FlSpot> returnVal =
+        List.generate(300, (index) => FlSpot(index.toDouble(), 0));
+    int curTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    for (DateTime dt in lastSeenTimes) {
+      if (curTime - dt.millisecondsSinceEpoch ~/ 1000 < returnVal.length) {
+        returnVal[curTime - dt.millisecondsSinceEpoch ~/ 1000] =
+            returnVal[curTime - dt.millisecondsSinceEpoch ~/ 1000]
+                .copyWith(y: 4);
+      }
+    }
+    returnVal = cleanup(returnVal);
+    return returnVal;
+  }
 
   LineChartData get sampleData1 => LineChartData(
         gridData: gridData,
@@ -12,7 +32,7 @@ class Chart extends StatelessWidget {
         borderData: borderData,
         lineBarsData: lineBarsData1,
         minX: 0,
-        maxX: 30,
+        maxX: 300,
         maxY: 3,
         minY: 0,
       );
@@ -59,7 +79,7 @@ class Chart extends StatelessWidget {
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
         reservedSize: 32,
-        interval: 1,
+        interval: 60,
         getTitlesWidget: bottomTitleWidgets,
       );
 
@@ -76,37 +96,53 @@ class Chart extends StatelessWidget {
       );
 
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-        isCurved: true,
-        curveSmoothness: 0,
-        color: darkTheme ? Colors.lightGreenAccent : Colors.green,
-        barWidth: 8,
-        isStrokeCapRound: true,
-        dotData: FlDotData(show: false),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 3),
-          FlSpot(2, 0),
-          FlSpot(3, 3),
-          FlSpot(4, 0),
-          FlSpot(5, 3),
-          FlSpot(6, 0),
-          FlSpot(7, 0),
-          FlSpot(8, 0),
-          FlSpot(9, 0),
-          FlSpot(10, 3),
-          FlSpot(11, 3),
-          FlSpot(12, 3),
-          FlSpot(13, 3),
-          FlSpot(14, 3),
-          FlSpot(15, 3),
-        ],
-      );
+      isCurved: true,
+      curveSmoothness: 0,
+      color: darkTheme ? Colors.lightGreenAccent : Colors.green,
+      barWidth: 2,
+      isStrokeCapRound: true,
+      dotData: FlDotData(show: false),
+      belowBarData: BarAreaData(show: false),
+      spots: whenSeen);
 
   @override
   Widget build(BuildContext context) {
-    return LineChart(
-      sampleData1,
-      swapAnimationDuration: const Duration(milliseconds: 250),
-    );
+    return whenSeen.isNotEmpty
+        ? LineChart(
+            sampleData1,
+            swapAnimationDuration: const Duration(milliseconds: 250),
+          )
+        : Container();
   }
+}
+
+bool isAheadFound(int index, List<FlSpot> input) {
+  for (int i = index; i < input.length && i < index + 3; i++) {
+    if (input[i].y > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool isBeforeFound(int index, List<FlSpot> input) {
+  for (int i = index; i >= 0 && i > index - 3; i--) {
+    if (input[i].y > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+List<FlSpot> cleanup(List<FlSpot> input) {
+  List<FlSpot> returnVal = input;
+  for (int i = 0; i < returnVal.length; i++) {
+    if (isBeforeFound(i, input) && isAheadFound(i, input)) {
+      returnVal[i] = returnVal[i].copyWith(y: 4);
+    }
+    if (i + 3 >= returnVal.length && isBeforeFound(i, input)) {
+      returnVal[i] = returnVal[i].copyWith(y: 4);
+    }
+  }
+  return returnVal;
 }

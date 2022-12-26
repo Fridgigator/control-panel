@@ -1,6 +1,11 @@
+import 'dart:developer';
+
+import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/data_structures/main_widget.dart';
-import 'package:control_panel/views/hubs/sensor_view.dart';
+import 'package:control_panel/view_model/main_view/hubs.dart';
+import 'package:control_panel/views/hubs/hub_view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Hubs extends MainWidget {
   final bool darkTheme;
@@ -9,70 +14,23 @@ class Hubs extends MainWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: SingleChildScrollView(
-            child: Wrap(direction: Axis.horizontal, children: [
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-      SensorView(
-        darkTheme: darkTheme,
-      ),
-    ])));
+    return MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => HubsViewModel())],
+        builder: (context, child) {
+          return Center(
+              child: SingleChildScrollView(
+                  child: Wrap(
+                      direction: Axis.horizontal,
+                      children:
+                          Provider.of<HubsViewModel>(context).hubs.map((Hub h) {
+                        log("hub: $h");
+                        return HubView(
+                            key: ValueKey(h.id),
+                            darkTheme: darkTheme,
+                            hubUUID: h.id,
+                            lastSeenTimes: h.pings);
+                      }).toList())));
+        });
   }
 
   @override

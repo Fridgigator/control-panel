@@ -9,21 +9,10 @@ class StatelessSnackbarController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => StatelessSnackbarViewModel()),
-        ],
-        builder: (context, child) {
-          return Stack(fit: StackFit.expand, children: [
-            this.child,
-            StatelessSnackbar(
-                backgroundColor: Colors.red,
-                visible:
-                    Provider.of<StatelessSnackbarViewModel>(context).visible,
-                child: Text(
-                    Provider.of<StatelessSnackbarViewModel>(context).text ??
-                        ""))
-          ]);
-        });
+    return Stack(fit: StackFit.expand, children: [
+      child,
+      const StatelessSnackbar(
+          backgroundColor: Colors.red, visible: false, child: Text(""))
+    ]);
   }
 }
