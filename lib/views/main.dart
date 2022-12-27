@@ -36,10 +36,6 @@ class _MainPageState extends State<_MyAppState> {
 
   @override
   Widget build(BuildContext context) {
-    bool isOnSmallDevice =
-        MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width <
-            900;
-
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => MainViewModel()),
@@ -73,25 +69,20 @@ class _MainPageState extends State<_MyAppState> {
                       log("context=$settings, ${settings.name}");
 
                       final routes = {
-                        "/": (context) => OverviewScaffold(
+                        "/": (context) => const OverviewScaffold(
                               pageToGo: MainViewState.overview,
-                              isOnSmallDevice: isOnSmallDevice,
                             ),
-                        "overview": (context) => OverviewScaffold(
+                        "overview": (context) => const OverviewScaffold(
                               pageToGo: MainViewState.overview,
-                              isOnSmallDevice: isOnSmallDevice,
                             ),
-                        "hubs": (context) => OverviewScaffold(
+                        "hubs": (context) => const OverviewScaffold(
                               pageToGo: MainViewState.hubs,
-                              isOnSmallDevice: isOnSmallDevice,
                             ),
-                        "fridges": (context) => OverviewScaffold(
+                        "fridges": (context) => const OverviewScaffold(
                               pageToGo: MainViewState.fridges,
-                              isOnSmallDevice: isOnSmallDevice,
                             ),
-                        "settings": (context) => OverviewScaffold(
+                        "settings": (context) => const OverviewScaffold(
                               pageToGo: MainViewState.settings,
-                              isOnSmallDevice: isOnSmallDevice,
                             ),
                       };
                       if (settings.name != "login") {
@@ -112,9 +103,7 @@ class _MainPageState extends State<_MyAppState> {
 
 class OverviewScaffold extends StatelessWidget {
   final MainViewState pageToGo;
-  final bool isOnSmallDevice;
-  const OverviewScaffold(
-      {super.key, required this.pageToGo, required this.isOnSmallDevice});
+  const OverviewScaffold({super.key, required this.pageToGo});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +113,6 @@ class OverviewScaffold extends StatelessWidget {
       darkTheme: Provider.of<MainViewModel>(context).themeType,
       onLogin: Provider.of<MainViewModel>(context).login,
       onLogout: Provider.of<MainViewModel>(context).logout,
-      isOnSmallDevice: isOnSmallDevice,
       accessToken: Provider.of<MainViewModel>(context).accessToken,
     );
   }
@@ -136,7 +124,6 @@ class _MainScaffold extends StatelessWidget {
   final String? accessToken;
 
   final bool doneLoading;
-  final bool isOnSmallDevice;
   final Function(String accessToken) onLogin;
   final Function() onLogout;
 
@@ -145,7 +132,6 @@ class _MainScaffold extends StatelessWidget {
     required this.currentlySelectedPage,
     required this.accessToken,
     required this.doneLoading,
-    required this.isOnSmallDevice,
     required this.onLogin,
     required this.onLogout,
   });
@@ -171,79 +157,75 @@ class _MainScaffold extends StatelessWidget {
         break;
     }
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Control Panel'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  onLogout();
-                },
-                icon: const Icon(Icons.logout))
-          ],
-        ),
-        body: StatelessSnackbarController(child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-          double width = constraints.maxWidth;
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      double width = constraints.maxWidth;
+      MainWidget widgetToDisplay;
+      if (width < 250) {
+        return const Scaffold(body: Center(child: Text("Screen too small")));
+      }
+      bool smallDevice = true;
+      if (width < 900) {
+        smallDevice = true;
+      } else {
+        smallDevice = false;
+      }
+      switch (currentlySelectedPage) {
+        case MainViewState.overview:
+          widgetToDisplay = Overview(
+            darkTheme: isDarkTheme,
+            smallDevice: smallDevice,
+          );
+          break;
+        case MainViewState.hubs:
+          widgetToDisplay =
+              Hubs(darkTheme: isDarkTheme, smallDevice: smallDevice);
+          break;
+        case MainViewState.fridges:
+          widgetToDisplay = Fridges(
+              darkTheme: isDarkTheme,
+              smallDevice: smallDevice,
+              accessToken: accessToken);
+          break;
+        case MainViewState.settings:
+          widgetToDisplay = Settings(
+              darkTheme: darkTheme,
+              smallDevice: smallDevice,
+              setThemeType: Provider.of<MainViewModel>(context).setTheme);
+      }
 
-          if (width < 250) {
-            return const Center(child: Text("Screen too small"));
-          } else if (width < 900) {
-            switch (currentlySelectedPage) {
-              case MainViewState.overview:
-                return Overview(
-                  darkTheme: isDarkTheme,
-                  smallDevice: true,
-                );
-              case MainViewState.hubs:
-                return Hubs(darkTheme: isDarkTheme, smallDevice: true);
-              case MainViewState.fridges:
-                return Fridges(darkTheme: isDarkTheme, smallDevice: true);
-              case MainViewState.settings:
-                return Settings(
-                    darkTheme: darkTheme,
-                    smallDevice: true,
-                    setThemeType: Provider.of<MainViewModel>(context).setTheme);
-            }
-          } else {
-            MainWidget child;
-            switch (currentlySelectedPage) {
-              case MainViewState.overview:
-                child = Overview(
-                  darkTheme: isDarkTheme,
-                  smallDevice: false,
-                );
-                break;
-              case MainViewState.hubs:
-                child = Hubs(darkTheme: isDarkTheme, smallDevice: false);
-                break;
-              case MainViewState.fridges:
-                child = Fridges(darkTheme: isDarkTheme, smallDevice: false);
-                break;
-              case MainViewState.settings:
-                child = Settings(
-                    darkTheme: darkTheme,
-                    smallDevice: false,
-                    setThemeType: Provider.of<MainViewModel>(context).setTheme);
-            }
-            return MainNavigationRail(
-                mainView: child,
-                viewState: currentlySelectedPage,
-                changeViewState: (int? select) {
-                  if (select == null) return;
-                  Navigator.pushReplacementNamed(
-                      context, MainViewState.getByValue(select).name);
-                });
-          }
-        })),
-        bottomNavigationBar: isOnSmallDevice
-            ? MainBottomNavigationBar(
-                viewState: currentlySelectedPage,
-                changeViewState: (int? select) {
-                  if (select == null) return;
-                  Navigator.pushReplacementNamed(
-                      context, MainViewState.getByValue(select).name);
-                })
-            : null);
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('Control Panel'),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    onLogout();
+                  },
+                  icon: const Icon(Icons.logout))
+            ],
+          ),
+          body: StatelessSnackbarController(
+              child: !smallDevice
+                  ? MainNavigationRail(
+                      mainView: widgetToDisplay,
+                      viewState: currentlySelectedPage,
+                      changeViewState: (int? select) {
+                        if (select == null) return;
+                        Navigator.pushReplacementNamed(
+                            context, MainViewState.getByValue(select).name);
+                      })
+                  : widgetToDisplay),
+          floatingActionButton: widgetToDisplay.getFAB(context),
+          bottomNavigationBar: smallDevice
+              ? MainBottomNavigationBar(
+                  viewState: currentlySelectedPage,
+                  changeViewState: (int? select) {
+                    if (select == null) return;
+                    Navigator.pushReplacementNamed(
+                        context, MainViewState.getByValue(select).name);
+                  })
+              : null);
+    });
   }
 }

@@ -1,5 +1,6 @@
 import 'package:control_panel/data_structures/main_widget.dart';
-import 'package:control_panel/view_model/main_view/fridges.dart';
+import 'package:control_panel/view_model/main_view/fridges/overview.dart';
+import 'package:control_panel/views/fridges/add_fridge/add_fridge_dialog.dart';
 import 'package:control_panel/views/fridges/fridge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +8,12 @@ import 'package:provider/provider.dart';
 class Fridges extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
+  final String accessToken;
   const Fridges(
-      {super.key, required this.darkTheme, required this.smallDevice});
+      {super.key,
+      required this.darkTheme,
+      required this.smallDevice,
+      required this.accessToken});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +27,11 @@ class Fridges extends MainWidget {
               children: Provider.of<FridgeViewModel>(context)
                   .fridges
                   .map(
-                    (fridge) =>
-                        FridgeCard(darkTheme: darkTheme, fridge: fridge),
+                    (fridge) => FridgeCard(
+                      darkTheme: darkTheme,
+                      fridge: fridge,
+                      accessToken: accessToken,
+                    ),
                   )
                   .toList(),
             ),
@@ -59,6 +67,18 @@ class Fridges extends MainWidget {
         ),
       ],
     );
+  }
+
+  @override
+  FloatingActionButton? getFAB(BuildContext context) {
+    return FloatingActionButton(
+        onPressed: () {
+          if (!smallDevice) {
+            AddDialog.startDialog(context, accessToken);
+          }
+        },
+        backgroundColor: Colors.deepPurple,
+        child: const Icon(Icons.add));
   }
 
   @override

@@ -4,4 +4,6 @@ abstract class MainWidget extends StatelessWidget {
   const MainWidget({super.key});
   bool hasSideBar();
   Widget getSideBar(BuildContext context);
+
+  FloatingActionButton? getFAB(BuildContext context);
 }

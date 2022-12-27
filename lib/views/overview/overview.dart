@@ -61,4 +61,9 @@ class Overview extends MainWidget {
   bool hasSideBar() {
     return true;
   }
+
+  @override
+  FloatingActionButton? getFAB(BuildContext context) {
+    return null;
+  }
 }

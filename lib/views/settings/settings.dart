@@ -141,4 +141,9 @@ class Settings extends MainWidget {
   bool hasSideBar() {
     return false;
   }
+
+  @override
+  FloatingActionButton? getFAB(BuildContext context) {
+    return null;
+  }
 }

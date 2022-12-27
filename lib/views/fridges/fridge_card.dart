@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:control_panel/data_structures/data_value.dart';
 import 'package:control_panel/data_structures/fridge.dart';
 import 'package:control_panel/data_structures/sensor.dart';
+import 'package:control_panel/views/fridges/remove_fridge/remove_fridge_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:gauges/gauges.dart';
 
@@ -11,7 +12,12 @@ import 'chart.dart';
 class FridgeCard extends StatelessWidget {
   final bool darkTheme;
   final Fridge fridge;
-  const FridgeCard({super.key, required this.darkTheme, required this.fridge});
+  final String accessToken;
+  const FridgeCard(
+      {super.key,
+      required this.darkTheme,
+      required this.fridge,
+      required this.accessToken});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +30,19 @@ class FridgeCard extends StatelessWidget {
                   Row(children: [
                     const Padding(padding: EdgeInsets.fromLTRB(16, 32, 8, 8)),
                     Text(fridge.name),
+                    const Padding(padding: EdgeInsets.fromLTRB(8, 32, 8, 8)),
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {},
+                    ),
+                    const Padding(padding: EdgeInsets.fromLTRB(8, 32, 16, 8)),
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      onPressed: () {
+                        RemoveDialog.startDialog(
+                            context, accessToken, fridge.id, fridge.name);
+                      },
+                    ),
                     const Padding(padding: EdgeInsets.fromLTRB(8, 32, 16, 8)),
                   ]),
                   for (Sensor s in fridge.sensors)
@@ -76,8 +95,11 @@ class _IndividualSensorWidget extends StatelessWidget {
             Text("Sensor ${sensor.location}")
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            _MyRadialGauge(
-                latestTemp: latestTemp, dataValues: sensor.dataValues)
+            SizedBox(
+                height: 120,
+                width: 120,
+                child: _MyRadialGauge(
+                    latestTemp: latestTemp, dataValues: sensor.dataValues))
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             SizedBox(
@@ -110,7 +132,7 @@ class _MyRadialGauge extends StatelessWidget {
   Widget build(context) {
     double? latestTemp = this.latestTemp;
     return (latestTemp == null)
-        ? Container()
+        ? const Expanded(child: Icon(Icons.block))
         : RadialGauge(radius: 60, axes: [
             RadialGaugeAxis(
               pointers: [

@@ -65,4 +65,12 @@ class Hubs extends MainWidget {
   bool hasSideBar() {
     return true;
   }
+
+  @override
+  FloatingActionButton? getFAB(BuildContext context) {
+    return FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add));
+  }
 }
