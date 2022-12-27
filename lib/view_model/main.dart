@@ -9,10 +9,12 @@ class MainViewModel with ChangeNotifier {
   ThemeType _darkTheme = ThemeType.system;
   bool _doneLoading = false;
   String? _accessToken;
+  bool _isCentigrade = true;
 
   ThemeType get themeType => _darkTheme;
   bool get doneLoading => _doneLoading;
   String? get accessToken => _accessToken;
+  bool get isCentigrade => _isCentigrade;
 
   SharedPreferences? _sp;
 
@@ -28,6 +30,7 @@ class MainViewModel with ChangeNotifier {
       } else {
         t = ThemeType.system;
       }
+      isCentigrade = sp.getBool("centigrade") ?? true;
       accessToken = sp.getString("accessToken");
       themeType = t;
       _sp = sp;
@@ -56,6 +59,17 @@ class MainViewModel with ChangeNotifier {
 
     _darkTheme = darkTheme;
     notifyListeners();
+  }
+
+  set isCentigrade(bool centigrade) {
+    _sp?.setBool("centigrade", centigrade);
+
+    _isCentigrade = centigrade;
+    notifyListeners();
+  }
+
+  void setCentigrade(bool cenrigrade) {
+    isCentigrade = cenrigrade;
   }
 
   void login(String accessToken) {

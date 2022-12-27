@@ -75,6 +75,10 @@ class Fridges extends MainWidget {
         onPressed: () {
           if (!smallDevice) {
             AddDialog.startDialog(context, accessToken);
+          } else {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AddDialog.replaceMain(accessToken),
+            ));
           }
         },
         backgroundColor: Colors.deepPurple,

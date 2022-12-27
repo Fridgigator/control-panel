@@ -189,8 +189,11 @@ class _MainScaffold extends StatelessWidget {
           break;
         case MainViewState.settings:
           widgetToDisplay = Settings(
+              setCentigrade: Provider.of<MainViewModel>(context).setCentigrade,
+              centigrade: Provider.of<MainViewModel>(context).isCentigrade,
               darkTheme: darkTheme,
               smallDevice: smallDevice,
+              accessToken: accessToken,
               setThemeType: Provider.of<MainViewModel>(context).setTheme);
       }
 

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/data_structures/theme_type.dart';
+import 'package:control_panel/views/phone/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,12 +11,18 @@ import 'package:settings_ui/settings_ui.dart';
 class Settings extends MainWidget {
   final ThemeType darkTheme;
   final bool smallDevice;
+  final bool centigrade;
+  final Function(bool) setCentigrade;
+  final String accessToken;
   final Function(ThemeType) setThemeType;
 
   const Settings(
       {super.key,
       required this.setThemeType,
+      required this.setCentigrade,
+      required this.centigrade,
       required this.darkTheme,
+      required this.accessToken,
       required this.smallDevice});
   @override
   Widget build(BuildContext context) {
@@ -30,7 +37,14 @@ class Settings extends MainWidget {
               leading: const Icon(Icons.phone),
               description: const Text('Register a telephone for alerts'),
               onPressed: (context) {
-                debugPrint("register");
+                if (!smallDevice) {
+                  RegisterPhone.startDialog(context, accessToken, smallDevice);
+                } else {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        RegisterPhone.replaceMain(accessToken, smallDevice),
+                  ));
+                }
               },
             ),
             SettingsTile.navigation(
@@ -98,6 +112,16 @@ class Settings extends MainWidget {
                 debugPrint("Hihihih");
               },
             ),
+          ],
+        ),
+        SettingsSection(
+          title: const Text('Data'),
+          tiles: [
+            SettingsTile.switchTile(
+                initialValue: centigrade,
+                onToggle: setCentigrade,
+                description: const Text("Use centigrade"),
+                title: const Text("Units"))
           ],
         ),
         SettingsSection(

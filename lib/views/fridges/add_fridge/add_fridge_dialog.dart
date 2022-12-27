@@ -12,4 +12,11 @@ class AddDialog {
           );
         });
   }
+
+  static Widget replaceMain(String accessToken) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Add Fridge')),
+      body: AddStepper(accessToken: accessToken),
+    );
+  }
 }
