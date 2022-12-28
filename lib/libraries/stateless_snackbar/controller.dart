@@ -9,8 +9,7 @@ class StatelessSnackbarController extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(fit: StackFit.expand, children: [
       child,
-      const StatelessSnackbar(
-          backgroundColor: Colors.red, visible: false, child: Text(""))
+      const StatelessSnackbar(backgroundColor: Colors.red)
     ]);
   }
 }

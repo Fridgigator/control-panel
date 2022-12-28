@@ -1,29 +1,45 @@
 import 'dart:developer';
 
+import 'package:control_panel/libraries/get_updates.dart';
 import 'package:flutter/foundation.dart';
 
 class StatelessSnackbarViewModel with ChangeNotifier {
-  static StatelessSnackbarViewModel _instance =
-      StatelessSnackbarViewModel._internal();
-
-  String? _text;
-  StatelessSnackbarViewModel._internal();
-  factory StatelessSnackbarViewModel() {
-    return _instance;
+  bool disposed = false;
+  StatelessSnackbarViewModel() {
+    disposed = false;
+    () async {
+      log("Awaiting for Message");
+      await for (Error m in errorsController.stream) {
+        if (disposed != false) {
+          break;
+        }
+        log("Message: $m");
+        switch (m) {
+          case Error.initError:
+            text = "Cannot initialize";
+            break;
+          case Error.disconnected:
+            text = "Disconnected";
+            break;
+          case Error.removeError:
+            text = null;
+            break;
+        }
+        if (m == Error.initError) {}
+      }
+    }();
   }
-
-  bool get visible => _instance._text != null;
-  String? get text => _instance._text;
-
   @override
-  dispose() {
-    _instance = StatelessSnackbarViewModel._internal();
+  void dispose() {
+    disposed = true;
     super.dispose();
   }
 
+  String? _text;
+  bool get visible => _text != null;
+  String? get text => _text;
   set text(String? error) {
-    log("Setting $error");
-    _instance._text = error;
+    _text = error;
     notifyListeners();
   }
 }
