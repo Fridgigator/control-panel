@@ -65,6 +65,7 @@ dependencies:
   equatable: ^2.0.5
   tuple: ^2.0.1
   intl_phone_field: ^3.1.0
+  another_flushbar: ^1.12.29
 
 
 dependency_overrides:

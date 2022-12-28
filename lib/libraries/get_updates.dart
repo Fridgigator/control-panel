@@ -9,6 +9,7 @@ import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/data_structures/sensor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -60,7 +61,7 @@ void _getData() async {
   WebSocketChannel? globalChannel;
   while (true) {
     log("starting get data");
-
+    WidgetsFlutterBinding.ensureInitialized();
     try {
       try {
         (await SharedPreferences.getInstance()).getString("accessToken");

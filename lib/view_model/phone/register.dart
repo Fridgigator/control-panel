@@ -11,9 +11,11 @@ class RegisterPhoneViewModel with ChangeNotifier {
   String accessToken;
   IconType displayIcon = IconType.ok;
   GlobalKey<FormState> formKey;
+  List<String>? _registeredTelephones;
   int _currentStep = 0;
   PhoneNumber? _numToRegister;
   PhoneNumber? get numToRegister => _numToRegister;
+
   set numToRegister(PhoneNumber? numToRegister) {
     _numToRegister = numToRegister;
     notifyListeners();
@@ -25,14 +27,58 @@ class RegisterPhoneViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  RegisterPhoneViewModel({required this.accessToken, required this.formKey});
+  List<String>? get registeredTelephones => _registeredTelephones;
+  set registeredTelephones(List<String>? newPhones) {
+    _registeredTelephones = newPhones;
+    notifyListeners();
+  }
+
+  RegisterPhoneViewModel(
+      {required this.accessToken,
+      required this.formKey,
+      required Function(String display) pop}) {
+    getPhoneList(pop);
+  }
+
+  void getPhoneList(Function(String display) pop) async {
+    try {
+      var body = (await http.post(
+          Uri.parse("$remoteHttpDomain/api/frontend/v2/get-telephone-list"),
+          headers: {"Authorization": accessToken}));
+      if (body.statusCode != 200) {
+        log("get-telephone-list-error: ${body.statusCode}");
+        debugPrint("error: ${body.statusCode} is not 200");
+        registeredTelephones = [];
+        pop("Server Error");
+      } else {
+        var retVal = jsonDecode(body.body);
+        log("retval=$retVal");
+        if (retVal["error-code"] != 0) {
+          pop("Server Error");
+          debugPrint("$retVal");
+        } else {
+          if (retVal["phone-list"] == null) {
+            registeredTelephones = [];
+          } else {
+            registeredTelephones = (retVal["phone-list"] as List<dynamic>)
+                .map((e) => e.toString())
+                .toList();
+          }
+        }
+      }
+    } catch (e, stack) {
+      debugPrint("catch: $e $stack");
+      pop("Server Error");
+    }
+  }
+
   void Function()? getOnStepCancel(BuildContext context) {
     return () {
       Navigator.of(context).pop();
     };
   }
 
-  void Function()? getOnStepContinue() {
+  void Function()? getOnStepContinue(Function(String) displaySnackbar) {
     switch (currentStep) {
       case 0:
         if (numToRegister == null) {
@@ -55,6 +101,7 @@ class RegisterPhoneViewModel with ChangeNotifier {
                   currentStep = 2;
                 }
               } catch (e) {
+                displaySnackbar("Server Error");
                 debugPrint("catch: $e");
               }
             }();
@@ -66,7 +113,8 @@ class RegisterPhoneViewModel with ChangeNotifier {
     return null;
   }
 
-  void onStep1Changed(PhoneNumber? val) {
+  void onStep1Changed(
+      PhoneNumber? val, Function(String display) displaySnackbar) {
     FormState? state = formKey.currentState;
     if (state == null) {
       numToRegister = null;
@@ -81,7 +129,8 @@ class RegisterPhoneViewModel with ChangeNotifier {
 
   void onStep1Saved(PhoneNumber? val) {}
 
-  void onStep2Completed(String text, Function pop) async {
+  void onStep2Completed(
+      String text, Function pop, Function(String) displaySnackbar) async {
     try {
       var body = (await http.post(
           Uri.parse(
@@ -100,10 +149,31 @@ class RegisterPhoneViewModel with ChangeNotifier {
           Timer(const Duration(seconds: 1), () {
             pop();
           });
+        } else if (retVal["error-code"] == 1) {
+          displaySnackbar(
+            "Invalid code",
+          );
         }
       }
     } catch (e) {
       debugPrint("catch: $e");
+    }
+  }
+
+  void removePhone(String phone, Function(String) showPopup) async {
+    try {
+      var body = (await http.post(
+          Uri.parse(
+              "$remoteHttpDomain/api/frontend/v2/remove-telephone?phone=${Uri.encodeComponent(phone)}"),
+          headers: {"Authorization": accessToken}));
+      if (body.statusCode != 200) {
+        showPopup("Server error");
+      } else {
+        registeredTelephones = null;
+        getPhoneList(showPopup);
+      }
+    } catch (e, stack) {
+      debugPrint("catch: $e $stack");
     }
   }
 }
