@@ -5,24 +5,34 @@ import 'package:control_panel/data_structures/fridge.dart';
 import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/libraries/get_updates.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+
+bool _finishedLoading = false;
 
 class OverviewViewModel with ChangeNotifier {
   DateTime _lastPing = DateTime.fromMicrosecondsSinceEpoch(0);
   bool _hasPinged = false;
   int _amountUp = 0;
   int _amountDown = 0;
-  bool? disposed;
+  bool? _disposed;
 
+  bool get finishedLoading => _finishedLoading;
   bool get hasPinged => _hasPinged;
   DateTime get lastPinged => _lastPing;
   int get amountUp => _amountUp;
   int get amountDown => _amountDown;
 
+  set finishedLoading(bool finishedLoading) {
+    log("Awaiting for Message: _disposed = $_disposed; set finishedLoading to: $finishedLoading");
+    _finishedLoading = finishedLoading;
+    if (_disposed != true) {
+      notifyListeners();
+    }
+  }
+
   set hasPinged(bool hasPinged) {
     if (hasPinged != _hasPinged) {
       _hasPinged = hasPinged;
-      if (disposed != true) {
+      if (_disposed != true) {
         notifyListeners();
       }
     }
@@ -37,7 +47,7 @@ class OverviewViewModel with ChangeNotifier {
     } else {
       hasPinged = false;
     }
-    if (disposed != true && oldHasPinged != hasPinged) {
+    if (_disposed != true && oldHasPinged != hasPinged) {
       notifyListeners();
     }
   }
@@ -51,7 +61,7 @@ class OverviewViewModel with ChangeNotifier {
     if (amountUp == 0) {
       hasPinged = false;
     }
-    if (disposed != true && oldAmountUp != _amountUp) {
+    if (_disposed != true && oldAmountUp != _amountUp) {
       notifyListeners();
     }
   }
@@ -59,17 +69,16 @@ class OverviewViewModel with ChangeNotifier {
   set amountDown(int amountDown) {
     log("amntDown=$amountDown");
     _amountDown = amountDown;
-    if (disposed != true) {
+    if (_disposed != true) {
       notifyListeners();
     }
   }
 
-  WebSocketChannel? channel;
   Timer? _timer;
   List<Hub> _hubs = [];
 
   set hubs(List<Hub> h) {
-    if (disposed != true) {
+    if (_disposed != true) {
       _hubs = h;
       var curTime = DateTime.now();
       int localAmountUp = 0;
@@ -84,6 +93,8 @@ class OverviewViewModel with ChangeNotifier {
       }
       amountDown = localAmountDown;
       amountUp = localAmountUp;
+    } else {
+      log("Awaiting for Message: disposed");
     }
   }
 
@@ -97,7 +108,9 @@ class OverviewViewModel with ChangeNotifier {
   bool error = false;
 
   OverviewViewModel() {
-    disposed = false;
+    log("Awaiting for Message: Started");
+    _finishedLoading = false;
+    _disposed = false;
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
       var curTime = DateTime.now();
       int localAmountUp = 0;
@@ -120,14 +133,18 @@ class OverviewViewModel with ChangeNotifier {
       log("pinged: $hasPinged");
     });
     () async {
-      log("Awaiting for Message");
+      log("Awaiting for Message: $cachedHubMessage, $cachedFridgeMessage");
+      messagesSend.add(const UpdateMessage());
       await for (Message m in messagesController.stream) {
-        if (disposed != false) {
+        log("Awaiting for Message: got message, _disposed=$_disposed");
+        finishedLoading = true;
+        if (_disposed != false) {
           break;
         }
-        log("Message: $m");
+        log("Awaiting for Message: $m");
         if (m is HubMessage) {
           hubs = m.h;
+          log("Awaiting for Message: is hub message: ${m.h}, finishedLoading=$finishedLoading");
         } else if (m is FridgeMessage) {
           fridges = m.h;
         }
@@ -143,7 +160,7 @@ class OverviewViewModel with ChangeNotifier {
 
   @override
   void dispose() {
-    disposed = true;
+    _disposed = true;
     _timer?.cancel();
     super.dispose();
   }

@@ -6,16 +6,26 @@ import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/libraries/get_updates.dart';
 import 'package:flutter/material.dart';
 
+bool _finishedLoading = false;
+
 class HubsViewModel with ChangeNotifier {
   DateTime _lastPing = DateTime.fromMicrosecondsSinceEpoch(0);
   bool _hasPinged = false;
   int _amountUp = 0;
   int _amountDown = 0;
 
+  bool get finishedLoading => _finishedLoading;
   bool get hasPinged => _hasPinged;
   DateTime get lastPinged => _lastPing;
   int get amountUp => _amountUp;
   int get amountDown => _amountDown;
+
+  set finishedLoading(bool finishedLoading) {
+    _finishedLoading = finishedLoading;
+    if (disposed != true) {
+      notifyListeners();
+    }
+  }
 
   set hasPinged(bool hasPinged) {
     if (hasPinged != _hasPinged) {
@@ -96,6 +106,7 @@ class HubsViewModel with ChangeNotifier {
   bool disposed = false;
 
   HubsViewModel() {
+    _finishedLoading = false;
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
       var curTime = DateTime.now();
       int localAmountUp = 0;
@@ -119,10 +130,12 @@ class HubsViewModel with ChangeNotifier {
     });
     () async {
       log("Awaiting for Message");
+      messagesSend.add(const UpdateMessage());
       await for (Message m in messagesController.stream) {
         if (disposed != false) {
           break;
         }
+        finishedLoading = true;
         log("Message: $m");
         if (m is HubMessage) {
           hubs = m.h;

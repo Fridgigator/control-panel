@@ -25,7 +25,6 @@ class StatelessSnackbarViewModel with ChangeNotifier {
             text = null;
             break;
         }
-        if (m == Error.initError) {}
       }
     }();
   }

@@ -21,21 +21,25 @@ class Fridges extends MainWidget {
       child: MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => FridgeViewModel())],
         builder: (context, child) {
-          return SingleChildScrollView(
-            child: Wrap(
-              direction: Axis.horizontal,
-              children: Provider.of<FridgeViewModel>(context)
-                  .fridges
-                  .map(
-                    (fridge) => FridgeCard(
-                      darkTheme: darkTheme,
-                      fridge: fridge,
-                      accessToken: accessToken,
-                    ),
-                  )
-                  .toList(),
-            ),
-          );
+          return Provider.of<FridgeViewModel>(context).finishedLoading
+              ? SingleChildScrollView(
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    children: Provider.of<FridgeViewModel>(context)
+                        .fridges
+                        .map(
+                          (fridge) => FridgeCard(
+                            darkTheme: darkTheme,
+                            fridge: fridge,
+                            accessToken: accessToken,
+                          ),
+                        )
+                        .toList(),
+                  ),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                );
         },
       ),
     );

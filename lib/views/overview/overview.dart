@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/view_model/main_view/overview.dart';
 import 'package:control_panel/views/overview/fridge_overview_display.dart';
@@ -8,10 +10,12 @@ import 'package:provider/provider.dart';
 class Overview extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
+  final bool centigrade;
   const Overview({
     super.key,
     required this.darkTheme,
     required this.smallDevice,
+    required this.centigrade,
   });
 
   @override
@@ -19,29 +23,35 @@ class Overview extends MainWidget {
     return MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => OverviewViewModel())],
         builder: (context, child) {
-          return ListView(
-              padding: smallDevice
-                  ? const EdgeInsets.fromLTRB(8, 32, 8, 32)
-                  : const EdgeInsets.fromLTRB(128, 32, 128, 32),
-              scrollDirection: Axis.vertical,
-              children: [
-                MainConnectionStat(
-                    darkTheme: darkTheme,
-                    amountUp: Provider.of<OverviewViewModel>(context).amountUp,
-                    amountDown:
-                        Provider.of<OverviewViewModel>(context).amountDown,
-                    hasPinged:
-                        Provider.of<OverviewViewModel>(context).hasPinged),
-                Center(
-                    child: Wrap(
-                  direction: Axis.horizontal,
-                  runAlignment: WrapAlignment.spaceAround,
-                  children: Provider.of<OverviewViewModel>(context)
-                      .fridges
-                      .map((e) => FridgeOverviewDisplay(fridge: e))
-                      .toList(),
-                )),
-              ]);
+          return Provider.of<OverviewViewModel>(context).finishedLoading
+              ? ListView(
+                  padding: smallDevice
+                      ? const EdgeInsets.fromLTRB(8, 32, 8, 32)
+                      : const EdgeInsets.fromLTRB(128, 32, 128, 32),
+                  scrollDirection: Axis.vertical,
+                  children: [
+                      MainConnectionStat(
+                          darkTheme: darkTheme,
+                          amountUp:
+                              Provider.of<OverviewViewModel>(context).amountUp,
+                          amountDown: Provider.of<OverviewViewModel>(context)
+                              .amountDown,
+                          hasPinged: Provider.of<OverviewViewModel>(context)
+                              .hasPinged),
+                      Center(
+                          child: Wrap(
+                        direction: Axis.horizontal,
+                        runAlignment: WrapAlignment.spaceAround,
+                        children: Provider.of<OverviewViewModel>(context)
+                            .fridges
+                            .map((e) => FridgeOverviewDisplay(
+                                fridge: e, centigrade: centigrade))
+                            .toList(),
+                      )),
+                    ])
+              : const Center(
+                  child: CircularProgressIndicator(),
+                );
         });
   }
 

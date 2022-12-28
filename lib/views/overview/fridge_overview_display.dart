@@ -4,10 +4,19 @@ import 'package:gauges/gauges.dart';
 
 class FridgeOverviewDisplay extends StatelessWidget {
   final Fridge fridge;
-  const FridgeOverviewDisplay({super.key, required this.fridge});
+  final bool centigrade;
+  const FridgeOverviewDisplay(
+      {super.key, required this.fridge, required this.centigrade});
 
   @override
   Widget build(BuildContext context) {
+    String highTempDisplay = centigrade
+        ? "${fridge.highTemp.toStringAsFixed(2)} C"
+        : "${cToF(fridge.highTemp).toStringAsFixed(2)} F";
+    String lowTempDisplay = centigrade
+        ? "${fridge.lowTemp.toStringAsFixed(2)} C"
+        : "${cToF(fridge.lowTemp).toStringAsFixed(2)} F";
+
     return Card(
         child: InkWell(
             onTap: () {},
@@ -72,11 +81,11 @@ class FridgeOverviewDisplay extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("${fridge.medianTemp.toStringAsFixed(2)} C"),
+                          Text(highTempDisplay),
                           const Padding(
                             padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
                           ),
-                          Text("${fridge.lowTemp.toStringAsFixed(2)} C")
+                          Text(lowTempDisplay)
                         ]),
                     Row(
                         mainAxisSize: MainAxisSize.max,
@@ -91,4 +100,8 @@ class FridgeOverviewDisplay extends StatelessWidget {
                   ]))
                 ]))));
   }
+}
+
+double cToF(double tempC) {
+  return (tempC * 9.0 / 5.0) + 32.0;
 }

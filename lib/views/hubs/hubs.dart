@@ -18,8 +18,9 @@ class Hubs extends MainWidget {
         providers: [ChangeNotifierProvider(create: (_) => HubsViewModel())],
         builder: (context, child) {
           return Center(
-              child: SingleChildScrollView(
-                  child: Wrap(
+            child: Provider.of<HubsViewModel>(context).finishedLoading
+                ? SingleChildScrollView(
+                    child: Wrap(
                       direction: Axis.horizontal,
                       children:
                           Provider.of<HubsViewModel>(context).hubs.map((Hub h) {
@@ -29,7 +30,11 @@ class Hubs extends MainWidget {
                             darkTheme: darkTheme,
                             hubUUID: h.id,
                             lastSeenTimes: h.pings);
-                      }).toList())));
+                      }).toList(),
+                    ),
+                  )
+                : const CircularProgressIndicator(),
+          );
         });
   }
 

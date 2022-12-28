@@ -173,6 +173,7 @@ class _MainScaffold extends StatelessWidget {
       switch (currentlySelectedPage) {
         case MainViewState.overview:
           widgetToDisplay = Overview(
+            centigrade: Provider.of<MainViewModel>(context).isCentigrade,
             darkTheme: isDarkTheme,
             smallDevice: smallDevice,
           );

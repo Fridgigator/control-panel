@@ -7,12 +7,14 @@ import 'package:control_panel/data_structures/data_value.dart';
 import 'package:control_panel/data_structures/fridge.dart';
 import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/data_structures/sensor.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+HubMessage? cachedHubMessage;
+FridgeMessage? cachedFridgeMessage;
 
 StreamController<Error> errorsController = StreamController<Error>.broadcast();
 StreamController<Message> messagesController =
@@ -20,7 +22,7 @@ StreamController<Message> messagesController =
 
 Stream<Error> errors = errorsController.stream;
 Stream<Message> messages = messagesController.stream;
-
+StreamController<Message> messagesSend = StreamController<Message>.broadcast();
 void getUpdates() async {
   bool error = false;
   const androidConfig = FlutterBackgroundAndroidConfig(
@@ -86,7 +88,16 @@ void _getData() async {
         }
         globalChannel = channel;
         log("Listening");
-
+        if (!messagesSend.isClosed) {
+          messagesSend.stream.listen((event) {
+            if (event is UpdateMessage) {
+              log("Awaiting for Message: Sending data");
+              channel.sink.add('{"command":"read-all"}');
+            }
+          });
+        } else {
+          print("Can't listen to message stream");
+        }
         await for (String data in channel.stream) {
           log("In stream");
           String? tmpAccessToken =
@@ -119,6 +130,7 @@ void _getData() async {
               Hub h = Hub(id: name, lastSeen: lastSeen, pings: pings);
               return h;
             }).toList();
+            cachedHubMessage = HubMessage(obtainedHubs);
             messagesController.add(HubMessage(obtainedHubs));
             log("setting lastPing = added to message");
           }
@@ -206,6 +218,7 @@ void _getData() async {
               );
               return f;
             }).toList();
+            cachedFridgeMessage = FridgeMessage(newFridges);
             messagesController.add(FridgeMessage(newFridges));
           }
         }
@@ -232,7 +245,9 @@ void _getData() async {
 
 enum Error { initError, disconnected, removeError }
 
-abstract class Message {}
+abstract class Message {
+  const Message();
+}
 
 class HubMessage extends Message {
   final List<Hub> h;
@@ -244,6 +259,10 @@ class FridgeMessage extends Message {
   final List<Fridge> h;
 
   FridgeMessage(this.h);
+}
+
+class UpdateMessage extends Message {
+  const UpdateMessage();
 }
 
 class _AccessTokenChanged {}
