@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:control_panel/data_structures/fridge.dart';
 import 'package:control_panel/libraries/get_updates.dart';
@@ -41,23 +40,15 @@ class FridgeViewModel with ChangeNotifier {
     _finishedLoading = false;
 
     () async {
-      log("Awaiting for Message");
       messagesSend.add(const UpdateMessage());
       await for (Message m in messagesController.stream) {
         if (disposed != false) {
           break;
         }
         finishedLoading = true;
-        log("Message: $m");
         if (m is FridgeMessage) {
           fridges = m.h;
         }
-      }
-    }();
-    () async {
-      log("Awaiting for Error Message");
-      await for (Error m in errorsController.stream) {
-        log("Error Message: ${m.name}");
       }
     }();
   }

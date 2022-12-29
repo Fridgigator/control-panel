@@ -1,67 +1,29 @@
-import 'package:control_panel/data_structures/data_value.dart';
+/*import 'package:control_panel/data_structures/data_value.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:quiver/iterables.dart';
 import 'package:tuple/tuple.dart';
 
-class Chart extends StatelessWidget {
+class SensorChart extends StatelessWidget {
   final bool darkTheme;
-  final List<DataValue> dataValues;
+  final List<Tuple2<double, double>> dataValues;
   final DateTime now;
-  final bool isTemp;
   final List<String>? toolTipsText;
-  const Chart(
+  const SensorChart(
       {super.key,
       required this.darkTheme,
-      required this.isTemp,
       required this.now,
       required this.dataValues,
       this.toolTipsText});
 
-  double? get maxValue => dataValues.fold(null, (previousValue, element) {
-        if (previousValue == null) {
-          return element.value;
-        } else {
-          if (previousValue > element.value) {
-            return previousValue;
-          } else {
-            return element.value;
-          }
-        }
-      });
-  double? get minValue => dataValues.fold(null, (previousValue, element) {
-        if (previousValue == null) {
-          return element.value;
-        } else {
-          if (previousValue < element.value) {
-            return previousValue;
-          } else {
-            return element.value;
-          }
-        }
-      });
-
-  LineChartData get sampleData1 => LineChartData(
-        gridData: gridData,
-        lineTouchData: LineTouchData(
-          enabled: toolTipsText != null,
-          touchTooltipData: LineTouchTooltipData(
-            getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-              return touchedBarSpots.map((LineBarSpot barSpot) {
-                print("${barSpot.y}");
-                return LineTooltipItem(
-                    "${barSpot.y}", TextStyle(inherit: true));
-              }).toList();
-            },
-          ),
-        ),
-        titlesData: titlesData1,
-        borderData: borderData,
-        lineBarsData: lineBarsData,
-        minX: 0,
-        maxX: 30,
-        maxY: maxValue ?? 4 + 3,
-        minY: minValue ?? -4 - 3,
-      );
+  double? get maxValue => max(
+      dataValues,
+      (Tuple2<double, double> a, Tuple2<double, double> b) =>
+          a.item2.compareTo(b.item2))?.item2;
+  double? get minValue => min(
+      dataValues,
+      (Tuple2<double, double> a, Tuple2<double, double> b) =>
+          a.item1.compareTo(b.item1))?.item1;
 
   FlTitlesData get titlesData1 => FlTitlesData(
         bottomTitles: AxisTitles(
@@ -80,42 +42,13 @@ class Chart extends StatelessWidget {
         ),
       );
 
-  List<LineChartBarData> get lineBarsData => [
-        lineChartBarDataTemp,
-        lineChartBarDataPicoTemp,
-        lineChartBarDataDHT22Temp,
-        lineChartBarDataDHT11Temp,
-        lineChartBarDataHumidity,
-        lineChartBarDataDHT22Humidity,
-        lineChartBarDataDHT11Humidity,
-        if (isTemp) high,
-        if (isTemp) low
-      ];
+  List<LineChartBarData> get lineBarsData => [high, low];
 
-  List<FlSpot> get tempSpots => getSpots(TypeOfData.temp, now);
-  List<FlSpot> get dht22TempSpots => getSpots(TypeOfData.dht22Temp, now);
-  List<FlSpot> get dht11TempSpots => getSpots(TypeOfData.dht11Temp, now);
-  List<FlSpot> get picoSpots => getSpots(TypeOfData.picoTemp, now);
-
-  List<FlSpot> get humiditySpots => getSpots(TypeOfData.humidity, now);
-  List<FlSpot> get dht22HumiditySpots =>
-      getSpots(TypeOfData.dht22Humidity, now);
-  List<FlSpot> get dht11HumiditySpots =>
-      getSpots(TypeOfData.dht11Humidity, now);
-
-  List<FlSpot> getSpots(TypeOfData type, DateTime now) {
-    List<FlSpot> dataValues = this.dataValues.where((DataValue v) {
-      return v.typeOfData == type;
-    }).map((DataValue v) {
-      return Tuple2(v.time, v.value);
-    }).map((Tuple2<DateTime, double> t) {
-      return FlSpot(
-          now.millisecondsSinceEpoch / 1000 -
-              t.item1.millisecondsSinceEpoch / 1000,
-          t.item2);
-    }).toList();
-    return dataValues;
-  }
+  List<FlSpot>? get highPercentile =>
+      enumerate(dataValues).map((dataValue, index) {
+        return FlSpot((index as int), dataValue.value.item2);
+      }).toList();
+  //List<FlSpot> get lowPercentile =>
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     Widget text;
@@ -266,3 +199,4 @@ class Chart extends StatelessWidget {
     );
   }
 }
+*/

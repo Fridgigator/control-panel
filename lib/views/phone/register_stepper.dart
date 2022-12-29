@@ -1,6 +1,4 @@
-import 'dart:developer';
 
-import 'package:another_flushbar/flushbar.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:control_panel/view_model/phone/register.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +17,6 @@ class RegisterPhoneStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("Build");
     final formKey = GlobalKey<FormState>();
 
     return MultiProvider(
@@ -187,7 +184,7 @@ class _FirstStepView extends StatelessWidget {
               ])),
           Card(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
               child: Container(
                 alignment: Alignment.centerLeft,
                 child: Form(

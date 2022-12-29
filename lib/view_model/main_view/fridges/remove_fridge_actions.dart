@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:flutter/widgets.dart';
@@ -15,9 +14,7 @@ Future<bool> removeButton(String accessToken, String fridgeID) async {
     debugPrint("error: ${body.statusCode} is not 200");
     return false;
   } else {
-    log('remove-fridge-body: ${body.body}');
     var returnMap = jsonDecode(body.body);
-    log("remove-fridge-returnMap=$returnMap");
     if (returnMap["error-code"] == 0) {
       return true;
     } else {

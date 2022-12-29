@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -20,7 +19,6 @@ class MainConnectionStat extends StatelessWidget {
   final double width = 7;
   @override
   Widget build(BuildContext context) {
-    log("$hasPinged");
     return Card(
         child: InkWell(
             onTap: () {},

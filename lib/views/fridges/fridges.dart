@@ -1,19 +1,23 @@
 import 'package:control_panel/data_structures/main_widget.dart';
+import 'package:control_panel/data_structures/sensor.dart';
 import 'package:control_panel/view_model/main_view/fridges/overview.dart';
 import 'package:control_panel/views/fridges/add_fridge/add_fridge_dialog.dart';
 import 'package:control_panel/views/fridges/fridge_card.dart';
+import 'package:control_panel/views/fridges/sensor_stats/sensor_stats.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Fridges extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
+  final bool isCentigrade;
   final String accessToken;
   const Fridges(
       {super.key,
       required this.darkTheme,
       required this.smallDevice,
-      required this.accessToken});
+      required this.accessToken,
+      required this.isCentigrade});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,23 @@ class Fridges extends MainWidget {
                         .fridges
                         .map(
                           (fridge) => FridgeCard(
+                            onCardTap: (Sensor sensor) {
+                              if (!smallDevice) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title:
+                                            Text("Sensor: ${sensor.location}"),
+                                        content: SensorStats(
+                                          isCentigrade: isCentigrade,
+                                          sensorKey: sensor.name,
+                                          timeCalled: DateTime.now(),
+                                        ),
+                                      );
+                                    });
+                              }
+                            },
                             darkTheme: darkTheme,
                             fridge: fridge,
                             accessToken: accessToken,
@@ -78,7 +99,7 @@ class Fridges extends MainWidget {
     return FloatingActionButton(
         onPressed: () {
           if (!smallDevice) {
-            AddDialog.startDialog(context, accessToken);
+            AddDialog.startFridgeDialog(context, accessToken);
           } else {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => AddDialog.replaceMain(accessToken),

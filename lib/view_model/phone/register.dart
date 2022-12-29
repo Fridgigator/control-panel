@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:flutter/material.dart';
@@ -46,13 +45,11 @@ class RegisterPhoneViewModel with ChangeNotifier {
           Uri.parse("$remoteHttpDomain/api/frontend/v2/get-telephone-list"),
           headers: {"Authorization": accessToken}));
       if (body.statusCode != 200) {
-        log("get-telephone-list-error: ${body.statusCode}");
         debugPrint("error: ${body.statusCode} is not 200");
         registeredTelephones = [];
         pop("Server Error");
       } else {
         var retVal = jsonDecode(body.body);
-        log("retval=$retVal");
         if (retVal["error-code"] != 0) {
           pop("Server Error");
           debugPrint("$retVal");
@@ -93,7 +90,6 @@ class RegisterPhoneViewModel with ChangeNotifier {
                         "$remoteHttpDomain/api/frontend/v2/register-telephone?phone=${Uri.encodeComponent(numToRegister?.number ?? "")}"),
                     headers: {"Authorization": accessToken}));
                 if (body.statusCode != 200) {
-                  log("add-fridge-error: ${body.statusCode}");
                   debugPrint("error: ${body.statusCode} is not 200");
                   displayIcon = IconType.error;
                   currentStep = 0;
@@ -137,13 +133,11 @@ class RegisterPhoneViewModel with ChangeNotifier {
               "$remoteHttpDomain/api/frontend/v2/verify-telephone?phone=${Uri.encodeComponent(numToRegister?.number ?? "")}&code=${Uri.encodeComponent(text)}"),
           headers: {"Authorization": accessToken}));
       if (body.statusCode != 200) {
-        log("add-fridge-error: ${body.statusCode}");
         debugPrint("error: ${body.statusCode} is not 200");
         displayIcon = IconType.error;
         currentStep = 0;
       } else {
         var retVal = jsonDecode(body.body);
-        log("retval=$retVal");
         if (retVal["error-code"] == 0) {
           currentStep = 3;
           Timer(const Duration(seconds: 1), () {

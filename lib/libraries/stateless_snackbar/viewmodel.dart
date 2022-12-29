@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:control_panel/libraries/get_updates.dart';
 import 'package:flutter/foundation.dart';
@@ -8,12 +7,10 @@ class StatelessSnackbarViewModel with ChangeNotifier {
   StatelessSnackbarViewModel() {
     disposed = false;
     () async {
-      log("Awaiting for Message");
       await for (Error m in errorsController.stream) {
         if (disposed != false) {
           break;
         }
-        log("Message: $m");
         switch (m) {
           case Error.initError:
             text = "Cannot initialize";

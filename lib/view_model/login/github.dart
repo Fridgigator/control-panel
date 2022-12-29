@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class GithubLoginViewModel extends ChangeNotifier {
-  @override
-  void dispose() {
-    super.dispose();
-    log("Disposing");
-  }
-
   Future<String?> tryLogin() async {
     const androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: "Fridgigator",
@@ -38,7 +31,7 @@ class GithubLoginViewModel extends ChangeNotifier {
       }
     } catch (e) {
       if (e is! MissingPluginException) {
-        log("$e");
+        debugPrint("$e");
         return "Cannot stay alive in the background";
       }
     }
@@ -52,11 +45,9 @@ class GithubLoginViewModel extends ChangeNotifier {
       int i = 0;
 
       await for (String data in channel.stream) {
-        log("$i");
         if (i == 0) {
           var jsonData = jsonDecode(data);
           var state = jsonData["state"];
-          log("redirect_uri: $remoteHttpDomain/api/login/v1/github-response");
           var loginGithubUrl =
               Uri.https("github.com", "login/oauth/authorize", {
             "client_id": clientID,
@@ -87,7 +78,7 @@ class GithubLoginViewModel extends ChangeNotifier {
         }
         return ' ${e.message}';
       }
-      log("$e");
+      debugPrint("$e");
       return 'Backend Error';
     }
     return 'Not complete';

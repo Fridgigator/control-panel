@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:control_panel/constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,14 +52,11 @@ class StepperViewModel with ChangeNotifier {
                     "$remoteHttpDomain/api/frontend/v2/register-fridge?fridge-name=${Uri.encodeFull(fridgeName ?? "")}"),
                 headers: {"Authorization": accessToken}));
             if (body.statusCode != 200) {
-              log("add-fridge-error: ${body.statusCode}");
               debugPrint("error: ${body.statusCode} is not 200");
               displayIcon = IconType.error;
               currentStep++;
             } else {
-              log('add-fridge-body: ${body.body}');
               var returnMap = jsonDecode(body.body);
-              log("add-fridge-returnMap=$returnMap");
               if (returnMap["error-code"] == 0) {
                 displayIcon = IconType.ok;
                 currentStep++;

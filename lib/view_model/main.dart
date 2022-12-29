@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:control_panel/data_structures/theme_type.dart';
 import 'package:flutter/material.dart';
@@ -73,8 +72,6 @@ class MainViewModel with ChangeNotifier {
   }
 
   void login(String accessToken) {
-    log("Done, accessToken=$accessToken");
-
     accessToken = accessToken;
     if (accessToken == "") {
       this.accessToken = null;

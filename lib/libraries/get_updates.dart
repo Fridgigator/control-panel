@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:control_panel/data_structures/data_value.dart';
@@ -49,7 +48,7 @@ void getUpdates() async {
   } catch (e) {
     if (e is! MissingPluginException) {
       error = true;
-      log("$e");
+      debugPrint("$e");
       errorsController.sink.add(Error.initError);
     }
   }
@@ -59,10 +58,9 @@ void getUpdates() async {
 }
 
 void _getData() async {
-  log("get data");
+  bool connected = false;
   WebSocketChannel? globalChannel;
   while (true) {
-    log("starting get data");
     WidgetsFlutterBinding.ensureInitialized();
     try {
       try {
@@ -76,22 +74,22 @@ void _getData() async {
       String? accessToken =
           (await SharedPreferences.getInstance()).getString("accessToken");
       if (accessToken == null || accessToken == "") {
-        log("no access token");
         await Future.delayed(const Duration(seconds: 1));
         continue;
       } else {
         var channel = WebSocketChannel.connect(Uri.parse(
             '$remoteWsDomain/api/frontend/v2/get-overview?accessToken=$accessToken'));
         if (channel is WebSocketChannelException) {
-          log("Error in socket");
           throw "error in socket";
         }
+        connected = true;
         globalChannel = channel;
-        log("Listening");
         if (!messagesSend.isClosed) {
           messagesSend.stream.listen((event) {
             if (event is UpdateMessage) {
-              log("Awaiting for Message: Sending data");
+              if (!connected) {
+                return;
+              }
               channel.sink.add('{"command":"read-all"}');
             }
           });
@@ -99,30 +97,23 @@ void _getData() async {
           print("Can't listen to message stream");
         }
         await for (String data in channel.stream) {
-          log("In stream");
           String? tmpAccessToken =
               (await SharedPreferences.getInstance()).getString("accessToken");
           if (tmpAccessToken != accessToken) {
             throw _AccessTokenChanged();
           }
-          log("Removed text");
           errorsController.add(Error.removeError);
-          log("data=$data");
           var map = jsonDecode(data);
           if (map["type"] == "hub") {
             List<dynamic> hubDynamic = map["hub"];
             List<Hub> obtainedHubs = hubDynamic.map((e) {
-              log("pings-type: ${e["pings"].runtimeType}");
               List<DateTime> pings = [];
               if (e["pings"] is! String && e["pings"].isNotEmpty) {
-                log("pings-type: ${e["pings"].runtimeType}");
-
                 pings = (e["pings"] as List).map((e) {
                   return (DateTime.fromMillisecondsSinceEpoch((e as int) * 1000)
                       .add(DateTime.now().timeZoneOffset));
                 }).toList();
               }
-              log("type=: ${e["pings"].runtimeType} ${e["name"].runtimeType}, ${e["last-ping"].runtimeType}, ${pings.runtimeType}");
               DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(
                       (e["last-ping"] as int) * 1000)
                   .add(DateTime.now().timeZoneOffset);
@@ -132,10 +123,8 @@ void _getData() async {
             }).toList();
             cachedHubMessage = HubMessage(obtainedHubs);
             messagesController.add(HubMessage(obtainedHubs));
-            log("setting lastPing = added to message");
           }
           if (map["type"] == "fridges") {
-            log("fridges=${map["fridges"]}");
             List<dynamic> m = map["fridges"];
 
             List<Fridge> newFridges = m.map((fridgeRec) {
@@ -222,7 +211,6 @@ void _getData() async {
             messagesController.add(FridgeMessage(newFridges));
           }
         }
-        log("finished for");
         errorsController.sink.add(Error.disconnected);
       }
     } catch (e, stacktrace) {
@@ -233,13 +221,10 @@ void _getData() async {
         errorsController.sink.add(Error.disconnected);
       }
     } finally {
-      log("canceling");
+      connected = false;
       globalChannel?.sink.close(4000, "");
     }
-    log("waiting");
-
     await Future.delayed(const Duration(seconds: 10));
-    log("finished waiting");
   }
 }
 

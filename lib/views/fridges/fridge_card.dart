@@ -13,11 +13,13 @@ class FridgeCard extends StatelessWidget {
   final bool darkTheme;
   final Fridge fridge;
   final String accessToken;
+  final void Function(Sensor sensor)? onCardTap;
   const FridgeCard(
       {super.key,
       required this.darkTheme,
       required this.fridge,
-      required this.accessToken});
+      required this.accessToken,
+      required this.onCardTap});
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,7 @@ class FridgeCard extends StatelessWidget {
                   for (Sensor s in fridge.sensors)
                     s.dataValues.isNotEmpty
                         ? _IndividualSensorWidget(
+                            onCardTap: onCardTap,
                             now: DateTime.now(),
                             key: ValueKey(s.name),
                             darkTheme: darkTheme,
@@ -60,11 +63,13 @@ class FridgeCard extends StatelessWidget {
 class _IndividualSensorWidget extends StatelessWidget {
   final Sensor sensor;
   final DateTime now;
+  final void Function(Sensor sensos)? onCardTap;
   const _IndividualSensorWidget({
     Key? key,
     required this.now,
     required this.darkTheme,
     required this.sensor,
+    required this.onCardTap,
   }) : super(key: key);
 
   final bool darkTheme;
@@ -77,48 +82,82 @@ class _IndividualSensorWidget extends StatelessWidget {
             v.typeOfData == TypeOfData.dht22Temp ||
             v.typeOfData == TypeOfData.temp)
         .toList();
-
+    List<DataValue> humidityLists = sensor.dataValues
+        .where((DataValue v) =>
+            v.typeOfData == TypeOfData.dht11Humidity ||
+            v.typeOfData == TypeOfData.dht22Humidity ||
+            v.typeOfData == TypeOfData.humidity)
+        .toList();
     double? latestTemp;
     try {
-      log("sensor.dataValues.last=${tempLists.last}");
-
       latestTemp = tempLists.last.value;
-    } catch (_) {
-      log("not found");
-    }
-    return Card(
+    } catch (_) {}
+    void Function(Sensor sensor)? onCardTap = this.onCardTap;
+    return InkWell(
+      onTap: onCardTap == null
+          ? null
+          : () {
+              onCardTap(sensor);
+            },
+      child: Card(
         elevation: 8,
-        child: Column(children: [
-          Row(children: [
-            const Padding(padding: EdgeInsets.fromLTRB(16, 32, 8, 8)),
-            const Padding(padding: EdgeInsets.fromLTRB(0, 8, 8, 8)),
-            Text("Sensor ${sensor.location}")
-          ]),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(
-                height: 120,
-                width: 120,
-                child: _MyRadialGauge(
-                    latestTemp: latestTemp, dataValues: sensor.dataValues))
-          ]),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            SizedBox(
-              height: 128,
-              width: 256,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
-                child: Chart(
-                  now: now,
-                  darkTheme: darkTheme,
-                  dataValues: sensor.dataValues
-                      .where((DataValue t) => t.time
-                          .isAfter(now.subtract(const Duration(seconds: 30))))
-                      .toList(),
+        child: Column(
+          children: [
+            Row(children: [
+              const Padding(padding: EdgeInsets.fromLTRB(16, 32, 8, 8)),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 8, 8, 8)),
+              Text("Sensor ${sensor.location}")
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              SizedBox(
+                  height: 120,
+                  width: 120,
+                  child: _MyRadialGauge(
+                      latestTemp: latestTemp, dataValues: tempLists))
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              SizedBox(
+                height: 128,
+                width: 256,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  child: Chart(
+                    now: now,
+                    isTemp: true,
+                    darkTheme: darkTheme,
+                    dataValues: tempLists
+                        .where((DataValue t) => t.time
+                            .isAfter(now.subtract(const Duration(seconds: 30))))
+                        .toList(),
+                  ),
                 ),
-              ),
+              )
+            ]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  height: 128,
+                  width: 256,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
+                    child: Chart(
+                      isTemp: false,
+                      now: now,
+                      darkTheme: darkTheme,
+                      dataValues: humidityLists
+                          .where((DataValue t) => t.time.isAfter(
+                              now.subtract(const Duration(seconds: 30))))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ],
             )
-          ])
-        ]));
+          ],
+        ),
+      ),
+    );
   }
 }
 

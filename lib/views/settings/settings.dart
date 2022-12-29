@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/data_structures/theme_type.dart';
@@ -68,7 +67,6 @@ class Settings extends MainWidget {
                                     groupValue: selected,
                                     onChanged: (ThemeType? value) {
                                       setThemeType(value ?? ThemeType.system);
-                                      log("selected: $selected");
                                       setState(() {
                                         selected = value ?? ThemeType.system;
                                       });
@@ -79,7 +77,6 @@ class Settings extends MainWidget {
                                     value: ThemeType.light,
                                     groupValue: selected,
                                     onChanged: (ThemeType? value) {
-                                      log("selected: $selected");
                                       setThemeType(value ?? ThemeType.system);
                                       setState(() {
                                         selected = value ?? ThemeType.system;
@@ -91,12 +88,10 @@ class Settings extends MainWidget {
                                     value: ThemeType.dark,
                                     groupValue: selected,
                                     onChanged: (ThemeType? value) {
-                                      log("selected: $selected");
                                       setThemeType(value ?? ThemeType.system);
                                       setState(() {
                                         selected = value ?? ThemeType.system;
                                       });
-                                      log("selected: $selected");
                                     },
                                   )
                                 ]);

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:control_panel/view_model/main_view/fridges/add_fridge_stepper.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ class AddStepper extends StatelessWidget {
   const AddStepper({super.key, required this.accessToken});
   @override
   Widget build(BuildContext context) {
-    log("Build");
     final formKey = GlobalKey<FormState>();
 
     return MultiProvider(

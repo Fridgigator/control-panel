@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:flutter/foundation.dart';
@@ -25,12 +24,10 @@ class EmailViewModel with ChangeNotifier {
             "password": data.password,
           }));
       if (body.statusCode != 200) {
-        log("${body.statusCode}");
         throw "Backend Error";
       }
       var returnMap = jsonDecode(body.body);
       if (returnMap["error-code"] == 0) {
-        log("$returnMap");
         SharedPreferences sp = await SharedPreferences.getInstance();
         sp.setString("accessToken", returnMap['access-token']);
         return null;
@@ -38,7 +35,7 @@ class EmailViewModel with ChangeNotifier {
         return returnMap["error-output"];
       }
     } catch (e) {
-      log("$e");
+      debugPrint("$e");
       return 'Error: $e';
     }
   }

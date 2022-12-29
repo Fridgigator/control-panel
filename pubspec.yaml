@@ -28,6 +28,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   responsive_sizer: ^3.0.8
+  quiver: ^3.2.1
   flutter:
     sdk: flutter
     

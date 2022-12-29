@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:control_panel/data_structures/fridge.dart';
 import 'package:control_panel/data_structures/hubs.dart';
@@ -22,7 +21,6 @@ class OverviewViewModel with ChangeNotifier {
   int get amountDown => _amountDown;
 
   set finishedLoading(bool finishedLoading) {
-    log("Awaiting for Message: _disposed = $_disposed; set finishedLoading to: $finishedLoading");
     _finishedLoading = finishedLoading;
     if (_disposed != true) {
       notifyListeners();
@@ -67,7 +65,6 @@ class OverviewViewModel with ChangeNotifier {
   }
 
   set amountDown(int amountDown) {
-    log("amntDown=$amountDown");
     _amountDown = amountDown;
     if (_disposed != true) {
       notifyListeners();
@@ -84,7 +81,6 @@ class OverviewViewModel with ChangeNotifier {
       int localAmountUp = 0;
       int localAmountDown = 0;
       for (Hub h in _hubs) {
-        log("pinged: $curTime $_lastPing");
         if (curTime.difference(h.lastSeen) < const Duration(seconds: 5)) {
           localAmountUp++;
         } else {
@@ -93,8 +89,6 @@ class OverviewViewModel with ChangeNotifier {
       }
       amountDown = localAmountDown;
       amountUp = localAmountUp;
-    } else {
-      log("Awaiting for Message: disposed");
     }
   }
 
@@ -108,7 +102,6 @@ class OverviewViewModel with ChangeNotifier {
   bool error = false;
 
   OverviewViewModel() {
-    log("Awaiting for Message: Started");
     _finishedLoading = false;
     _disposed = false;
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
@@ -129,31 +122,19 @@ class OverviewViewModel with ChangeNotifier {
       lastPinged = tmpLastPing;
       amountDown = localAmountDown;
       amountUp = localAmountUp;
-
-      log("pinged: $hasPinged");
     });
     () async {
-      log("Awaiting for Message: $cachedHubMessage, $cachedFridgeMessage");
       messagesSend.add(const UpdateMessage());
       await for (Message m in messagesController.stream) {
-        log("Awaiting for Message: got message, _disposed=$_disposed");
         finishedLoading = true;
         if (_disposed != false) {
           break;
         }
-        log("Awaiting for Message: $m");
         if (m is HubMessage) {
           hubs = m.h;
-          log("Awaiting for Message: is hub message: ${m.h}, finishedLoading=$finishedLoading");
         } else if (m is FridgeMessage) {
           fridges = m.h;
         }
-      }
-    }();
-    () async {
-      log("Awaiting for Error Message");
-      await for (Error m in errorsController.stream) {
-        log("Error Message: ${m.name}");
       }
     }();
   }

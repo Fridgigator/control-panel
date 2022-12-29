@@ -1,5 +1,4 @@
 // Based on https://github.com/flutter/flutter/blob/b8f7f1f986/packages/flutter/lib/src/material/snack_bar.dart#L188
-import 'dart:developer';
 
 import 'package:control_panel/libraries/stateless_snackbar/viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ class StatelessSnackbar extends StatelessWidget {
   final double horizontalPadding = 16.0;
   @override
   Widget build(BuildContext context) {
-    log("Building snackbar");
     final EdgeInsetsGeometry padding = EdgeInsetsDirectional.only(
         start: horizontalPadding, end: horizontalPadding);
 

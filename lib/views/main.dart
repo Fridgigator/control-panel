@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/data_structures/theme_type.dart';
 import 'package:control_panel/libraries/stateless_snackbar/controller.dart';
@@ -66,8 +64,6 @@ class _MainPageState extends State<_MyAppState> {
                 return PageRouteBuilder(
                     settings: settings,
                     pageBuilder: (context, _, __) {
-                      log("context=$settings, ${settings.name}");
-
                       final routes = {
                         "/": (context) => const OverviewScaffold(
                               pageToGo: MainViewState.overview,
@@ -86,7 +82,11 @@ class _MainPageState extends State<_MyAppState> {
                             ),
                       };
                       if (settings.name != "login") {
-                        return routes[settings.name]!(context);
+                        if (routes[settings.name] != null) {
+                          return routes[settings.name]!(context);
+                        } else {
+                          return routes["overview"]!(context);
+                        }
                       } else {
                         return LoginScaffold(
                             darkTheme:
@@ -184,6 +184,7 @@ class _MainScaffold extends StatelessWidget {
           break;
         case MainViewState.fridges:
           widgetToDisplay = Fridges(
+              isCentigrade: Provider.of<MainViewModel>(context).isCentigrade,
               darkTheme: isDarkTheme,
               smallDevice: smallDevice,
               accessToken: accessToken);

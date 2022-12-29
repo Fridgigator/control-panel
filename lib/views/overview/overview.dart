@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/view_model/main_view/overview.dart';

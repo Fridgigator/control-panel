@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/view_model/main_view/hubs.dart';
@@ -24,7 +22,6 @@ class Hubs extends MainWidget {
                       direction: Axis.horizontal,
                       children:
                           Provider.of<HubsViewModel>(context).hubs.map((Hub h) {
-                        log("hub: $h");
                         return HubView(
                             key: ValueKey(h.id),
                             darkTheme: darkTheme,
