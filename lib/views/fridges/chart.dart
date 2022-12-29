@@ -47,7 +47,6 @@ class Chart extends StatelessWidget {
           touchTooltipData: LineTouchTooltipData(
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((LineBarSpot barSpot) {
-                print("${barSpot.y}");
                 return LineTooltipItem(
                     "${barSpot.y}", TextStyle(inherit: true));
               }).toList();

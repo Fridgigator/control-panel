@@ -206,7 +206,7 @@ class BarChartSample2State extends State<SensorStats> {
     super.initState();
 
     () async {
-      debugPrint("key=${widget.sensorKey}");
+      
       http.Response r = await http.get(Uri.parse(
           '$remoteHttpDomain/api/v1/get-sensor-stat?sensor-key=${widget.sensorKey}'));
       if (r.statusCode != 200) {
@@ -227,7 +227,7 @@ class BarChartSample2State extends State<SensorStats> {
               cToF(v["seventyFifth"] * 100).round().toDouble() / 100.0));
         }
       }
-      print(items.length);
+
       if (items.isEmpty) {
         if (!mounted) {
           return;
