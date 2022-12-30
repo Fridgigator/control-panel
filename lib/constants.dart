@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-const remoteHttpDomain =
-    kDebugMode ? "http://192.168.1.164:1234" : "detoirhbf2f8n.cloudfront.net";
+const remoteHttpDomain = kDebugMode
+    ? "http://192.168.1.164:1234"
+    : "https://detoirhbf2f8n.cloudfront.net";
 const remoteWsDomain = kDebugMode
     ? "ws://192.168.1.164:1234"
     : "wss://detoirhbf2f8n.cloudfront.net";
