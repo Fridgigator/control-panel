@@ -220,10 +220,15 @@ class BarChartSample2State extends State<SensorStats> {
       for (int i = jsonData.length - 1; i >= 0; i--) {
         var v = jsonData[i];
         if (v["valid"] == true) {
-          items.add(makeGroupData(
-              i,
-              cToF((v["twentyFifth"] * 100).round().toDouble() / 100.0),
-              cToF(v["seventyFifth"] * 100).round().toDouble() / 100.0));
+          double twentyFifthC =
+              (v["twentyFifth"] * 100).round().toDouble() / 100.0;
+          double seventyFifthC =
+              (v["seventyFifth"] * 100).round().toDouble() / 100.0;
+          double twentyFifth =
+              widget.isCentigrade ? twentyFifthC : cToF(twentyFifthC);
+          double seventyFifth =
+              widget.isCentigrade ? seventyFifthC : cToF(seventyFifthC);
+          items.add(makeGroupData(i, twentyFifth, seventyFifth));
         }
       }
 
