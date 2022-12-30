@@ -20,26 +20,18 @@ class Chart extends StatelessWidget {
       required this.dataValues,
       this.toolTipsText});
 
-  double? get maxValue => dataValues.fold(null, (previousValue, element) {
-        if (previousValue == null) {
-          return element.value;
+  double get maxValue => dataValues.fold(8, (previousValue, element) {
+        if (previousValue > element.value) {
+          return previousValue;
         } else {
-          if (previousValue > element.value) {
-            return previousValue;
-          } else {
-            return element.value;
-          }
+          return element.value;
         }
       });
-  double? get minValue => dataValues.fold(null, (previousValue, element) {
-        if (previousValue == null) {
-          return element.value;
+  double get minValue => dataValues.fold(-8, (previousValue, element) {
+        if (previousValue < element.value) {
+          return previousValue;
         } else {
-          if (previousValue < element.value) {
-            return previousValue;
-          } else {
-            return element.value;
-          }
+          return element.value;
         }
       });
 
@@ -51,7 +43,7 @@ class Chart extends StatelessWidget {
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((LineBarSpot barSpot) {
                 return LineTooltipItem(
-                    "${barSpot.y}", TextStyle(inherit: true));
+                    "${barSpot.y}", const TextStyle(inherit: true));
               }).toList();
             },
           ),
@@ -61,8 +53,8 @@ class Chart extends StatelessWidget {
         lineBarsData: lineBarsData,
         minX: 0,
         maxX: 30,
-        maxY: isCentigrade ? maxValue ?? 4 + 3 : cToF(maxValue ?? 4 + 3),
-        minY: isCentigrade ? minValue ?? -4 - 3 : cToF(minValue ?? -4 - 3),
+        maxY: isCentigrade ? maxValue + 3 : cToF(maxValue + 3),
+        minY: isCentigrade ? minValue - 3 : cToF(minValue - 3),
       );
 
   FlTitlesData get titlesData1 => FlTitlesData(
