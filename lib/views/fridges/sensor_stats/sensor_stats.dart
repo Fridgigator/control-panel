@@ -213,7 +213,6 @@ class BarChartSample2State extends State<SensorStats> {
           return;
         }
         FlushbarHelper.createError(message: "Server Error").show(context);
-        Navigator.pop(context);
       }
       var jsonData = json.decode(r.body);
       List<BarChartGroupData> items = [];
@@ -238,8 +237,6 @@ class BarChartSample2State extends State<SensorStats> {
         }
         FlushbarHelper.createError(message: "No data was received")
             .show(context);
-
-        Navigator.pop(context);
       }
       if (!mounted) {
         return;

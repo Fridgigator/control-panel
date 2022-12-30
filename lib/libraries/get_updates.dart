@@ -148,6 +148,8 @@ void _getData() async {
                 String location = sensorDynamic['location'];
                 String name = sensorDynamic['name'];
                 List<DataValue> dataValues;
+                String sensorID = sensorDynamic['uuid'];
+
                 if (sensorDynamic['data-values'] == null) {
                   dataValues = [];
                 } else {
@@ -182,7 +184,7 @@ void _getData() async {
                     }
                     assert(DateTime.fromMillisecondsSinceEpoch(v['time'] * 1000)
                         .isBefore(DateTime.now()));
-                   
+
                     return DataValue(
                         value: value,
                         typeOfData: typeOfData,
@@ -197,6 +199,7 @@ void _getData() async {
                     model: model,
                     location: location,
                     name: name,
+                    sensorID: sensorID,
                     dataValues: dataValues);
               }).toList();
               double medianTemp = fridgeRec["median-temp"].toDouble();

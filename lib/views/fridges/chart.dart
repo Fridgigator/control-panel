@@ -1,4 +1,5 @@
 import 'package:control_panel/data_structures/data_value.dart';
+import 'package:control_panel/views/overview/fridge_overview_display.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
@@ -9,10 +10,12 @@ class Chart extends StatelessWidget {
   final DateTime now;
   final bool isTemp;
   final List<String>? toolTipsText;
+  final bool isCentigrade;
   const Chart(
       {super.key,
       required this.darkTheme,
       required this.isTemp,
+      required this.isCentigrade,
       required this.now,
       required this.dataValues,
       this.toolTipsText});
@@ -58,8 +61,8 @@ class Chart extends StatelessWidget {
         lineBarsData: lineBarsData,
         minX: 0,
         maxX: 30,
-        maxY: maxValue ?? 4 + 3,
-        minY: minValue ?? -4 - 3,
+        maxY: isCentigrade ? maxValue ?? 4 + 3 : cToF(maxValue ?? 4 + 3),
+        minY: isCentigrade ? minValue ?? -4 - 3 : cToF(minValue ?? -4 - 3),
       );
 
   FlTitlesData get titlesData1 => FlTitlesData(
@@ -75,7 +78,23 @@ class Chart extends StatelessWidget {
           sideTitles: SideTitles(showTitles: false),
         ),
         leftTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: true, reservedSize: 48.0),
+          sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 48.0,
+              getTitlesWidget: (double value, TitleMeta meta) {
+                Widget text;
+                if (value.toInt() % 5 == 0) {
+                  text = Text('${value.toInt()}');
+                } else {
+                  text = const Text('');
+                }
+
+                return SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  space: 10,
+                  child: text,
+                );
+              }),
         ),
       );
 
@@ -109,7 +128,7 @@ class Chart extends StatelessWidget {
     List<FlSpot> dataValues = this.dataValues.where((DataValue v) {
       return v.typeOfData == type;
     }).map((DataValue v) {
-      return Tuple2(v.time, v.value);
+      return Tuple2(v.time, isCentigrade ? v.value : cToF(v.value));
     }).map((Tuple2<DateTime, double> t) {
       return FlSpot(
           now.millisecondsSinceEpoch / 1000 -

@@ -179,8 +179,11 @@ class _MainScaffold extends StatelessWidget {
           );
           break;
         case MainViewState.hubs:
-          widgetToDisplay =
-              Hubs(darkTheme: isDarkTheme, smallDevice: smallDevice);
+          widgetToDisplay = Hubs(
+            darkTheme: isDarkTheme,
+            smallDevice: smallDevice,
+            accessToken: accessToken,
+          );
           break;
         case MainViewState.fridges:
           widgetToDisplay = Fridges(

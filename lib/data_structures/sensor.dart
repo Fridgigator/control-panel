@@ -5,10 +5,12 @@ class Sensor extends Equatable {
   final ModelType model;
   final String location;
   final String name;
+  final String sensorID;
   final List<DataValue> dataValues;
 
   const Sensor(
       {required this.model,
+      required this.sensorID,
       required this.location,
       required this.name,
       required this.dataValues});

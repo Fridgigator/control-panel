@@ -4,6 +4,7 @@ import 'package:control_panel/data_structures/data_value.dart';
 import 'package:control_panel/data_structures/fridge.dart';
 import 'package:control_panel/data_structures/sensor.dart';
 import 'package:control_panel/views/fridges/remove_fridge/remove_fridge_dialog.dart';
+import 'package:control_panel/views/old_views/add_sensor.dart';
 import 'package:flutter/material.dart';
 import 'package:gauges/gauges.dart';
 
@@ -13,11 +14,13 @@ class FridgeCard extends StatelessWidget {
   final bool darkTheme;
   final Fridge fridge;
   final String accessToken;
+  final bool isCentigrade;
   final void Function(Sensor sensor)? onCardTap;
   const FridgeCard(
       {super.key,
       required this.darkTheme,
       required this.fridge,
+      required this.isCentigrade,
       required this.accessToken,
       required this.onCardTap});
 
@@ -35,7 +38,18 @@ class FridgeCard extends StatelessWidget {
                     const Padding(padding: EdgeInsets.fromLTRB(8, 32, 8, 8)),
                     IconButton(
                       icon: const Icon(Icons.add),
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                  title: const Text('Add Sensor'),
+                                  content: AddSensor(
+                                    accessToken: accessToken,
+                                    fridges: [],
+                                  ));
+                            });
+                      },
                     ),
                     const Padding(padding: EdgeInsets.fromLTRB(8, 32, 16, 8)),
                     IconButton(
@@ -50,6 +64,7 @@ class FridgeCard extends StatelessWidget {
                   for (Sensor s in fridge.sensors)
                     s.dataValues.isNotEmpty
                         ? _IndividualSensorWidget(
+                            isCentigrade: isCentigrade,
                             onCardTap: onCardTap,
                             now: DateTime.now(),
                             key: ValueKey(s.name),
@@ -64,10 +79,12 @@ class _IndividualSensorWidget extends StatelessWidget {
   final Sensor sensor;
   final DateTime now;
   final void Function(Sensor sensos)? onCardTap;
+  final bool isCentigrade;
   const _IndividualSensorWidget({
     Key? key,
     required this.now,
     required this.darkTheme,
+    required this.isCentigrade,
     required this.sensor,
     required this.onCardTap,
   }) : super(key: key);
@@ -126,6 +143,7 @@ class _IndividualSensorWidget extends StatelessWidget {
                     now: now,
                     isTemp: true,
                     darkTheme: darkTheme,
+                    isCentigrade: isCentigrade,
                     dataValues: tempLists
                         .where((DataValue t) => t.time
                             .isAfter(now.subtract(const Duration(seconds: 30))))
@@ -145,6 +163,7 @@ class _IndividualSensorWidget extends StatelessWidget {
                     child: Chart(
                       isTemp: false,
                       now: now,
+                      isCentigrade: true,
                       darkTheme: darkTheme,
                       dataValues: humidityLists
                           .where((DataValue t) => t.time.isAfter(

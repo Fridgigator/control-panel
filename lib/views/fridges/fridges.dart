@@ -32,6 +32,7 @@ class Fridges extends MainWidget {
                     children: Provider.of<FridgeViewModel>(context).fridges.map(
                       (fridge) {
                         return FridgeCard(
+                          isCentigrade: isCentigrade,
                           onCardTap: (Sensor sensor) {
                             if (!smallDevice) {
                               showDialog(
@@ -41,7 +42,7 @@ class Fridges extends MainWidget {
                                       title: Text("Sensor: ${sensor.location}"),
                                       content: SensorStats(
                                         isCentigrade: isCentigrade,
-                                        sensorKey: sensor.name,
+                                        sensorKey: sensor.sensorID,
                                         timeCalled: DateTime.now(),
                                       ),
                                     );

@@ -2,13 +2,19 @@ import 'package:control_panel/data_structures/hubs.dart';
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/view_model/main_view/hubs.dart';
 import 'package:control_panel/views/hubs/hub_view.dart';
+import 'package:control_panel/views/old_views/add_hub.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Hubs extends MainWidget {
   final bool darkTheme;
   final bool smallDevice;
-  const Hubs({super.key, required this.darkTheme, required this.smallDevice});
+  final String accessToken;
+  const Hubs(
+      {super.key,
+      required this.darkTheme,
+      required this.smallDevice,
+      required this.accessToken});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +77,15 @@ class Hubs extends MainWidget {
   @override
   FloatingActionButton? getFAB(BuildContext context) {
     return FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                    title: const Text('Add Hub'),
+                    content: AddHub(accessToken: accessToken));
+              });
+        },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add));
   }
