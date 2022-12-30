@@ -29,33 +29,31 @@ class Fridges extends MainWidget {
               ? SingleChildScrollView(
                   child: Wrap(
                     direction: Axis.horizontal,
-                    children: Provider.of<FridgeViewModel>(context)
-                        .fridges
-                        .map(
-                          (fridge) => FridgeCard(
-                            onCardTap: (Sensor sensor) {
-                              if (!smallDevice) {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title:
-                                            Text("Sensor: ${sensor.location}"),
-                                        content: SensorStats(
-                                          isCentigrade: isCentigrade,
-                                          sensorKey: sensor.name,
-                                          timeCalled: DateTime.now(),
-                                        ),
-                                      );
-                                    });
-                              }
-                            },
-                            darkTheme: darkTheme,
-                            fridge: fridge,
-                            accessToken: accessToken,
-                          ),
-                        )
-                        .toList(),
+                    children: Provider.of<FridgeViewModel>(context).fridges.map(
+                      (fridge) {
+                        return FridgeCard(
+                          onCardTap: (Sensor sensor) {
+                            if (!smallDevice) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Sensor: ${sensor.location}"),
+                                      content: SensorStats(
+                                        isCentigrade: isCentigrade,
+                                        sensorKey: sensor.name,
+                                        timeCalled: DateTime.now(),
+                                      ),
+                                    );
+                                  });
+                            }
+                          },
+                          darkTheme: darkTheme,
+                          fridge: fridge,
+                          accessToken: accessToken,
+                        );
+                      },
+                    ).toList(),
                   ),
                 )
               : const Center(

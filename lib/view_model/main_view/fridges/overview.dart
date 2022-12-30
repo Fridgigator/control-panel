@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:control_panel/data_structures/data_value.dart';
 import 'package:control_panel/data_structures/fridge.dart';
+import 'package:control_panel/data_structures/sensor.dart';
 import 'package:control_panel/libraries/get_updates.dart';
 import 'package:flutter/material.dart';
 

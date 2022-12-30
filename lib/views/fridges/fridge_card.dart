@@ -80,6 +80,7 @@ class _IndividualSensorWidget extends StatelessWidget {
         .where((DataValue v) =>
             v.typeOfData == TypeOfData.dht11Temp ||
             v.typeOfData == TypeOfData.dht22Temp ||
+            v.typeOfData == TypeOfData.picoTemp ||
             v.typeOfData == TypeOfData.temp)
         .toList();
     List<DataValue> humidityLists = sensor.dataValues

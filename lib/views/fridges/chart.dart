@@ -94,7 +94,10 @@ class Chart extends StatelessWidget {
   List<FlSpot> get tempSpots => getSpots(TypeOfData.temp, now);
   List<FlSpot> get dht22TempSpots => getSpots(TypeOfData.dht22Temp, now);
   List<FlSpot> get dht11TempSpots => getSpots(TypeOfData.dht11Temp, now);
-  List<FlSpot> get picoSpots => getSpots(TypeOfData.picoTemp, now);
+  List<FlSpot> get picoSpots {
+    var spots = getSpots(TypeOfData.picoTemp, now);
+    return spots;
+  }
 
   List<FlSpot> get humiditySpots => getSpots(TypeOfData.humidity, now);
   List<FlSpot> get dht22HumiditySpots =>
@@ -201,7 +204,7 @@ class Chart extends StatelessWidget {
   LineChartBarData get lineChartBarDataDHT11Temp => LineChartBarData(
         isCurved: true,
         curveSmoothness: 0,
-        color: Colors.indigo,
+        color: Colors.grey,
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(show: true),
@@ -212,7 +215,7 @@ class Chart extends StatelessWidget {
   LineChartBarData get lineChartBarDataDHT22Humidity => LineChartBarData(
         isCurved: true,
         curveSmoothness: 0,
-        color: Colors.yellow,
+        color: Colors.orange,
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(show: true),
@@ -223,7 +226,7 @@ class Chart extends StatelessWidget {
   LineChartBarData get lineChartBarDataDHT11Humidity => LineChartBarData(
         isCurved: true,
         curveSmoothness: 0,
-        color: Colors.indigo,
+        color: Colors.green,
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(show: true),

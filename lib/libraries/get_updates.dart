@@ -95,7 +95,7 @@ void _getData() async {
             }
           });
         } else {
-          print("Can't listen to message stream");
+          debugPrint("Can't listen to message stream");
         }
         await for (String data in channel.stream) {
           String? tmpAccessToken =
@@ -111,13 +111,12 @@ void _getData() async {
               List<DateTime> pings = [];
               if (e["pings"] is! String && e["pings"].isNotEmpty) {
                 pings = (e["pings"] as List).map((e) {
-                  return (DateTime.fromMillisecondsSinceEpoch((e as int) * 1000)
-                      .add(DateTime.now().timeZoneOffset));
+                  return (DateTime.fromMillisecondsSinceEpoch(
+                      (e as int) * 1000));
                 }).toList();
               }
               DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(
-                      (e["last-ping"] as int) * 1000)
-                  .add(DateTime.now().timeZoneOffset);
+                  (e["last-ping"] as int) * 1000);
               String name = e["name"];
               Hub h = Hub(id: name, lastSeen: lastSeen, pings: pings);
               return h;
@@ -125,7 +124,6 @@ void _getData() async {
             cachedHubMessage = HubMessage(obtainedHubs);
             messagesController.add(HubMessage(obtainedHubs));
           }
-          log("map=$map");
           if (map["type"] == "fridges") {
             List<dynamic> m = map["fridges"];
 
@@ -184,6 +182,7 @@ void _getData() async {
                     }
                     assert(DateTime.fromMillisecondsSinceEpoch(v['time'] * 1000)
                         .isBefore(DateTime.now()));
+                   
                     return DataValue(
                         value: value,
                         typeOfData: typeOfData,
@@ -193,6 +192,7 @@ void _getData() async {
                 }
                 dataValues.sort(
                     (DataValue a, DataValue b) => a.time.compareTo(b.time));
+
                 return Sensor(
                     model: model,
                     location: location,

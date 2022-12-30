@@ -39,6 +39,7 @@ class HubsViewModel with ChangeNotifier {
     _lastPing = lastPing;
     var curTime = DateTime.now();
     bool oldHasPinged = hasPinged;
+    debugPrint("curTime=$curTime - $_lastPing");
     if (curTime.difference(_lastPing) < const Duration(seconds: 6)) {
       hasPinged = true;
     } else {
@@ -109,10 +110,13 @@ class HubsViewModel with ChangeNotifier {
       int localAmountUp = 0;
       int localAmountDown = 0;
       DateTime tmpLastPing = DateTime.fromMicrosecondsSinceEpoch(0);
+
       for (Hub h in _hubs) {
         if (tmpLastPing.isBefore(h.lastSeen)) {
           tmpLastPing = h.lastSeen;
         }
+        debugPrint("curTime=$curTime - $tmpLastPing");
+
         if (curTime.difference(h.lastSeen) < const Duration(seconds: 5)) {
           localAmountUp++;
         } else {
