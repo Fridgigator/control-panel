@@ -104,7 +104,7 @@ class OverviewViewModel with ChangeNotifier {
   OverviewViewModel() {
     _finishedLoading = false;
     _disposed = false;
-    _timer = Timer.periodic(const Duration(seconds: 5), (t) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (t) {
       var curTime = DateTime.now();
       int localAmountUp = 0;
       int localAmountDown = 0;
@@ -113,7 +113,7 @@ class OverviewViewModel with ChangeNotifier {
         if (tmpLastPing.isBefore(h.lastSeen)) {
           tmpLastPing = h.lastSeen;
         }
-        if (curTime.difference(h.lastSeen) < const Duration(seconds: 5)) {
+        if (curTime.difference(h.lastSeen) < const Duration(seconds: 10)) {
           localAmountUp++;
         } else {
           localAmountDown++;

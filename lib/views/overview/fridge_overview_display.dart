@@ -1,4 +1,5 @@
 import 'package:control_panel/data_structures/fridge.dart';
+import 'package:control_panel/data_structures/sensor.dart';
 import 'package:flutter/material.dart';
 import 'package:gauges/gauges.dart';
 
@@ -16,15 +17,26 @@ class FridgeOverviewDisplay extends StatelessWidget {
     String lowTempDisplay = centigrade
         ? "${fridge.lowTemp.toStringAsFixed(2)} C"
         : "${cToF(fridge.lowTemp).toStringAsFixed(2)} F";
-
+    bool dataReceived = false;
+    if (fridge.sensors.isNotEmpty) {
+      for (Sensor s in fridge.sensors) {
+        if (s.dataValues.isNotEmpty) {
+          dataReceived = true;
+          break;
+        }
+      }
+    }
     return Card(
-        child: InkWell(
-            onTap: () {},
-            child: Container(
-                padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                child: Column(children: [
-                  Text(fridge.name),
-                  Container(
+      child: InkWell(
+        onTap: () {},
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+          child: Column(
+            children: [
+              Text(fridge.name),
+              !dataReceived
+                  ? const Icon(Icons.error)
+                  : Container(
                       padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
                       child: RadialGauge(
                         radius: 60,
@@ -74,31 +86,45 @@ class FridgeOverviewDisplay extends StatelessWidget {
                             maxAngle: 150,
                           ),
                         ],
-                      )),
-                  IntrinsicWidth(
-                      child: Column(children: [
+                      ),
+                    ),
+              IntrinsicWidth(
+                child: Column(
+                  children: [
                     Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(highTempDisplay),
-                          const Padding(
-                            padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
-                          ),
-                          Text(lowTempDisplay)
-                        ]),
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        dataReceived ? Text(highTempDisplay) : const Text(""),
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
+                        ),
+                        dataReceived ? Text(lowTempDisplay) : const Text("")
+                      ],
+                    ),
                     Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text("${fridge.highHumidity.toStringAsFixed(2)}%"),
-                          const Padding(
-                            padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
-                          ),
-                          Text("${fridge.lowHumidity.toStringAsFixed(2)}%")
-                        ])
-                  ]))
-                ]))));
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        dataReceived
+                            ? Text("${fridge.highHumidity.toStringAsFixed(2)}%")
+                            : const Text(""),
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(32, 8, 32, 8),
+                        ),
+                        dataReceived
+                            ? Text("${fridge.lowHumidity.toStringAsFixed(2)}%")
+                            : const Text("")
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

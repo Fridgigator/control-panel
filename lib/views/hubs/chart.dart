@@ -112,7 +112,7 @@ class Chart extends StatelessWidget {
 }
 
 bool isAheadFound(int index, List<FlSpot> input) {
-  for (int i = index; i < input.length && i < index + 3; i++) {
+  for (int i = index; i < input.length && i < index + 6; i++) {
     if (input[i].y > 0) {
       return true;
     }
@@ -121,7 +121,7 @@ bool isAheadFound(int index, List<FlSpot> input) {
 }
 
 bool isBeforeFound(int index, List<FlSpot> input) {
-  for (int i = index; i >= 0 && i > index - 3; i--) {
+  for (int i = index; i >= 0 && i > index - 6; i--) {
     if (input[i].y > 0) {
       return true;
     }
@@ -135,7 +135,7 @@ List<FlSpot> cleanup(List<FlSpot> input) {
     if (isBeforeFound(i, input) && isAheadFound(i, input)) {
       returnVal[i] = returnVal[i].copyWith(y: 4);
     }
-    if (i + 3 >= returnVal.length && isBeforeFound(i, input)) {
+    if (i + 6 >= returnVal.length && isBeforeFound(i, input)) {
       returnVal[i] = returnVal[i].copyWith(y: 4);
     }
   }

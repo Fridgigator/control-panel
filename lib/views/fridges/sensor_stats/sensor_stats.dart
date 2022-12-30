@@ -206,7 +206,6 @@ class BarChartSample2State extends State<SensorStats> {
     super.initState();
 
     () async {
-      
       http.Response r = await http.get(Uri.parse(
           '$remoteHttpDomain/api/v1/get-sensor-stat?sensor-key=${widget.sensorKey}'));
       if (r.statusCode != 200) {
@@ -267,7 +266,7 @@ class BarChartSample2State extends State<SensorStats> {
                     Expanded(
                       child: BarChart(
                         BarChartData(
-                          maxY: 50,
+                          maxY: widget.isCentigrade ? 50 : 150,
                           barTouchData: BarTouchData(
                               handleBuiltInTouches: true,
                               touchTooltipData: BarTouchTooltipData(
@@ -345,24 +344,8 @@ class BarChartSample2State extends State<SensorStats> {
         return Container();
       }
     } else {
-      if (value == 0) {
-        text = '0° F';
-      } else if (value == 5) {
-        text = '5° F';
-      } else if (value == 10) {
-        text = '10° F';
-      } else if (value == 15) {
-        text = '15° F';
-      } else if (value == 20) {
-        text = '20° F';
-      } else if (value == 25) {
-        text = '25° F';
-      } else if (value == 30) {
-        text = '30° F';
-      } else if (value == 35) {
-        text = '35° F';
-      } else if (value == 40) {
-        text = '40° F';
+      if (value % 10 == 0) {
+        text = '$value° F';
       } else {
         return Container();
       }

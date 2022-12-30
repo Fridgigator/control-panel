@@ -39,7 +39,7 @@ class HubsViewModel with ChangeNotifier {
     _lastPing = lastPing;
     var curTime = DateTime.now();
     bool oldHasPinged = hasPinged;
-    if (curTime.difference(_lastPing) < const Duration(seconds: 5)) {
+    if (curTime.difference(_lastPing) < const Duration(seconds: 6)) {
       hasPinged = true;
     } else {
       hasPinged = false;

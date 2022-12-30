@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:control_panel/constants.dart';
 import 'package:control_panel/data_structures/data_value.dart';
@@ -124,6 +125,7 @@ void _getData() async {
             cachedHubMessage = HubMessage(obtainedHubs);
             messagesController.add(HubMessage(obtainedHubs));
           }
+          log("map=$map");
           if (map["type"] == "fridges") {
             List<dynamic> m = map["fridges"];
 
@@ -147,45 +149,48 @@ void _getData() async {
                 }
                 String location = sensorDynamic['location'];
                 String name = sensorDynamic['name'];
-                List<DataValue> dataValues =
-                    (sensorDynamic['data-values'] as List).map((v) {
-                  if (v['value'].runtimeType != int) {
-                    debugPrint("v=${v['value']}; v=${v['value'].runtimeType}");
-                  }
-                  double value = v['value'].toDouble();
-                  int typeOfDataInt = v['type-of-data'];
-                  TypeOfData typeOfData;
-                  switch (typeOfDataInt) {
-                    case 1:
-                      typeOfData = TypeOfData.temp;
-                      break;
-                    case 2:
-                      typeOfData = TypeOfData.humidity;
-                      break;
-                    case 3:
-                      typeOfData = TypeOfData.dht22Temp;
-                      break;
-                    case 4:
-                      typeOfData = TypeOfData.dht22Humidity;
-                      break;
-                    case 5:
-                      typeOfData = TypeOfData.dht11Temp;
-                      break;
-                    case 6:
-                      typeOfData = TypeOfData.dht11Humidity;
-                      break;
-                    case 7:
-                      typeOfData = TypeOfData.picoTemp;
-                      break;
-                    default:
-                      throw 'Incorrect type of data';
-                  }
-                  return DataValue(
-                      value: value,
-                      typeOfData: typeOfData,
-                      time: DateTime.fromMillisecondsSinceEpoch(
-                          v['time'] * 1000));
-                }).toList();
+                List<DataValue> dataValues;
+                if (sensorDynamic['data-values'] == null) {
+                  dataValues = [];
+                } else {
+                  dataValues = (sensorDynamic['data-values'] as List).map((v) {
+                    double value = v['value'].toDouble();
+                    int typeOfDataInt = v['type-of-data'];
+                    TypeOfData typeOfData;
+                    switch (typeOfDataInt) {
+                      case 1:
+                        typeOfData = TypeOfData.temp;
+                        break;
+                      case 2:
+                        typeOfData = TypeOfData.humidity;
+                        break;
+                      case 3:
+                        typeOfData = TypeOfData.dht22Temp;
+                        break;
+                      case 4:
+                        typeOfData = TypeOfData.dht22Humidity;
+                        break;
+                      case 5:
+                        typeOfData = TypeOfData.dht11Temp;
+                        break;
+                      case 6:
+                        typeOfData = TypeOfData.dht11Humidity;
+                        break;
+                      case 7:
+                        typeOfData = TypeOfData.picoTemp;
+                        break;
+                      default:
+                        throw 'Incorrect type of data';
+                    }
+                    assert(DateTime.fromMillisecondsSinceEpoch(v['time'] * 1000)
+                        .isBefore(DateTime.now()));
+                    return DataValue(
+                        value: value,
+                        typeOfData: typeOfData,
+                        time: DateTime.fromMillisecondsSinceEpoch(
+                            v['time'] * 1000));
+                  }).toList();
+                }
                 dataValues.sort(
                     (DataValue a, DataValue b) => a.time.compareTo(b.time));
                 return Sensor(
