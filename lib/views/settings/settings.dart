@@ -115,7 +115,7 @@ class Settings extends MainWidget {
             SettingsTile.switchTile(
                 initialValue: centigrade,
                 onToggle: setCentigrade,
-                description: const Text("Use centigrade"),
+                description: const Text("Use Celsius"),
                 title: const Text("Units"))
           ],
         ),
