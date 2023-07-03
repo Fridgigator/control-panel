@@ -18,52 +18,8 @@ class Fridges extends MainWidget {
       required this.smallDevice,
       required this.accessToken,
       required this.isCentigrade});
-
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => FridgeViewModel())],
-        builder: (context, child) {
-          return Provider.of<FridgeViewModel>(context).finishedLoading
-              ? SingleChildScrollView(
-                  child: Wrap(
-                    direction: Axis.horizontal,
-                    children: Provider.of<FridgeViewModel>(context).fridges.map(
-                      (fridge) {
-                        return FridgeCard(
-                          isCentigrade: isCentigrade,
-                          onCardTap: (Sensor sensor) {
-                            if (!smallDevice) {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Sensor: ${sensor.location}"),
-                                      content: SensorStats(
-                                        isCentigrade: isCentigrade,
-                                        sensorKey: sensor.sensorID,
-                                        timeCalled: DateTime.now(),
-                                      ),
-                                    );
-                                  });
-                            }
-                          },
-                          darkTheme: darkTheme,
-                          fridge: fridge,
-                          accessToken: accessToken,
-                        );
-                      },
-                    ).toList(),
-                  ),
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
-                );
-        },
-      ),
-    );
-  }
+  State<StatefulWidget> createState() => _FridgesState();
 
   @override
   Widget getSideBar(BuildContext context) {
@@ -112,5 +68,53 @@ class Fridges extends MainWidget {
   @override
   bool hasSideBar() {
     return true;
+  }
+}
+
+class _FridgesState extends State<Fridges> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => FridgeViewModel())],
+        builder: (context, child) {
+          return Provider.of<FridgeViewModel>(context).finishedLoading
+              ? SingleChildScrollView(
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    children: Provider.of<FridgeViewModel>(context).fridges.map(
+                      (fridge) {
+                        return FridgeCard(
+                          isCentigrade: widget.isCentigrade,
+                          onCardTap: (Sensor sensor) {
+                            if (!widget.smallDevice) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Sensor: ${sensor.location}"),
+                                      content: SensorStats(
+                                        isCentigrade: widget.isCentigrade,
+                                        sensorKey: sensor.sensorID,
+                                        timeCalled: DateTime.now(),
+                                      ),
+                                    );
+                                  });
+                            }
+                          },
+                          darkTheme: widget.darkTheme,
+                          fridge: fridge,
+                          accessToken: widget.accessToken,
+                        );
+                      },
+                    ).toList(),
+                  ),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                );
+        },
+      ),
+    );
   }
 }

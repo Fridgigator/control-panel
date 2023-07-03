@@ -13,12 +13,30 @@ class OverviewViewModel with ChangeNotifier {
   int _amountUp = 0;
   int _amountDown = 0;
   bool? _disposed;
+  int _radarAngle = 0;
+  Map<int, List<String>> _radarPoints = {};
 
   bool get finishedLoading => _finishedLoading;
   bool get hasPinged => _hasPinged;
   DateTime get lastPinged => _lastPing;
   int get amountUp => _amountUp;
   int get amountDown => _amountDown;
+
+  /// The current angle of the sweeper in degrees
+  int get radarAngle => _radarAngle;
+  set radarAngle(int radarAngle) {
+    _radarAngle = radarAngle;
+    notifyListeners();
+  }
+
+  /// A map of points that should be displayed. The key is the degree where they lie and
+  /// the value is a list of hub IDs that will be displayed on hover.
+  Map<int, List<String>> get radarPoints => _radarPoints;
+
+  set points(Map<int, List<String>> points) {
+    _radarPoints = points;
+    notifyListeners();
+  }
 
   set finishedLoading(bool finishedLoading) {
     _finishedLoading = finishedLoading;
@@ -104,14 +122,26 @@ class OverviewViewModel with ChangeNotifier {
   OverviewViewModel() {
     _finishedLoading = false;
     _disposed = false;
-    _timer = Timer.periodic(const Duration(seconds: 10), (t) {
+
+    // Since the hub pings every 2 seconds, we need to sweep 360* every 2 seconds,
+    // and our angular velocity is 180*/second, or one degree every 6 milliseconds.
+    _timer = Timer.periodic(const Duration(milliseconds: 6), (t) {
+      // At 359, we roll over back to 0
+      if (radarAngle == 359) {
+        radarAngle = 0;
+      } else {
+        radarAngle++;
+      }
       var curTime = DateTime.now();
       int localAmountUp = 0;
       int localAmountDown = 0;
       DateTime tmpLastPing = DateTime.fromMicrosecondsSinceEpoch(0);
+      var points = radarPoints;
+      points.remove(radarAngle);
       for (Hub h in _hubs) {
         if (tmpLastPing.isBefore(h.lastSeen)) {
           tmpLastPing = h.lastSeen;
+//          points.remove(radarAngle/.);
         }
         if (curTime.difference(h.lastSeen) < const Duration(seconds: 10)) {
           localAmountUp++;

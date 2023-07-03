@@ -1,4 +1,3 @@
-
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/data_structures/theme_type.dart';
 import 'package:control_panel/views/phone/register.dart';
@@ -23,9 +22,30 @@ class Settings extends MainWidget {
       required this.darkTheme,
       required this.accessToken,
       required this.smallDevice});
+
+  @override
+  Widget getSideBar(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  bool hasSideBar() {
+    return false;
+  }
+
+  @override
+  FloatingActionButton? getFAB(BuildContext context) {
+    return null;
+  }
+
+  @override
+  State<StatefulWidget> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    ThemeType selected = darkTheme;
+    ThemeType selected = widget.darkTheme;
     return SettingsList(
       sections: [
         SettingsSection(
@@ -36,12 +56,13 @@ class Settings extends MainWidget {
               leading: const Icon(Icons.phone),
               description: const Text('Register a telephone for alerts'),
               onPressed: (context) {
-                if (!smallDevice) {
-                  RegisterPhone.startDialog(context, accessToken, smallDevice);
+                if (!widget.smallDevice) {
+                  RegisterPhone.startDialog(
+                      context, widget.accessToken, widget.smallDevice);
                 } else {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        RegisterPhone.replaceMain(accessToken, smallDevice),
+                    builder: (context) => RegisterPhone.replaceMain(
+                        widget.accessToken, widget.smallDevice),
                   ));
                 }
               },
@@ -66,7 +87,8 @@ class Settings extends MainWidget {
                                     value: ThemeType.system,
                                     groupValue: selected,
                                     onChanged: (ThemeType? value) {
-                                      setThemeType(value ?? ThemeType.system);
+                                      widget.setThemeType(
+                                          value ?? ThemeType.system);
                                       setState(() {
                                         selected = value ?? ThemeType.system;
                                       });
@@ -77,7 +99,8 @@ class Settings extends MainWidget {
                                     value: ThemeType.light,
                                     groupValue: selected,
                                     onChanged: (ThemeType? value) {
-                                      setThemeType(value ?? ThemeType.system);
+                                      widget.setThemeType(
+                                          value ?? ThemeType.system);
                                       setState(() {
                                         selected = value ?? ThemeType.system;
                                       });
@@ -88,7 +111,8 @@ class Settings extends MainWidget {
                                     value: ThemeType.dark,
                                     groupValue: selected,
                                     onChanged: (ThemeType? value) {
-                                      setThemeType(value ?? ThemeType.system);
+                                      widget.setThemeType(
+                                          value ?? ThemeType.system);
                                       setState(() {
                                         selected = value ?? ThemeType.system;
                                       });
@@ -113,8 +137,8 @@ class Settings extends MainWidget {
           title: const Text('Data'),
           tiles: [
             SettingsTile.switchTile(
-                initialValue: centigrade,
-                onToggle: setCentigrade,
+                initialValue: widget.centigrade,
+                onToggle: widget.setCentigrade,
                 description: const Text("Use Celsius"),
                 title: const Text("Units"))
           ],
@@ -149,20 +173,5 @@ class Settings extends MainWidget {
         ),
       ],
     );
-  }
-
-  @override
-  Widget getSideBar(BuildContext context) {
-    return Container();
-  }
-
-  @override
-  bool hasSideBar() {
-    return false;
-  }
-
-  @override
-  FloatingActionButton? getFAB(BuildContext context) {
-    return null;
   }
 }

@@ -17,28 +17,22 @@ class Hubs extends MainWidget {
       required this.accessToken});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => HubsViewModel())],
-        builder: (context, child) {
-          return Center(
-            child: Provider.of<HubsViewModel>(context).finishedLoading
-                ? SingleChildScrollView(
-                    child: Wrap(
-                      direction: Axis.horizontal,
-                      children:
-                          Provider.of<HubsViewModel>(context).hubs.map((Hub h) {
-                        return HubView(
-                            key: ValueKey(h.id),
-                            darkTheme: darkTheme,
-                            hubUUID: h.id,
-                            lastSeenTimes: h.pings);
-                      }).toList(),
-                    ),
-                  )
-                : const CircularProgressIndicator(),
-          );
-        });
+  State<StatefulWidget> createState() => _HubsState();
+
+  @override
+  FloatingActionButton? getFAB(BuildContext context) {
+    return FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                    title: const Text('Add Hub'),
+                    content: AddHub(accessToken: accessToken));
+              });
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add));
   }
 
   @override
@@ -73,20 +67,31 @@ class Hubs extends MainWidget {
   bool hasSideBar() {
     return true;
   }
+}
 
+class _HubsState extends State<Hubs> {
   @override
-  FloatingActionButton? getFAB(BuildContext context) {
-    return FloatingActionButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                    title: const Text('Add Hub'),
-                    content: AddHub(accessToken: accessToken));
-              });
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add));
+  Widget build(BuildContext context) {
+    return MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => HubsViewModel())],
+        builder: (context, child) {
+          return Center(
+            child: Provider.of<HubsViewModel>(context).finishedLoading
+                ? SingleChildScrollView(
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      children:
+                          Provider.of<HubsViewModel>(context).hubs.map((Hub h) {
+                        return HubView(
+                            key: ValueKey(h.id),
+                            darkTheme: widget.darkTheme,
+                            hubUUID: h.id,
+                            lastSeenTimes: h.pings);
+                      }).toList(),
+                    ),
+                  )
+                : const CircularProgressIndicator(),
+          );
+        });
   }
 }

@@ -78,6 +78,7 @@ void _getData() async {
         await Future.delayed(const Duration(seconds: 1));
         continue;
       } else {
+        print("$accessToken");
         var channel = WebSocketChannel.connect(Uri.parse(
             '$remoteWsDomain/api/frontend/v2/get-overview?accessToken=$accessToken'));
         if (channel is WebSocketChannelException) {
@@ -91,6 +92,7 @@ void _getData() async {
               if (!connected) {
                 return;
               }
+
               channel.sink.add('{"command":"read-all"}');
             }
           });

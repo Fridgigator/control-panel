@@ -1,4 +1,3 @@
-
 import 'package:control_panel/data_structures/main_widget.dart';
 import 'package:control_panel/view_model/main_view/overview.dart';
 import 'package:control_panel/views/overview/fridge_overview_display.dart';
@@ -16,44 +15,8 @@ class Overview extends MainWidget {
     required this.smallDevice,
     required this.centigrade,
   });
-
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => OverviewViewModel())],
-        builder: (context, child) {
-          return Provider.of<OverviewViewModel>(context).finishedLoading
-              ? ListView(
-                  padding: smallDevice
-                      ? const EdgeInsets.fromLTRB(8, 32, 8, 32)
-                      : const EdgeInsets.fromLTRB(128, 32, 128, 32),
-                  scrollDirection: Axis.vertical,
-                  children: [
-                      MainConnectionStat(
-                          darkTheme: darkTheme,
-                          amountUp:
-                              Provider.of<OverviewViewModel>(context).amountUp,
-                          amountDown: Provider.of<OverviewViewModel>(context)
-                              .amountDown,
-                          hasPinged: Provider.of<OverviewViewModel>(context)
-                              .hasPinged),
-                      Center(
-                          child: Wrap(
-                        direction: Axis.horizontal,
-                        runAlignment: WrapAlignment.spaceAround,
-                        children: Provider.of<OverviewViewModel>(context)
-                            .fridges
-                            .map((e) => FridgeOverviewDisplay(
-                                fridge: e, centigrade: centigrade))
-                            .toList(),
-                      )),
-                    ])
-              : const Center(
-                  child: CircularProgressIndicator(),
-                );
-        });
-  }
-
+  State<StatefulWidget> createState() => OverviewState();
   @override
   Widget getSideBar(BuildContext context) {
     return ListView(
@@ -74,5 +37,50 @@ class Overview extends MainWidget {
   @override
   FloatingActionButton? getFAB(BuildContext context) {
     return null;
+  }
+}
+
+class OverviewState extends State<Overview> {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => OverviewViewModel())],
+        builder: (context, child) {
+          return Provider.of<OverviewViewModel>(context).finishedLoading
+              ? ListView(
+                  padding: widget.smallDevice
+                      ? const EdgeInsets.fromLTRB(8, 32, 8, 32)
+                      : const EdgeInsets.fromLTRB(128, 32, 128, 32),
+                  scrollDirection: Axis.vertical,
+                  children: [
+                      Center(
+                        child: MainConnectionStat(
+                            angle: Provider.of<OverviewViewModel>(context)
+                                .radarAngle,
+                            points: Provider.of<OverviewViewModel>(context)
+                                .radarPoints,
+                            darkTheme: widget.darkTheme,
+                            amountUp: Provider.of<OverviewViewModel>(context)
+                                .amountUp,
+                            amountDown: Provider.of<OverviewViewModel>(context)
+                                .amountDown,
+                            hasPinged: Provider.of<OverviewViewModel>(context)
+                                .hasPinged),
+                      ),
+                      Center(
+                          child: Wrap(
+                        direction: Axis.horizontal,
+                        runAlignment: WrapAlignment.spaceAround,
+                        children: Provider.of<OverviewViewModel>(context)
+                            .fridges
+                            .map((e) => FridgeOverviewDisplay(
+                                fridge: e, centigrade: widget.centigrade))
+                            .toList(),
+                      )),
+                    ])
+              : const Center(
+                  child: CircularProgressIndicator(),
+                );
+        });
   }
 }
